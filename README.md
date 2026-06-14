@@ -1,29 +1,43 @@
-## Current Progress
+# Malvani Learning AI
 
-Repository Status:
-Active
+A research exploration into regional-language AI systems for improving conceptual learning accessibility.
 
-Completed:
-- Initial setup
-- Prompt experimentation
-- Experiment documentation
+## Research Question
 
-Next:
-- Run explanation comparisons
-- Improve outputs
-- Continue testing
-## This Week
+Can AI explanations adapted to regional languages improve understanding of difficult concepts?
 
-Current objective:
+## Motivation
 
-Evaluate whether regional-language AI explanations improve concept understanding.
+Many students understand complex ideas better when explanations match their language and context.
 
-Current activities:
+This project explores AI-assisted learning approaches.
 
-- Prompt testing
-- Documentation
-- Experiment logging
+## Current Work
 
-Current status:
+- Prompt experiments
+- Explanation quality testing
+- Documentation of AI behaviour
+- Research notes
 
-Early exploration
+## Repository Structure
+
+experiments/
+- AI learning experiments and observations
+
+prompts/
+- Tested prompts and approaches
+
+research_notes/
+- Research thinking and documentation
+
+scripts/
+- Small development experiments
+
+## Current Stage
+
+Early research and prototype phase.
+
+Future:
+- Improve explanations
+- Collect feedback
+- Evaluate learning impact
