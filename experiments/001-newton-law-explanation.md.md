@@ -1,19 +1,41 @@
-# Experiment 001
+# Experiment 001 — Newton Law Explanation Test
 
-Testing AI explanations of Newton's Laws in Malvani.
+## Date
+
+2026-06-14
 
 ## Objective
 
-Evaluate whether regional-language explanations improve conceptual clarity.
+Test how AI explains a physics concept and identify ways to improve clarity for students.
 
-## Problems Observed
+## Concept
 
-- Translation sounds unnatural
-- Technical vocabulary inconsistent
-- Some concepts lose precision
+Newton's Laws of Motion
 
-## Next Steps
+## Method
 
-- Test mixed Marathi + Malvani explanations
-- Compare understanding quality
-- Improve prompt structure
+Asked an AI system to explain Newton's Laws at different difficulty levels.
+
+Compared:
+- technical explanation
+- simple explanation
+- regional-language style explanation
+
+## Prompt Used
+
+Explain Newton's Laws of Motion for a student who understands basic physics but struggles with textbook language.
+
+## Observation
+
+The simpler explanation was easier to understand because it used:
+- everyday examples
+- fewer technical terms
+- step-by-step reasoning
+
+## Result
+
+AI can adapt explanations, but quality depends heavily on prompt design.
+
+## Next Improvement
+
+Test explanations with more concepts and compare responses.
