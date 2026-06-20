@@ -1,28 +1,21 @@
-# Experiment 003 — Language Comparison
+# Experiment 002
 
 ## Question
 
-Which explanation style works better?
+Does language style affect concept understanding?
 
-Option A:
-Full Malvani
+## Concept
 
-Option B:
-Mixed Marathi + Malvani
+Newton's Laws of Motion
 
-Option C:
-Preserve scientific terms
+## Method
 
-## Evaluation
+Compare explanations in different language styles.
 
-Clarity:
-—
+## Observation
 
-Naturalness:
-—
+Record differences in clarity and student understanding.
 
-Accuracy:
-—
+## Learning
 
-Decision:
-(To be updated)
+Document what improved the explanation.
