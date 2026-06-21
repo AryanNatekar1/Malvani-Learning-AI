@@ -13,8 +13,11 @@ knowledge = {
     "newton": "newton",
     "newton law": "newton",
     "newton laws": "newton",
-    "acceleration": "motion",
-    "velocity": "motion"
+    "friction": "friction",
+    "acceleration": "acceleration",
+    "velocity": "velocity",
+    "momentum": "momentum",
+    "work": "work"
 }
 
 while True:

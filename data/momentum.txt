@@ -1,0 +1,7 @@
+Momentum is the quantity of motion of an object.
+
+Formula:
+
+Momentum = Mass × Velocity
+
+A heavier or faster object has greater momentum.

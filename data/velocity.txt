@@ -1,0 +1,7 @@
+Velocity is speed in a specific direction.
+
+Examples:
+- 10 m/s north
+- 20 km/h east
+
+Velocity includes both speed and direction.

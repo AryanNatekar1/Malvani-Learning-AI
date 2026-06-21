@@ -1,0 +1,11 @@
+Work is done when a force moves an object.
+
+Formula:
+
+Work = Force × Distance
+
+Examples:
+- Pushing a box
+- Lifting a bag
+
+Without movement, no work is done in physics.

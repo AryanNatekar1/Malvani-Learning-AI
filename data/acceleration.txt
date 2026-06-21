@@ -1,0 +1,7 @@
+Acceleration is the rate at which velocity changes.
+
+Examples:
+- A car speeding up
+- A train slowing down
+
+Acceleration can increase or decrease speed.
