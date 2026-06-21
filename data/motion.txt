@@ -1,0 +1,7 @@
+Motion is the change in position of an object over time.
+
+Examples:
+- A car driving on a road
+- A football moving through the air
+
+Motion can be described by speed and direction.

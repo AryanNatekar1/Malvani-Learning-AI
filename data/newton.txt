@@ -1,0 +1,10 @@
+Newton's Laws of Motion explain how objects move.
+
+First Law:
+An object stays at rest or in motion unless acted on by a force.
+
+Second Law:
+Force equals mass times acceleration.
+
+Third Law:
+For every action there is an equal and opposite reaction.

@@ -1,0 +1,7 @@
+Force is a push or pull acting on an object.
+
+Examples:
+- Pushing a door open
+- Pulling a rope
+
+Forces can change an object's motion.
