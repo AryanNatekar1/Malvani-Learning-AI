@@ -1,16 +1,12 @@
-# Project Status
+# Malvani Learning AI
 
-## Malvani Learning AI
+Current Version: V1
 
-Current Stage:
-Early research exploration
+Features:
+- Interactive chatbot
+- File-based knowledge system
+- 10 science topics
+- Expandable architecture
 
-Completed:
-- Repository setup
-- GitHub workflow
-- Documentation system
-
-Next Goals:
-- Test AI prompts
-- Study language AI
-- Record experiments
+Status:
+Working
