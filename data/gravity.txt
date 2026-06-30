@@ -1,7 +1,26 @@
+Concept:
+Gravity
+
+Simple Explanation:
 Gravity is the force that pulls objects toward Earth.
 
-Examples:
-- An apple falls from a tree.
-- A ball thrown upward comes back down.
+Sindhudurg Example:
+When a mango falls from a tree in Devgad, gravity pulls it toward the ground.
 
-Gravity keeps planets in orbit around the Sun.
+Culture Connection:
+During mango harvesting season, farmers depend on understanding how fruits fall safely from trees.
+
+Real Life Use:
+- Falling objects
+- Satellite orbits
+- Aircraft and drones
+- Sports
+
+Think Question:
+Why does a mango fall downward instead of upward?
+
+Career Connection:
+Aerospace engineers and drone developers must understand gravity when designing aircraft.
+
+Challenge:
+If gravity suddenly became half as strong, how would daily life change?

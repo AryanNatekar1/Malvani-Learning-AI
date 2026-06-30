@@ -1,7 +1,26 @@
+Concept:
+Momentum
+
+Simple Explanation:
 Momentum is the quantity of motion of an object.
 
-Formula:
+Sindhudurg Example:
+A fish transport truck moving on the highway has much more momentum than a bicycle moving at the same speed.
 
-Momentum = Mass × Velocity
+Culture Connection:
+During local village processions, a large moving group is harder to stop suddenly than a single person.
 
-A heavier or faster object has greater momentum.
+Real Life Use:
+- Vehicle safety
+- Cricket
+- Aircraft landing
+- Drone navigation
+
+Think Question:
+Why is it harder to stop a truck than a bicycle?
+
+Career Connection:
+Engineers use momentum when designing vehicles, aircraft, and autonomous drones.
+
+Challenge:
+Which has more momentum: a slow truck or a fast bicycle?
