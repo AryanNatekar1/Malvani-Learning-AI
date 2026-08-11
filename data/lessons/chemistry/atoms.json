@@ -1,0 +1,59 @@
+{
+  "id": "chemistry.atoms",
+  "title": "Atoms",
+  "subject": "Chemistry",
+  "topic": "atoms",
+  "aliases": ["atom"],
+  "levels": ["Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "Atoms are tiny building blocks that make up matter such as air, water, rocks, and our bodies.",
+      "detailed_explanation": "An atom has a central nucleus containing protons and neutrons, with electrons found around the nucleus. The number of protons identifies the element.",
+      "everyday_example": "A glass of water is made of many tiny water molecules, and those molecules are made from atoms."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "real_world_use": ["understanding materials", "medicine", "electronics", "environmental testing"],
+  "common_misconceptions": ["Atoms are extremely small, but they are not simply tiny solid balls."],
+  "think_question": "If atoms are so small, how can many atoms together make a solid object?",
+  "reasoning_guide": {
+    "required_keywords": ["many", "atoms"],
+    "misconception_keywords": ["atoms are not real"],
+    "correct_feedback": "Good reasoning: you explained that many tiny atoms together make larger materials.",
+    "partial_feedback": "Connect the small size of one atom to the huge number of atoms in an object.",
+    "misconception_feedback": "Atoms are real parts of matter. Focus on how a very large number of them combine to make an object."
+  },
+  "challenge": {
+    "question": "Name the three common subatomic particles introduced in a basic atom model.",
+    "hint": "One is positive, one is neutral, and one is negative.",
+    "progressive_hints": [
+      "One is positive, one is neutral, and one is negative.",
+      "The positive and neutral particles are in the nucleus; the negative particle is an electron.",
+      "Name the positive particle first, then the neutral one, then the negative one."
+    ],
+    "solution": "The particles are protons, neutrons, and electrons.",
+    "accepted_answers": ["protons neutrons electrons", "proton neutron electron"]
+  },
+  "career_connections": ["chemistry", "medicine", "materials science"],
+  "further_exploration": ["elements", "molecules", "periodic table"],
+  "quiz_questions": [
+    {
+      "id": "atoms-positive-particle",
+      "question": "Which particle in an atom has a positive charge?",
+      "type": "multiple_choice",
+      "options": ["Electron", "Proton", "Neutron", "Molecule"],
+      "correct_answers": ["Proton", "2"],
+      "explanation": "Protons have a positive electric charge.",
+      "hint": "The negatively charged particle is the electron.",
+      "progressive_hints": [
+        "The negatively charged particle is the electron.",
+        "The neutral particle is the neutron, so choose the remaining positively charged particle."
+      ],
+      "difficulty": "Class 9"
+    }
+  ],
+  "sources": ["Original introductory project lesson. Academic review is pending."],
+  "verification_status": "NEEDS_REVIEW"
+}

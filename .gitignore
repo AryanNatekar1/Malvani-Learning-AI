@@ -1,0 +1,12 @@
+# Python bytecode and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local-only student progress and secrets
+local_data/
+.env
+
+# Optional virtual environments
+.venv/
+venv/

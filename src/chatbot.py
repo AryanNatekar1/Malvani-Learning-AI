@@ -1,58 +1,33 @@
-import os
+"""Terminal interface for the local Malvani Learning AI prototype."""
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from knowledge_engine import find_topic, load_student_lesson
 
-print("Malvani Learning AI")
-print("Type 'exit' to quit")
 
-knowledge = {
-    "gravity": "gravity",
-    "energy": "energy",
-    "force": "force",
-    "motion": "motion",
-    "newton": "newton",
-    "newton law": "newton",
-    "newton laws": "newton",
-    "friction": "friction",
-    "acceleration": "acceleration",
-    "velocity": "velocity",
-    "momentum": "momentum",
-    "work": "work"
-}
+def run_chatbot() -> None:
+    """Run the terminal chatbot until the student types ``exit``."""
+    print("Malvani Learning AI")
+    print("Type 'exit' to quit")
 
-while True:
-    question = input("\nStudent: ").lower()
+    while True:
+        question = input("\nStudent: ")
 
-    if question == "exit":
-        print("\nGoodbye!")
-        break
-
-    found = False
-
-    for keyword, topic in knowledge.items():
-
-        if keyword in question:
-
-            file_path = os.path.join(
-                BASE_DIR,
-                "data",
-                f"{topic}.txt"
-            )
-
-            try:
-                with open(file_path, "r", encoding="utf-8") as f:
-                    content = f.read()
-
-                print("\nAI:")
-                print(content)
-
-            except FileNotFoundError:
-                print("\nAI:")
-                print(f"Knowledge file missing: {topic}.txt")
-
-            found = True
+        if question.lower() == "exit":
+            print("\nGoodbye!")
             break
 
-    if not found:
+        topic = find_topic(question)
+        if topic is None:
+            print("\nAI:")
+            print("I am still learning this topic.")
+            continue
+
+        content = load_student_lesson(topic)
         print("\nAI:")
-        print("I am still learning this topic.")
+        if content is None:
+            print(f"Knowledge file missing: {topic}.txt")
+        else:
+            print(content)
+
+
+if __name__ == "__main__":
+    run_chatbot()

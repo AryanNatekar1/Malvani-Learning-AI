@@ -1,0 +1,58 @@
+{
+  "id": "physics.newton-laws",
+  "title": "Newton's Laws of Motion",
+  "subject": "Physics",
+  "topic": "newton",
+  "levels": ["Class 8", "Class 9", "Class 10", "Class 11/12"],
+  "content": {
+    "English": {
+      "simple_explanation": "Newton's laws describe how forces change motion: objects resist changes in motion, force can accelerate them, and pushes have matching opposite pushes.",
+      "detailed_explanation": "Newton's first law describes inertia. His second law relates net force, mass, and acceleration (F = ma). His third law says that interacting objects exert equal and opposite forces on each other.",
+      "everyday_example": "A passenger may move forward when a moving bus stops suddenly because the passenger's body tends to keep moving."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "real_world_use": ["seat belts", "sports", "vehicle design", "rockets and propulsion"],
+  "common_misconceptions": ["The equal and opposite forces in Newton's third law act on different objects, so they do not cancel each other on one object."],
+  "think_question": "Why does a passenger move forward when a moving bus stops suddenly?",
+  "reasoning_guide": {
+    "required_keywords": ["inertia", "moving"],
+    "misconception_keywords": ["force pushes the passenger forward"],
+    "correct_feedback": "Good reasoning: you connected the passenger's continued motion to inertia.",
+    "partial_feedback": "Name inertia and explain that the body tends to keep moving when the bus stops.",
+    "misconception_feedback": "The bus stopping does not push the passenger forward. Inertia means the body tends to continue its previous motion."
+  },
+  "challenge": {
+    "question": "A 2 kg object accelerates at 3 m/s^2. What net force acts on it?",
+    "hint": "Use F = mass x acceleration.",
+    "progressive_hints": [
+      "Use F = mass x acceleration.",
+      "Put 2 in place of mass and 3 in place of acceleration.",
+      "The force unit is newtons (N)."
+    ],
+    "solution": "F = 2 kg x 3 m/s^2 = 6 N.",
+    "accepted_answers": ["6", "6 n", "6 newtons"]
+  },
+  "career_connections": ["mechanical engineering", "automotive safety", "aerospace engineering"],
+  "further_exploration": ["inertia", "acceleration", "momentum"],
+  "quiz_questions": [
+    {
+      "id": "newton-second-law",
+      "question": "What is the net force on a 2 kg object accelerating at 3 m/s^2?",
+      "type": "numerical",
+      "options": [],
+      "correct_answers": ["6", "6 n", "6 newtons"],
+      "explanation": "Newton's second law is F = ma, so 2 x 3 = 6 N.",
+      "hint": "Multiply mass by acceleration.",
+      "progressive_hints": [
+        "Multiply mass by acceleration.",
+        "Calculate 2 x 3, then write the unit N."
+      ],
+      "difficulty": "Class 9"
+    }
+  ],
+  "sources": ["Migrated and expanded from the project's original newton.txt lesson. Academic review is still needed."],
+  "verification_status": "NEEDS_REVIEW"
+}

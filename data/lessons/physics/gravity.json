@@ -1,0 +1,72 @@
+{
+  "id": "physics.gravity",
+  "title": "Gravity",
+  "subject": "Physics",
+  "topic": "gravity",
+  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "Gravity is the force that pulls objects toward Earth.",
+      "detailed_explanation": "Every object with mass attracts other objects. Near Earth's surface, Earth's gravitational pull makes unsupported objects fall downward.",
+      "everyday_example": "When you drop a ball, it falls toward the ground because of gravity."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "local_example": {
+    "text": "A mango falling from a tree is a useful everyday illustration of gravity.",
+    "region": "Konkan / Sindhudurg",
+    "source": null,
+    "verification_status": "NEEDS_REVIEW",
+    "appropriate_usage": "Use as an illustrative context, not as a claim about a specific farm or tradition."
+  },
+  "culture_connection": {
+    "text": "Fruit harvesting can be a meaningful context for discussing why people should keep clear of falling objects.",
+    "region": "Konkan / Sindhudurg",
+    "source": null,
+    "verification_status": "NEEDS_REVIEW",
+    "appropriate_usage": "Show this as a local-context draft until a community or subject reviewer verifies it."
+  },
+  "real_world_use": ["predicting falling objects", "satellite orbits", "sports", "drone and aircraft design"],
+  "common_misconceptions": ["Gravity does not pull only heavy objects; in the same conditions, objects accelerate similarly."],
+  "think_question": "Why does a dropped mango move downward instead of upward?",
+  "reasoning_guide": {
+    "required_keywords": ["gravity", "earth"],
+    "misconception_keywords": ["heavier objects fall faster"],
+    "correct_feedback": "Good reasoning: you identified Earth's gravity as the cause of the downward motion.",
+    "partial_feedback": "You named part of the idea. Connect gravity specifically to Earth pulling the object.",
+    "misconception_feedback": "In the same conditions, gravity acts on both light and heavy objects. Focus on Earth's pull rather than only an object's weight."
+  },
+  "challenge": {
+    "question": "Imagine that Earth's gravity suddenly became half as strong. Name one everyday activity that would feel different and explain why.",
+    "hint": "Think about jumping, lifting, or falling.",
+    "progressive_hints": [
+      "Think about jumping, lifting, or falling.",
+      "Choose one activity and explain how a weaker downward pull would change it.",
+      "Compare the same person with Earth's usual pull and with half that pull."
+    ],
+    "solution": "Many answers are possible. For example, you could jump higher because Earth would pull you downward less strongly.",
+    "accepted_answers": []
+  },
+  "career_connections": ["aerospace engineering", "drone development", "sports science"],
+  "further_exploration": ["mass and weight", "free fall", "orbits"],
+  "quiz_questions": [
+    {
+      "id": "gravity-direction",
+      "question": "Which force pulls a dropped object toward Earth?",
+      "type": "multiple_choice",
+      "options": ["Friction", "Gravity", "Magnetism", "Sound"],
+      "correct_answers": ["Gravity", "2"],
+      "explanation": "Gravity pulls objects toward Earth.",
+      "hint": "Think of the force that makes a dropped ball fall.",
+      "progressive_hints": [
+        "Think of the force that makes a dropped ball fall.",
+        "Choose the option that describes an attraction toward Earth."
+      ],
+      "difficulty": "Beginner"
+    }
+  ],
+  "sources": ["Migrated from the project's original gravity.txt lesson. Academic and local-context review is still needed."],
+  "verification_status": "NEEDS_REVIEW"
+}

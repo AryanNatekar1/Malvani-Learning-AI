@@ -1,0 +1,59 @@
+{
+  "id": "mathematics.fractions",
+  "title": "Fractions",
+  "subject": "Mathematics",
+  "topic": "fractions",
+  "aliases": ["fraction"],
+  "levels": ["Beginner", "Class 8", "Class 9"],
+  "content": {
+    "English": {
+      "simple_explanation": "A fraction shows equal parts of a whole. In 3/4, the whole is divided into four equal parts and three parts are chosen.",
+      "detailed_explanation": "In a fraction, the numerator is the number on top and tells how many equal parts are considered. The denominator is the number on the bottom and tells how many equal parts make the whole.",
+      "everyday_example": "If four friends share four equal pieces of fruit and you take one piece, you have 1/4 of the fruit."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "real_world_use": ["sharing quantities fairly", "measuring ingredients", "reading maps and scales"],
+  "common_misconceptions": ["A larger denominator does not always mean a larger fraction; 1/8 is smaller than 1/4."],
+  "think_question": "Which is larger: 1/2 or 1/4? How can you show it with a drawing?",
+  "reasoning_guide": {
+    "required_keywords": ["equal", "parts"],
+    "misconception_keywords": ["4 is bigger than 2"],
+    "correct_feedback": "Good reasoning: you used equal parts to compare the fractions.",
+    "partial_feedback": "Use the phrase equal parts and explain how many parts are chosen.",
+    "misconception_feedback": "Compare the size of equal parts, not only the digits in the denominator."
+  },
+  "challenge": {
+    "question": "Calculate 3/4 + 1/4.",
+    "hint": "The denominators are already the same, so add the numerators.",
+    "progressive_hints": [
+      "The denominators are already the same, so add the numerators.",
+      "Add 3 and 1 while keeping 4 as the denominator.",
+      "Ask whether 4/4 represents a whole."
+    ],
+    "solution": "3/4 + 1/4 = 4/4 = 1 whole.",
+    "accepted_answers": ["1", "4/4", "one"]
+  },
+  "career_connections": ["cooking and food science", "engineering", "accounting"],
+  "further_exploration": ["equivalent fractions", "decimals", "percentages"],
+  "quiz_questions": [
+    {
+      "id": "fractions-half",
+      "question": "Which fraction is equal to one half?",
+      "type": "multiple_choice",
+      "options": ["1/4", "2/4", "3/4", "4/4"],
+      "correct_answers": ["2/4", "2"],
+      "explanation": "Two of four equal parts is the same amount as one of two equal parts.",
+      "hint": "Imagine folding a shape into four equal parts.",
+      "progressive_hints": [
+        "Imagine folding a shape into four equal parts.",
+        "How many of four equal parts make the same area as one of two equal halves?"
+      ],
+      "difficulty": "Beginner"
+    }
+  ],
+  "sources": ["Original introductory project lesson. Academic review is pending."],
+  "verification_status": "NEEDS_REVIEW"
+}

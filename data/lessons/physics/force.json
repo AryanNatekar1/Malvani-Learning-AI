@@ -1,0 +1,65 @@
+{
+  "id": "physics.force",
+  "title": "Force",
+  "subject": "Physics",
+  "topic": "force",
+  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "A force is a push or pull on an object.",
+      "detailed_explanation": "A net force can change an object's motion by speeding it up, slowing it down, changing its direction, or changing its shape.",
+      "everyday_example": "Pushing a door open and pulling a drawer closed are both examples of force."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "local_example": {
+    "text": "Pulling a fishing net is an everyday example of applying a force.",
+    "region": "Konkan / Sindhudurg",
+    "source": null,
+    "verification_status": "NEEDS_REVIEW",
+    "appropriate_usage": "Use as a local-context draft only until reviewed by a community or content reviewer."
+  },
+  "real_world_use": ["machines", "vehicles", "sports", "robotics"],
+  "common_misconceptions": ["An object can keep moving even when no continuing force pushes it, if friction is small."],
+  "think_question": "Can an object move without a force continuously pushing it? What forces might slow it down?",
+  "reasoning_guide": {
+    "required_keywords": ["friction", "force"],
+    "misconception_keywords": ["force is needed to keep moving"],
+    "correct_feedback": "Good reasoning: you connected forces such as friction to changes in motion.",
+    "partial_feedback": "Explain which force can slow the object and how it affects motion.",
+    "misconception_feedback": "A continuing push is not always needed to keep an object moving. Think about friction and other forces that change motion."
+  },
+  "challenge": {
+    "question": "List three pushes or pulls you used today and name the object affected.",
+    "hint": "Think about doors, bags, bicycles, or games.",
+    "progressive_hints": [
+      "Think about doors, bags, bicycles, or games.",
+      "For each example, name whether you pushed or pulled and what object moved.",
+      "Use a complete sentence for at least one example."
+    ],
+    "solution": "Answers differ. Examples include pushing a door, pulling a bag, or kicking a ball.",
+    "accepted_answers": []
+  },
+  "career_connections": ["robotics", "civil engineering", "sports science"],
+  "further_exploration": ["friction", "Newton's laws", "balanced forces"],
+  "quiz_questions": [
+    {
+      "id": "force-definition",
+      "question": "Which statement best describes a force?",
+      "type": "multiple_choice",
+      "options": ["A type of colour", "A push or pull", "Only a fast movement", "A kind of energy only"],
+      "correct_answers": ["A push or pull", "2"],
+      "explanation": "A force is a push or pull acting on an object.",
+      "hint": "Think about opening a door.",
+      "progressive_hints": [
+        "Think about opening a door.",
+        "Opening a door involves a push or a pull, not a colour or kind of energy."
+      ],
+      "difficulty": "Beginner"
+    }
+  ],
+  "sources": ["Migrated and expanded from the project's original force.txt lesson. Academic and local-context review is still needed."],
+  "verification_status": "NEEDS_REVIEW"
+}

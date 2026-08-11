@@ -1,0 +1,65 @@
+{
+  "id": "physics.momentum",
+  "title": "Momentum",
+  "subject": "Physics",
+  "topic": "momentum",
+  "levels": ["Class 8", "Class 9", "Class 10", "Class 11/12"],
+  "content": {
+    "English": {
+      "simple_explanation": "Momentum tells us how much motion an object has. A heavier object or a faster object has more momentum.",
+      "detailed_explanation": "Linear momentum is mass multiplied by velocity: p = m x v. Because velocity includes direction, momentum also has direction.",
+      "everyday_example": "A moving loaded cart is usually harder to stop than a moving empty cart at the same speed."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "local_example": {
+    "text": "Comparing a loaded transport vehicle with a bicycle is a useful way to reason about why a larger moving mass can be harder to stop.",
+    "region": "Konkan / Sindhudurg",
+    "source": null,
+    "verification_status": "NEEDS_REVIEW",
+    "appropriate_usage": "Present as an engineering illustration; do not treat it as a claim about a specific local route or occupation."
+  },
+  "real_world_use": ["vehicle safety", "cricket and other sports", "aircraft landing", "robot and drone motion"],
+  "common_misconceptions": ["A fast light object can have more momentum than a slow heavy object."],
+  "think_question": "Why is it usually harder to stop a moving truck than a moving bicycle?",
+  "reasoning_guide": {
+    "required_keywords": ["mass", "momentum"],
+    "misconception_keywords": ["only speed matters"],
+    "correct_feedback": "Good reasoning: you connected the larger mass to greater momentum.",
+    "partial_feedback": "You are close. Explain how mass changes momentum, not only how fast something moves.",
+    "misconception_feedback": "Speed matters, but mass matters too. Compare both when reasoning about momentum."
+  },
+  "challenge": {
+    "question": "A 2 kg object moves at 5 m/s. What is its momentum?",
+    "hint": "Use momentum = mass x velocity.",
+    "progressive_hints": [
+      "Use momentum = mass x velocity.",
+      "Substitute 2 for mass and 5 for velocity before multiplying.",
+      "Write the unit as kg m/s after you calculate the number."
+    ],
+    "solution": "Momentum = 2 kg x 5 m/s = 10 kg m/s.",
+    "accepted_answers": ["10", "10 kg m/s", "10 kg m s"]
+  },
+  "career_connections": ["mechanical engineering", "transport safety", "robotics"],
+  "further_exploration": ["force", "impulse", "conservation of momentum"],
+  "quiz_questions": [
+    {
+      "id": "momentum-calculation",
+      "question": "A 3 kg cart moves at 4 m/s. What is its momentum?",
+      "type": "numerical",
+      "options": [],
+      "correct_answers": ["12", "12 kg m/s", "12 kg m s"],
+      "explanation": "Momentum = mass x velocity = 3 x 4 = 12 kg m/s.",
+      "hint": "Multiply the mass by the velocity.",
+      "progressive_hints": [
+        "Multiply the mass by the velocity.",
+        "Calculate 3 x 4, then include kg m/s."
+      ],
+      "difficulty": "Class 9"
+    }
+  ],
+  "sources": ["Migrated and expanded from the project's original momentum.txt lesson. Academic and local-context review is still needed."],
+  "verification_status": "NEEDS_REVIEW"
+}

@@ -1,0 +1,59 @@
+{
+  "id": "biology.photosynthesis",
+  "title": "Photosynthesis",
+  "subject": "Biology",
+  "topic": "photosynthesis",
+  "aliases": ["photosynthesis"],
+  "levels": ["Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "Photosynthesis is how green plants use sunlight, water, and carbon dioxide to make food. Oxygen is released in the process.",
+      "detailed_explanation": "Chlorophyll in green plant parts captures light energy. That energy helps convert water and carbon dioxide into glucose, a food molecule, while oxygen is released.",
+      "everyday_example": "A healthy green plant needs light and water because it uses them in making its own food."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "real_world_use": ["food chains", "farming", "oxygen cycles", "understanding plant health"],
+  "common_misconceptions": ["Plants do not get all their food from soil; they make much of it through photosynthesis."],
+  "think_question": "Why might a green plant grow poorly if it stays in a dark room for a long time?",
+  "reasoning_guide": {
+    "required_keywords": ["light", "photosynthesis"],
+    "misconception_keywords": ["soil makes all food"],
+    "correct_feedback": "Good reasoning: you connected the lack of light to less photosynthesis.",
+    "partial_feedback": "Name photosynthesis and explain why light is needed for it.",
+    "misconception_feedback": "Soil provides materials, but plants use light in photosynthesis to make much of their food."
+  },
+  "challenge": {
+    "question": "Name two things a green plant needs for photosynthesis.",
+    "hint": "Think about what comes from the sky and what the roots absorb.",
+    "progressive_hints": [
+      "Think about what comes from the sky and what the roots absorb.",
+      "One input is sunlight and another is water; carbon dioxide is also used.",
+      "Choose any two of sunlight, water, and carbon dioxide."
+    ],
+    "solution": "Plants need sunlight, water, and carbon dioxide for photosynthesis. Any two are a correct start.",
+    "accepted_answers": ["sunlight water", "water sunlight", "sunlight and water"]
+  },
+  "career_connections": ["agriculture", "botany", "environmental science"],
+  "further_exploration": ["plant cells", "food chains", "ecosystems"],
+  "quiz_questions": [
+    {
+      "id": "photosynthesis-light",
+      "question": "Which energy source do green plants use during photosynthesis?",
+      "type": "multiple_choice",
+      "options": ["Sound", "Sunlight", "Gravity", "Magnetism"],
+      "correct_answers": ["Sunlight", "2"],
+      "explanation": "Plants capture energy from sunlight during photosynthesis.",
+      "hint": "Think about why plants need light.",
+      "progressive_hints": [
+        "Think about why plants need light.",
+        "Choose the energy source that reaches plants from the Sun."
+      ],
+      "difficulty": "Class 8"
+    }
+  ],
+  "sources": ["Original introductory project lesson. Academic review is pending."],
+  "verification_status": "NEEDS_REVIEW"
+}

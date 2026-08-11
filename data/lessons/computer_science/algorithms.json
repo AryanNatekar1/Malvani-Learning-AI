@@ -1,0 +1,59 @@
+{
+  "id": "computer-science.algorithms",
+  "title": "Algorithms",
+  "subject": "Computer Science",
+  "topic": "algorithms",
+  "aliases": ["algorithm"],
+  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "An algorithm is a clear sequence of steps for solving a problem or completing a task.",
+      "detailed_explanation": "Computer programs use algorithms to transform input into output. A useful algorithm has clear steps in the correct order and handles the information it needs.",
+      "everyday_example": "A recipe is like an algorithm: its steps must be followed in a sensible order to get the intended result."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "real_world_use": ["computer programs", "navigation", "search engines", "robotics"],
+  "common_misconceptions": ["An algorithm is not always computer code; it can be written as clear steps before coding."],
+  "think_question": "What could go wrong if instructions for a task are placed in the wrong order?",
+  "reasoning_guide": {
+    "required_keywords": ["steps", "order"],
+    "misconception_keywords": ["any order works"],
+    "correct_feedback": "Good reasoning: you explained why an algorithm needs ordered steps.",
+    "partial_feedback": "Use both steps and order to explain what could go wrong.",
+    "misconception_feedback": "Algorithms need a sensible order. Changing it can change or prevent the intended result."
+  },
+  "challenge": {
+    "question": "Write three clear steps an algorithm could use to decide whether a number is even.",
+    "hint": "Think about dividing the number by 2 and checking the remainder.",
+    "progressive_hints": [
+      "Think about dividing the number by 2 and checking the remainder.",
+      "First divide by 2, then inspect what remains after the division.",
+      "A remainder of 0 means the number is even."
+    ],
+    "solution": "One approach: divide the number by 2; check the remainder; if the remainder is 0, report that the number is even.",
+    "accepted_answers": []
+  },
+  "career_connections": ["software development", "data science", "robotics"],
+  "further_exploration": ["flowcharts", "programming", "debugging"],
+  "quiz_questions": [
+    {
+      "id": "algorithms-definition",
+      "question": "What is an algorithm?",
+      "type": "multiple_choice",
+      "options": ["A random guess", "A clear sequence of steps", "Only a computer screen", "A type of keyboard"],
+      "correct_answers": ["A clear sequence of steps", "2"],
+      "explanation": "An algorithm gives ordered steps for solving a problem.",
+      "hint": "Think about a recipe or set of directions.",
+      "progressive_hints": [
+        "Think about a recipe or set of directions.",
+        "Choose the option that describes ordered instructions for a task."
+      ],
+      "difficulty": "Beginner"
+    }
+  ],
+  "sources": ["Original introductory project lesson. Academic review is pending."],
+  "verification_status": "NEEDS_REVIEW"
+}
