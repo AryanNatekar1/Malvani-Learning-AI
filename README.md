@@ -46,6 +46,9 @@ ChatGPT clone and it does not require an API key.
 - A continuing question-and-answer trail, data-backed follow-up chips, clearer
   quiz progress, progress metrics, and lesson-library cards for a more usable
   desktop study workflow.
+- Explainable local recommendations: low recorded quiz accuracy suggests a
+  review with its actual submission evidence; otherwise the app offers an
+  author-linked next lesson only when it is installed locally.
 - Explicit requests such as “Explain momentum” start the full teaching flow;
   a focused active-lesson follow-up such as “Why?” remains a focused response.
 - In-progress quizzes resume when the student returns to Quiz rather than
@@ -103,6 +106,7 @@ src/
 ├── teaching_engine.py     # Builds paced learning responses
 ├── related_question_engine.py # Lesson-bound follow-up answers
 ├── reasoning_engine.py    # Transparent local key-idea feedback
+├── recommendation_engine.py # Evidence-based local next-step guidance
 ├── quiz_engine.py         # Offline quiz scoring
 ├── problem_engine.py      # Hint-before-solution problem flow
 ├── student_engine.py      # Local profile and aggregate progress

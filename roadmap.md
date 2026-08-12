@@ -18,6 +18,8 @@
   formulas, examples, uses, misconceptions, careers, and next steps.
 - Add one interactive Momentum visual lab with learner-controlled mass and
   velocity, an accessible text alternative, and no decorative animation loop.
+- Add explainable recommendations from real quiz-attempt evidence and installed
+  author-linked next lessons; do not imply mastery or predict ability.
 
 ## Next: content quality and community review
 

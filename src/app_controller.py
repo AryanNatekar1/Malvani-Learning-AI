@@ -23,6 +23,7 @@ from related_question_engine import (
     classify_related_question,
 )
 from reasoning_engine import ReasoningEngine, ReasoningFeedback
+from recommendation_engine import LearningRecommendation, build_recommendation
 from student_engine import ProfileStore, SQLiteProfileStore, StudentRepository, StudentProfile
 from teaching_engine import LessonSection, TeachingEngine
 
@@ -555,13 +556,7 @@ class AppController:
     def progress_text(self) -> str:
         """Build a local-only progress summary and honest recommendation."""
         topics = ", ".join(self.profile.topics_studied) or "No topics studied yet"
-        weak_topics = self.profile.weak_topics()
-        if weak_topics:
-            recommendation = "Review: " + ", ".join(weak_topics)
-        elif self.current_lesson is not None and self.current_lesson.further_exploration:
-            recommendation = "Try next: " + self.current_lesson.further_exploration[0]
-        else:
-            recommendation = "Choose a topic and try a challenge."
+        recommendation = self.learning_recommendation()
 
         return (
             f"Topics studied: {topics}\n"
@@ -571,7 +566,15 @@ class AppController:
             f"Reasoning attempts: {self.profile.reasoning_attempts}\n"
             f"Hints used: {self.profile.hints_used}\n"
             f"Challenge attempts: {self.profile.challenge_attempts}\n\n"
-            f"Recommendation: {recommendation}"
+            f"Recommendation\n{recommendation.as_text()}"
+        )
+
+    def learning_recommendation(self) -> LearningRecommendation:
+        """Return one next step supported by real local evidence and lesson data."""
+        return build_recommendation(
+            self.profile,
+            load_structured_lessons(),
+            self.current_lesson,
         )
 
     def dashboard_text(self) -> str:
@@ -582,17 +585,14 @@ class AppController:
             if last_topic
             else "Continue learning: choose your first local lesson."
         )
-        weak_topics = self.profile.weak_topics()
-        recommendation = (
-            f"Recommended review: {weak_topics[0].title()}"
-            if weak_topics
-            else "Recommended next step: browse the local lesson library."
-        )
+        recommendation = self.learning_recommendation()
         return (
             f"{continue_text}\n"
             f"Topics opened: {len(self.profile.topics_studied)}\n"
             f"Quiz answer attempts: {self.profile.questions_attempted}\n"
-            f"{recommendation}"
+            f"{recommendation.title}\n"
+            f"{recommendation.message}\n"
+            f"Reason: {recommendation.reason}"
         )
 
     def _subject_for_topic(self, topic: str) -> str:

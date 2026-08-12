@@ -59,6 +59,21 @@ class StudentAndControllerTests(unittest.TestCase):
             self.assertFalse(response.is_structured)
             self.assertIn("Acceleration", response.text)
 
+    def test_controller_progress_uses_an_explainable_local_recommendation(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            controller = AppController(
+                profile_store=ProfileStore(Path(temporary_directory) / "profile.json")
+            )
+            controller.answer_question("What is momentum?")
+            controller.start_quiz()
+            result = controller.submit_quiz_answer("0")
+            assert result is not None
+            recommendation = controller.learning_recommendation()
+            self.assertEqual(recommendation.kind, "review")
+            self.assertEqual(recommendation.topic, "momentum")
+            self.assertIn("0 of 1", recommendation.reason)
+            self.assertIn("Reason:", controller.progress_text())
+
 
 if __name__ == "__main__":
     unittest.main()

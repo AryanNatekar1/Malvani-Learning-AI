@@ -621,12 +621,13 @@ class HomeScreen(Screen):
         dashboard.columnconfigure(0, weight=1)
         self.dashboard_text = ttk.Label(dashboard, justify="left", wraplength=760, style="CardBody.TLabel")
         self.dashboard_text.grid(row=0, column=0, sticky="w")
-        ttk.Button(
+        self.recommendation_button = ttk.Button(
             dashboard,
             text="Browse lesson library",
             style="Secondary.TButton",
-            command=lambda: app.show_screen("library"),
-        ).grid(
+            command=self.open_recommendation,
+        )
+        self.recommendation_button.grid(
             row=1, column=0, sticky="w", pady=(10, 0)
         )
 
@@ -663,6 +664,14 @@ class HomeScreen(Screen):
         )
         self.app.show_screen("learning")
 
+    def open_recommendation(self) -> None:
+        """Open an installed recommendation, or the real lesson library."""
+        recommendation = self.app.controller.learning_recommendation()
+        if recommendation.topic is not None:
+            self.app.library_screen.open_lesson(recommendation.topic)
+            return
+        self.app.show_screen("library")
+
     def refresh(self) -> None:
         preferences = self.app.controller.preferences()
         self.language.set(preferences.language)
@@ -670,6 +679,11 @@ class HomeScreen(Screen):
         self.subject.set(preferences.subject)
         self.culture_mode.set(preferences.culture_mode)
         self.dashboard_text.configure(text=self.app.controller.dashboard_text())
+        recommendation = self.app.controller.learning_recommendation()
+        if recommendation.topic is not None:
+            self.recommendation_button.configure(text=f"Open: {recommendation.title}")
+        else:
+            self.recommendation_button.configure(text="Browse lesson library")
         profile = self.app.controller.profile
         self.topics_metric.value.set(str(len(profile.topics_studied)))
         self.attempts_metric.value.set(str(profile.questions_attempted))

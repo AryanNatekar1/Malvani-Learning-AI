@@ -40,6 +40,9 @@ chatbot and flat Physics files are preserved.
   at 800×600, and tested in-progress quiz resume behavior.
 - An offline interactive Momentum lab: learner-controlled mass and velocity
   update a directional cart diagram, formula result, and text alternative.
+- Explainable local recommendations: low quiz attempt accuracy drives a review
+  recommendation with its recorded evidence; otherwise only an installed,
+  lesson-authored next topic is offered.
 
 ## AI and neural reality
 

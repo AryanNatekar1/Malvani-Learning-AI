@@ -25,12 +25,14 @@ Current Version: **V2.3 local learning application prototype**
 - Data-bound related-question tutor flow for why/how, formula, example, uses,
   misconceptions, careers, and next steps; missing stored data is named
   instead of invented.
+- Explainable next-step recommendations based on local quiz attempts and
+  author-linked installed lessons. The displayed reason states the evidence.
 - Explicit “teach/explain topic” questions open the complete guided teaching
   flow; focused follow-ups remain focused on the active lesson.
 - In-progress quizzes resume when a learner navigates away and returns.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
-- 65 automated tests, including GUI flow, compact-layout reachability,
+- 70 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, and resize smoke tests.
 
 ## Not yet claimed as complete
