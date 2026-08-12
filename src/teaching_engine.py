@@ -132,5 +132,5 @@ class TeachingEngine:
                 else:
                     notice = context_availability_notice(context)
                     if notice and not any(section.body == notice for section in sections):
-                        sections.append(LessonSection("LOCAL CONTEXT STATUS", notice))
+                        sections.append(LessonSection("SINDHUDURG CONNECTION", notice))
         return sections

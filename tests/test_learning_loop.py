@@ -97,6 +97,34 @@ class LearningLoopTests(unittest.TestCase):
             self.assertIn("vehicle safety", uses.text)
             self.assertIn("What careers use this?", controller.related_question_suggestions())
 
+    def test_explicit_explain_request_opens_the_full_guided_lesson(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            controller = self._controller(temporary_directory)
+            response = controller.answer_question("Explain momentum")
+            section_titles = [section.title for section in response.sections]
+            self.assertEqual(controller.current_topic, "momentum")
+            self.assertIn("CONCEPT", section_titles)
+            self.assertIn("THINK", section_titles)
+            self.assertIn("TRY IT", section_titles)
+
+    def test_follow_up_why_question_stays_focused_on_the_active_lesson(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            controller = self._controller(temporary_directory)
+            controller.answer_question("Explain momentum")
+            response = controller.answer_question("Why does this matter?")
+            self.assertEqual(controller.current_topic, "momentum")
+            self.assertEqual(
+                [section.title for section in response.sections],
+                ["CONTENT STATUS", "DETAILED EXPLANATION"],
+            )
+
+    def test_response_text_includes_the_same_content_status_as_its_sections(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            controller = self._controller(temporary_directory)
+            response = controller.answer_question("Explain gravity")
+            self.assertIn("CONTENT STATUS", response.text)
+            self.assertIn("CONTENT STATUS", [section.title for section in response.sections])
+
     def test_controller_does_not_guess_when_a_lesson_has_no_stored_formula(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             controller = self._controller(temporary_directory)

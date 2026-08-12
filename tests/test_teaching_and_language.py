@@ -33,7 +33,9 @@ class TeachingAndLanguageTests(unittest.TestCase):
         self.assertIsNotNone(context_availability_notice(self.lesson.local_example))
         response = self.engine.build_response(self.lesson, "Class 9", "English")
         self.assertNotIn("A mango falling", response.as_text())
-        self.assertIn("LOCAL CONTEXT STATUS", response.as_text())
+        self.assertIn("SINDHUDURG CONNECTION", response.as_text())
+        self.assertIn("verified Sindhudurg or Konkan connection", response.as_text())
+        self.assertNotIn("draft exists", response.as_text())
 
     def test_malvani_falls_back_without_claiming_translation(self) -> None:
         resolution = resolve_lesson_language(self.lesson, "Malvani")

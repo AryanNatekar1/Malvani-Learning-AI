@@ -150,6 +150,76 @@ class GuiSmokeTests(unittest.TestCase):
         except tk.TclError:
             self.skipTest("Tk display is unavailable in this environment")
 
+    def test_returning_to_quiz_resumes_in_progress_session_when_display_is_available(self) -> None:
+        try:
+            from app_controller import AppController
+            from gui import LearningApp
+            from student_engine import ProfileStore
+            import tkinter as tk
+
+            with tempfile.TemporaryDirectory() as temporary_directory:
+                controller = AppController(
+                    profile_store=ProfileStore(Path(temporary_directory) / "profile.json")
+                )
+                app = LearningApp(controller=controller)
+                app.withdraw()
+                app.home_screen.start_learning()
+                app.learning_screen.question.set("What is momentum?")
+                app.learning_screen.ask_question()
+                app._navigate_from_shell("quiz")
+                app.quiz_screen.answer.set("12")
+                app.quiz_screen.submit()
+                app.quiz_screen.next_question()
+                before = controller.quiz_view()
+                assert before is not None
+                self.assertEqual(before.position, 2)
+                self.assertEqual(before.score, 1)
+
+                app.show_screen("learning")
+                app._navigate_from_shell("quiz")
+                after = controller.quiz_view()
+                assert after is not None
+                self.assertEqual(after.position, 2)
+                self.assertEqual(after.score, 1)
+                app.update()
+                app.destroy()
+        except tk.TclError:
+            self.skipTest("Tk display is unavailable in this environment")
+
+    def test_home_and_learning_content_remain_reachable_at_minimum_window_size_when_display_is_available(self) -> None:
+        try:
+            from gui import LearningApp
+            import tkinter as tk
+
+            app = LearningApp()
+            app.geometry("800x600")
+            app.update_idletasks()
+            app.update()
+
+            app.show_screen("home")
+            app.update_idletasks()
+            self.assertGreater(
+                app.home_viewport.body.winfo_height(),
+                app.home_viewport.canvas.winfo_height(),
+            )
+            app.home_viewport.canvas.yview_moveto(1.0)
+            app.update()
+            self.assertAlmostEqual(app.home_viewport.canvas.yview()[1], 1.0, places=2)
+
+            app.show_screen("learning")
+            app.update_idletasks()
+            self.assertGreaterEqual(app.learning_screen.lesson_cards.canvas.winfo_height(), 250)
+            self.assertGreater(
+                app.learning_viewport.body.winfo_height(),
+                app.learning_viewport.canvas.winfo_height(),
+            )
+            app.learning_viewport.canvas.yview_moveto(1.0)
+            app.update()
+            self.assertAlmostEqual(app.learning_viewport.canvas.yview()[1], 1.0, places=2)
+            app.destroy()
+        except tk.TclError:
+            self.skipTest("Tk display is unavailable in this environment")
+
 
 if __name__ == "__main__":
     unittest.main()

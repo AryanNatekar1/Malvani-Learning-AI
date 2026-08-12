@@ -56,6 +56,21 @@ def configure_theme(root: tk.Misc) -> ttk.Style:
     style.configure("Topbar.TFrame", background=PALETTE["surface"])
     style.configure("Card.TFrame", background=PALETTE["surface"], relief="solid", borderwidth=1)
     style.configure("LessonCard.TFrame", background=PALETTE["surface"], relief="solid", borderwidth=1)
+    style.configure(
+        "Surface.TLabel",
+        background=PALETTE["surface"],
+        foreground=PALETTE["text"],
+    )
+    style.configure(
+        "SurfaceMuted.TLabel",
+        background=PALETTE["surface"],
+        foreground=PALETTE["muted"],
+    )
+    style.configure(
+        "Warning.TLabel",
+        background=PALETTE["surface"],
+        foreground=PALETTE["warning"],
+    )
 
     style.configure(
         "Title.TLabel",

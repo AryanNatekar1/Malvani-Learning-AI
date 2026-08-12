@@ -39,9 +39,8 @@ class ScrollableLessonCards(ttk.Frame):
         )
         self.content.bind("<Configure>", self._update_scroll_region)
         self.canvas.bind("<Configure>", self._resize_content)
-        self.canvas.bind("<MouseWheel>", self._on_mousewheel)
-        self.canvas.bind("<Button-4>", lambda _event: self.canvas.yview_scroll(-1, "units"))
-        self.canvas.bind("<Button-5>", lambda _event: self.canvas.yview_scroll(1, "units"))
+        self._bind_scroll_events(self.canvas)
+        self._bind_scroll_events(self.content)
         self._rendered_text = ""
         self._body_labels: list[ttk.Label] = []
 
@@ -56,7 +55,23 @@ class ScrollableLessonCards(ttk.Frame):
                 label.configure(wraplength=wraplength)
 
     def _on_mousewheel(self, event: tk.Event[tk.Misc]) -> None:
-        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        if event.delta:
+            self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        return "break"
+
+    def _scroll_up(self, _event: tk.Event[tk.Misc]) -> str:
+        self.canvas.yview_scroll(-1, "units")
+        return "break"
+
+    def _scroll_down(self, _event: tk.Event[tk.Misc]) -> str:
+        self.canvas.yview_scroll(1, "units")
+        return "break"
+
+    def _bind_scroll_events(self, widget: tk.Misc) -> None:
+        """Let a wheel over a card scroll the lesson, not only its canvas."""
+        widget.bind("<MouseWheel>", self._on_mousewheel, add="+")
+        widget.bind("<Button-4>", self._scroll_up, add="+")
+        widget.bind("<Button-5>", self._scroll_down, add="+")
 
     def render(
         self,
@@ -108,6 +123,8 @@ class ScrollableLessonCards(ttk.Frame):
             wraplength=max(320, self.canvas.winfo_width() - 68),
         )
         label.pack(anchor="w", pady=(3, 0))
+        self._bind_scroll_events(card)
+        self._bind_scroll_events(label)
         self._body_labels.append(label)
         self._rendered_text += f"YOUR QUESTION\n{question}\n\n"
 
@@ -123,11 +140,99 @@ class ScrollableLessonCards(ttk.Frame):
             style="CardBody.TLabel",
         )
         body_label.pack(fill="x", pady=(4, 0))
+        self._bind_scroll_events(card)
+        self._bind_scroll_events(body_label)
         self._body_labels.append(body_label)
 
     def rendered_text(self) -> str:
         """Expose displayed text for lightweight GUI tests."""
         return self._rendered_text
+
+
+class ScrollableScreen(ttk.Frame):
+    """A vertically scrollable page body for compact laptop windows.
+
+    A desktop page may contain more controls than fit at 800×600.  This
+    wrapper keeps every control reachable without introducing a separate
+    toolkit or duplicating page layout code.  Screens that already contain a
+    primary scrolling workspace (Learning) keep their focused layout.
+    """
+
+    def __init__(self, parent: ttk.Frame, app: "LearningApp") -> None:
+        super().__init__(parent, style="App.TFrame")
+        self.app = app
+        self.canvas = tk.Canvas(
+            self,
+            highlightthickness=0,
+            background=PALETTE["app"],
+            bd=0,
+        )
+        self.scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.grid(row=0, column=0, sticky="nsew")
+        self.scrollbar.grid(row=0, column=1, sticky="ns")
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+
+        self.body = ttk.Frame(self.canvas, style="App.TFrame")
+        self.body.columnconfigure(0, weight=1)
+        self.body.rowconfigure(0, weight=1)
+        self._body_window = self.canvas.create_window((0, 0), window=self.body, anchor="nw")
+        self.content: Screen | None = None
+        self.body.bind("<Configure>", self._update_scroll_region)
+        self.canvas.bind("<Configure>", self._resize_body)
+        self._bind_scroll_events(self.canvas)
+        self._bind_scroll_events(self.body)
+
+    def _update_scroll_region(self, _event: tk.Event[tk.Misc]) -> None:
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def _resize_body(self, event: tk.Event[tk.Misc]) -> None:
+        self.canvas.itemconfigure(self._body_window, width=event.width)
+
+    def _on_mousewheel(self, event: tk.Event[tk.Misc]) -> str:
+        if event.delta:
+            self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        return "break"
+
+    def _scroll_up(self, _event: tk.Event[tk.Misc]) -> str:
+        self.canvas.yview_scroll(-1, "units")
+        return "break"
+
+    def _scroll_down(self, _event: tk.Event[tk.Misc]) -> str:
+        self.canvas.yview_scroll(1, "units")
+        return "break"
+
+    def _bind_scroll_events(self, widget: tk.Misc) -> None:
+        if getattr(widget, "_page_scroll_bound", False):
+            return
+        widget.bind("<MouseWheel>", self._on_mousewheel, add="+")
+        widget.bind("<Button-4>", self._scroll_up, add="+")
+        widget.bind("<Button-5>", self._scroll_down, add="+")
+        setattr(widget, "_page_scroll_bound", True)
+
+    def set_content(self, content: "Screen") -> None:
+        """Place one screen inside this viewport and bind its controls to scroll."""
+        self.content = content
+        content.grid(row=0, column=0, sticky="nsew")
+        self._bind_descendants(content)
+
+    def _bind_descendants(self, widget: tk.Misc) -> None:
+        """Forward wheel events from ordinary controls to this page viewport."""
+        for child in widget.winfo_children():
+            # Lesson cards own their focused scroll area; forwarding their
+            # wheel events to the outer page would make both canvases move.
+            if isinstance(child, (ScrollableLessonCards, ScrollableScreen)):
+                continue
+            self._bind_scroll_events(child)
+            self._bind_descendants(child)
+
+    def refresh(self) -> None:
+        """Forward navigation refreshes to the page's actual content body."""
+        if self.content is not None:
+            self.content.refresh()
+            self._bind_descendants(self.content)
+        self.after_idle(lambda: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
 
 
 class LearningApp(tk.Tk):
@@ -186,19 +291,35 @@ class LearningApp(tk.Tk):
         container.rowconfigure(0, weight=1)
         container.columnconfigure(0, weight=1)
 
-        self.home_screen = HomeScreen(container, self)
-        self.learning_screen = LearningScreen(container, self)
-        self.quiz_screen = QuizScreen(container, self)
-        self.progress_screen = ProgressScreen(container, self)
-        self.library_screen = LibraryScreen(container, self)
-        self.settings_screen = SettingsScreen(container, self)
+        # Each page sits in a lightweight scrollable viewport.  It keeps the
+        # app usable on the supported 800×600 laptop size while preserving the
+        # same screen objects used by the controller and tests.
+        self.home_viewport = ScrollableScreen(container, self)
+        self.learning_viewport = ScrollableScreen(container, self)
+        self.quiz_viewport = ScrollableScreen(container, self)
+        self.progress_viewport = ScrollableScreen(container, self)
+        self.library_viewport = ScrollableScreen(container, self)
+        self.settings_viewport = ScrollableScreen(container, self)
+
+        self.home_screen = HomeScreen(self.home_viewport.body, self)
+        self.learning_screen = LearningScreen(self.learning_viewport.body, self)
+        self.quiz_screen = QuizScreen(self.quiz_viewport.body, self)
+        self.progress_screen = ProgressScreen(self.progress_viewport.body, self)
+        self.library_screen = LibraryScreen(self.library_viewport.body, self)
+        self.settings_screen = SettingsScreen(self.settings_viewport.body, self)
+        self.home_viewport.set_content(self.home_screen)
+        self.learning_viewport.set_content(self.learning_screen)
+        self.quiz_viewport.set_content(self.quiz_screen)
+        self.progress_viewport.set_content(self.progress_screen)
+        self.library_viewport.set_content(self.library_screen)
+        self.settings_viewport.set_content(self.settings_screen)
         self.screens = {
-            "home": self.home_screen,
-            "learning": self.learning_screen,
-            "quiz": self.quiz_screen,
-            "progress": self.progress_screen,
-            "library": self.library_screen,
-            "settings": self.settings_screen,
+            "home": self.home_viewport,
+            "learning": self.learning_viewport,
+            "quiz": self.quiz_viewport,
+            "progress": self.progress_viewport,
+            "library": self.library_viewport,
+            "settings": self.settings_viewport,
         }
         for screen in self.screens.values():
             screen.grid(row=0, column=0, sticky="nsew")
@@ -260,9 +381,16 @@ class LearningApp(tk.Tk):
             ).grid(row=0, column=column, sticky="ew", padx=2)
 
     def _navigate_from_shell(self, target: str) -> None:
-        """Handle navigation that may need a quiz session first."""
+        """Handle navigation that may need a new quiz session first.
+
+        Returning to Quiz must resume an in-progress local session. Starting a
+        new session only when none exists protects a student's attempt, hints,
+        and score from being silently reset by navigation.
+        """
         if target == "quiz":
-            view = self.controller.start_quiz()
+            view = self.controller.quiz_view()
+            if view is None:
+                view = self.controller.start_quiz()
             if view is None:
                 self.show_screen("learning")
                 self.learning_screen.write_output(
@@ -412,7 +540,7 @@ class HomeScreen(Screen):
         ttk.Label(
             intro,
             text="Learn • Think • Solve • Explore",
-            style="Subtitle.TLabel",
+            style="SurfaceMuted.TLabel",
         ).pack(pady=(8, 24))
         ttk.Label(
             intro,
@@ -422,22 +550,23 @@ class HomeScreen(Screen):
             ),
             wraplength=610,
             justify="center",
+            style="Surface.TLabel",
         ).pack()
 
         form = ttk.LabelFrame(self, text="Learning preferences", style="Card.TLabelframe", padding=22)
         form.grid(row=1, column=0, columnspan=2, pady=(0, 14), sticky="ew")
         form.columnconfigure(1, weight=1)
-        self.language_label = ttk.Label(form)
+        self.language_label = ttk.Label(form, style="Surface.TLabel")
         self.language_label.grid(row=0, column=0, padx=(0, 16), pady=8, sticky="w")
         ttk.Combobox(form, textvariable=self.language, values=SUPPORTED_LANGUAGES, state="readonly").grid(
             row=0, column=1, pady=8, sticky="ew"
         )
-        self.level_label = ttk.Label(form)
+        self.level_label = ttk.Label(form, style="Surface.TLabel")
         self.level_label.grid(row=1, column=0, padx=(0, 16), pady=8, sticky="w")
         ttk.Combobox(form, textvariable=self.level, values=LEVELS, state="readonly").grid(
             row=1, column=1, pady=8, sticky="ew"
         )
-        self.subject_label = ttk.Label(form)
+        self.subject_label = ttk.Label(form, style="Surface.TLabel")
         self.subject_label.grid(row=2, column=0, padx=(0, 16), pady=8, sticky="w")
         ttk.Combobox(form, textvariable=self.subject, values=subjects, state="readonly").grid(
             row=2, column=1, pady=8, sticky="ew"
@@ -568,6 +697,10 @@ class LearningScreen(Screen):
 
         self.lesson_cards = ScrollableLessonCards(self)
         self.lesson_cards.grid(row=4, column=0, sticky="nsew", pady=(0, 10))
+        # In a page viewport, Canvas has no useful requested height by
+        # default.  Reserve enough reading space for a lesson card while the
+        # outer page can scroll to the Think/Try controls on small laptops.
+        self.lesson_cards.canvas.configure(height=280)
 
         reasoning_frame = ttk.LabelFrame(
             self,
@@ -586,7 +719,12 @@ class LearningScreen(Screen):
             text="Check My Reasoning",
             command=self.check_reasoning,
         ).grid(row=0, column=1)
-        self.reasoning_feedback = ttk.Label(reasoning_frame, text="", wraplength=850)
+        self.reasoning_feedback = ttk.Label(
+            reasoning_frame,
+            text="",
+            wraplength=850,
+            style="Surface.TLabel",
+        )
         self.reasoning_feedback.grid(row=1, column=0, columnspan=2, sticky="w", pady=(6, 0))
 
         self.challenge_frame = ttk.LabelFrame(
@@ -605,7 +743,12 @@ class LearningScreen(Screen):
             text="Submit Challenge Attempt",
             command=self.submit_challenge_attempt,
         ).grid(row=0, column=1)
-        self.challenge_feedback = ttk.Label(self.challenge_frame, text="", wraplength=850)
+        self.challenge_feedback = ttk.Label(
+            self.challenge_frame,
+            text="",
+            wraplength=850,
+            style="Surface.TLabel",
+        )
         self.challenge_feedback.grid(row=1, column=0, columnspan=2, sticky="w", pady=(6, 0))
         self.challenge_frame.grid_remove()
 
@@ -854,9 +997,20 @@ class QuizScreen(Screen):
         self.options_frame.grid(row=1, column=0, sticky="w", pady=(12, 0))
         self.answer_entry = ttk.Entry(question_card, textvariable=self.answer, width=45)
         self.answer_entry.grid(row=2, column=0, sticky="w", pady=(12, 0))
-        self.hint_label = ttk.Label(question_card, text="", wraplength=820, foreground=PALETTE["warning"])
+        self.hint_label = ttk.Label(
+            question_card,
+            text="",
+            wraplength=820,
+            style="Warning.TLabel",
+        )
         self.hint_label.grid(row=3, column=0, sticky="w", pady=(10, 0))
-        self.feedback_label = ttk.Label(question_card, textvariable=self.feedback, wraplength=820, justify="left")
+        self.feedback_label = ttk.Label(
+            question_card,
+            textvariable=self.feedback,
+            wraplength=820,
+            justify="left",
+            style="Surface.TLabel",
+        )
         self.feedback_label.grid(row=4, column=0, sticky="w", pady=(10, 0))
         controls = ttk.Frame(self, style="App.TFrame")
         controls.grid(row=3, column=0, sticky="w", pady=12)
@@ -1066,7 +1220,9 @@ class LibraryScreen(Screen):
         self.subject = tk.StringVar()
         selector = ttk.Frame(self, style="Card.TFrame", padding=(14, 12))
         selector.grid(row=1, column=0, sticky="ew", pady=(0, 10))
-        ttk.Label(selector, text="Subject:").grid(row=0, column=0, padx=(0, 8))
+        ttk.Label(selector, text="Subject:", style="Surface.TLabel").grid(
+            row=0, column=0, padx=(0, 8)
+        )
         self.subject_box = ttk.Combobox(selector, textvariable=self.subject, state="readonly")
         self.subject_box.grid(row=0, column=1, sticky="w")
         self.subject_box.bind("<<ComboboxSelected>>", lambda _event: self._build_lesson_buttons())

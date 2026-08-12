@@ -14,7 +14,8 @@ ChatGPT clone and it does not require an API key.
 
 - A Tkinter desktop GUI with Home, Learning, Quiz, Progress, Library, and
   Settings screens, organised in a responsive app shell with a consistent
-  local-first visual theme.
+  local-first visual theme. Page content remains reachable by scrolling at the
+  supported 800×600 laptop size.
 - The original terminal chatbot remains available as a fallback.
 - Structured, guided starter lessons in:
   - Physics: Gravity, Force, Momentum, Newton's Laws
@@ -43,6 +44,10 @@ ChatGPT clone and it does not require an API key.
 - A continuing question-and-answer trail, data-backed follow-up chips, clearer
   quiz progress, progress metrics, and lesson-library cards for a more usable
   desktop study workflow.
+- Explicit requests such as “Explain momentum” start the full teaching flow;
+  a focused active-lesson follow-up such as “Why?” remains a focused response.
+- In-progress quizzes resume when the student returns to Quiz rather than
+  silently resetting their score or attempt state.
 - A small deterministic local neural network routes simple UI intents such as
   “give me a hint.” It is **not an LLM** and is never used as a source of
   educational, cultural, Marathi, or Malvani facts.
@@ -125,6 +130,10 @@ project content, but should be reviewed against the intended school curriculum
 before being presented as published material. Local/cultural context needs both
 a source and `VERIFIED` status before the student UI will display it. Do not
 invent Malvani words, local slang, traditions, or historical claims.
+
+When a verified local connection is not available, the student interface says
+so in plain language. It does not expose internal terms such as draft state or
+verification metadata as part of a lesson.
 
 ## Language support
 

@@ -27,7 +27,7 @@ def student_context_text(context: ContextEntry | None) -> str | None:
 
 
 def context_availability_notice(context: ContextEntry | None) -> str | None:
-    """Explain why requested local context was not displayed, without its claim."""
+    """Give students a useful availability note without exposing draft metadata."""
     if context is None or is_verified_for_student_display(context):
         return None
-    return "A local-context draft exists for this lesson but is hidden until it is verified."
+    return "A verified Sindhudurg or Konkan connection is not available for this lesson yet."

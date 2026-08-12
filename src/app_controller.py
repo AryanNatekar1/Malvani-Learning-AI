@@ -17,6 +17,7 @@ from problem_engine import AttemptFeedback, GuidedProblemSession
 from quiz_engine import QuizEvaluation, QuizSession
 from related_question_engine import (
     DEFINITION,
+    EXPLANATION,
     RelatedQuestionResponse,
     answer_related_question,
     classify_related_question,
@@ -24,6 +25,21 @@ from related_question_engine import (
 from reasoning_engine import ReasoningEngine, ReasoningFeedback
 from student_engine import ProfileStore, SQLiteProfileStore, StudentRepository, StudentProfile
 from teaching_engine import LessonSection, TeachingEngine
+
+
+# These phrases signal that a student wants the guided lesson flow, not one
+# isolated fact.  Narrow requests such as a formula or an example are handled
+# separately by ``related_question_engine``.
+FULL_LESSON_CUES = (
+    "explain",
+    "teach",
+    "learn about",
+    "show the lesson",
+    "simple explanation",
+    "detailed explanation",
+    "what is",
+    "define",
+)
 
 
 @dataclass(frozen=True)
@@ -155,14 +171,17 @@ class AppController:
                 if lesson is not None
                 else None
             )
-            # "What is gravity?" remains a complete lesson-opening request.
-            # More targeted requests such as a formula, example, or why-question
-            # open the lesson and then answer the requested section directly.
+            related_type = classify_related_question(question)
+            # A student who explicitly asks to learn or explain a new topic
+            # should receive the full teaching sequence, not only a paragraph.
+            # Targeted requests such as a formula or example remain focused.
+            if lesson is not None and self._is_full_lesson_request(question, related_type):
+                return self._show_topic(topic)
             if related is not None and related.question_type != DEFINITION:
                 if self.current_lesson is None or self.current_lesson.topic != lesson.topic:
                     self._activate_structured_lesson(lesson)
                 return self._render_related_answer(related)
-            if classify_related_question(question) not in {None, DEFINITION} and lesson is not None:
+            if related_type not in {None, DEFINITION} and lesson is not None:
                 if self.current_lesson is None or self.current_lesson.topic != lesson.topic:
                     self._activate_structured_lesson(lesson)
                 return self._missing_related_answer(question)
@@ -207,6 +226,20 @@ class AppController:
             ),
             False,
         )
+
+    @staticmethod
+    def _is_full_lesson_request(question: str, related_type: str | None) -> bool:
+        """Return whether a topic request should start the guided lesson flow.
+
+        ``related_type`` takes priority for targeted material such as formulas,
+        examples, uses, misconceptions, careers, and next steps.  A standalone
+        ``Why?`` or ``How?`` remains a follow-up question about the active
+        lesson, while an explicit teach/explain request opens the full flow.
+        """
+        if related_type not in {None, DEFINITION, EXPLANATION}:
+            return False
+        normalized_question = " ".join(question.lower().split())
+        return any(cue in normalized_question for cue in FULL_LESSON_CUES)
 
     def related_question_suggestions(self) -> tuple[str, ...]:
         """Return only follow-up prompts that the active lesson can answer.
@@ -287,10 +320,9 @@ class AppController:
             )
         if related.language.notice:
             sections = (LessonSection("LANGUAGE NOTE", related.language.notice), *sections)
-        text = "\n\n".join(f"{section.title}\n{section.body}" for section in sections)
         return TutorResponse(
             self.current_lesson.topic,
-            text,
+            self._rendered_text(self.current_lesson.title, sections),
             True,
             sections=sections,
         )
@@ -315,8 +347,12 @@ class AppController:
                 ),
                 *sections,
             )
-        text = "\n\n".join(f"{section.title}\n{section.body}" for section in sections)
-        return TutorResponse(self.current_lesson.topic, text, True, sections=sections)
+        return TutorResponse(
+            self.current_lesson.topic,
+            self._rendered_text(self.current_lesson.title, sections),
+            True,
+            sections=sections,
+        )
 
     def lesson_action(self, action: str) -> TutorResponse:
         """Show a focused structured section without revealing a solution by default."""
@@ -362,10 +398,19 @@ class AppController:
             sections = (LessonSection("LANGUAGE NOTE", response.language.notice), *sections)
         return TutorResponse(
             self.current_lesson.topic,
-            response.as_text(),
+            self._rendered_text(response.title, sections),
             True,
             sections=sections,
         )
+
+    @staticmethod
+    def _rendered_text(title: str, sections: tuple[LessonSection, ...]) -> str:
+        """Keep terminal, GUI, and test representations equally safety-aware."""
+        rendered_sections = [title]
+        rendered_sections.extend(
+            f"{section.title}\n{section.body}" for section in sections
+        )
+        return "\n\n".join(rendered_sections)
 
     def start_challenge(self) -> TutorResponse:
         """Start a challenge session so hints and solution gating have real state."""
