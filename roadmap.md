@@ -12,6 +12,10 @@
   library, and a source-gated legacy-content renderer.
 - Add a learn → think → try → hint → retry → solution flow with transparent,
   deterministic feedback and retry/reveal quiz rules.
+- Add a polished shared desktop shell, responsive navigation, question-and-
+  answer trail, study-oriented cards, and honest local progress metrics.
+- Add deterministic lesson-bound follow-up questions for stored explanations,
+  formulas, examples, uses, misconceptions, careers, and next steps.
 
 ## Next: content quality and community review
 
@@ -31,6 +35,8 @@
 - Add optional local or hosted LLM adapters behind `AIProvider`.
 - Add more diagrams and accessible visual descriptions where they improve a
   concept.
+- Build one reusable, reduced-motion-aware Canvas animation at a time, starting
+  with Gravity, only after defining its learning objective and text alternative.
 - Add optional, reviewed speech-recognition and text-to-speech adapters.
 - Build a lightweight web/mobile-friendly interface.
 - Conduct opt-in student testing with minimal, anonymized data collection.

@@ -84,6 +84,36 @@ class GuiSmokeTests(unittest.TestCase):
         except tk.TclError:
             self.skipTest("Tk display is unavailable in this environment")
 
+    def test_learning_keeps_a_related_question_and_tutor_answer_in_the_trail_when_display_is_available(self) -> None:
+        try:
+            from app_controller import AppController
+            from gui import LearningApp
+            from student_engine import ProfileStore
+            import tkinter as tk
+
+            with tempfile.TemporaryDirectory() as temporary_directory:
+                controller = AppController(
+                    profile_store=ProfileStore(Path(temporary_directory) / "profile.json")
+                )
+                app = LearningApp(controller=controller)
+                app.withdraw()
+                app.home_screen.start_learning()
+                app.learning_screen.question.set("What is momentum?")
+                app.learning_screen.ask_question()
+                self.assertIn(
+                    "What is the formula?", controller.related_question_suggestions()
+                )
+
+                app.learning_screen.ask_related_question("What is the formula?")
+                trail = app.learning_screen.lesson_cards.rendered_text()
+                self.assertIn("YOUR QUESTION", trail)
+                self.assertIn("What is the formula?", trail)
+                self.assertIn("p = m x v", trail)
+                app.update()
+                app.destroy()
+        except tk.TclError:
+            self.skipTest("Tk display is unavailable in this environment")
+
     def test_main_window_resizes_at_laptop_and_desktop_sizes_when_display_is_available(self) -> None:
         try:
             from gui import LearningApp
@@ -97,6 +127,24 @@ class GuiSmokeTests(unittest.TestCase):
                     app.update_idletasks()
                     self.assertGreaterEqual(app.winfo_width(), 800)
                     self.assertGreaterEqual(app.winfo_height(), 600)
+            app.update()
+            app.destroy()
+        except tk.TclError:
+            self.skipTest("Tk display is unavailable in this environment")
+
+    def test_navigation_compacts_before_the_learning_area_becomes_cramped_when_display_is_available(self) -> None:
+        try:
+            from gui import LearningApp
+            import tkinter as tk
+            from types import SimpleNamespace
+
+            app = LearningApp()
+            app.withdraw()
+            app._adapt_navigation(SimpleNamespace(widget=app, width=800))
+            self.assertTrue(app._compact_navigation)
+            app._adapt_navigation(SimpleNamespace(widget=app, width=1180))
+            self.assertFalse(app._compact_navigation)
+            app.update_idletasks()
             app.update()
             app.destroy()
         except tk.TclError:

@@ -1,10 +1,12 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2 local learning application prototype**
+Current Version: **V2.1 local learning application prototype**
 
 ## Working now
 
 - Tkinter GUI: Home, Learning, Quiz, Progress, Library, and Settings.
+- Polished desktop shell with consistent navigation, responsive compact mode,
+  study-oriented cards, quiz progress, and local progress metrics.
 - Preserved terminal chatbot and original file-based Physics knowledge.
 - Structured **draft** lessons across Physics, Mathematics, Chemistry, Biology,
   and Computer Science.
@@ -17,7 +19,11 @@ Current Version: **V2 local learning application prototype**
   appear in student output.
 - Small offline neural intent classifier and provider-neutral AI interface.
 - Built-in concept diagrams for selected Physics lessons.
-- 43 automated tests, including GUI flow, state-reset, and resize smoke tests.
+- Data-bound related-question tutor flow for why/how, formula, example, uses,
+  misconceptions, careers, and next steps; missing stored data is named
+  instead of invented.
+- 55 automated tests, including GUI flow, question-trail, state-reset, and
+  resize smoke tests.
 
 ## Not yet claimed as complete
 

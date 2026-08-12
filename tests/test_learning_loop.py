@@ -82,6 +82,29 @@ class LearningLoopTests(unittest.TestCase):
             self.assertTrue(response.start_quiz)
             self.assertIsNotNone(controller.quiz_view())
 
+    def test_controller_answers_bounded_related_questions_from_active_lesson_data(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            controller = self._controller(temporary_directory)
+            controller.answer_question("What is momentum?")
+            controller.lesson_action("challenge")
+            formula = controller.answer_question("What is the formula of momentum?")
+            self.assertTrue(formula.is_structured)
+            self.assertIn("p = m x v", formula.text)
+            self.assertEqual(controller.current_topic, "momentum")
+            self.assertIsNotNone(controller.current_problem_session)
+
+            uses = controller.answer_question("What are its real-world uses?")
+            self.assertIn("vehicle safety", uses.text)
+            self.assertIn("What careers use this?", controller.related_question_suggestions())
+
+    def test_controller_does_not_guess_when_a_lesson_has_no_stored_formula(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            controller = self._controller(temporary_directory)
+            controller.answer_question("What is gravity?")
+            response = controller.answer_question("What is the formula?")
+            self.assertIn("does not yet contain a stored formula", response.text)
+            self.assertNotIn("weight =", response.text.lower())
+
     def test_library_lists_and_opens_real_subject_lessons(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
             controller = self._controller(temporary_directory)

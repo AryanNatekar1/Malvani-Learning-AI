@@ -15,6 +15,12 @@ from knowledge_engine import (
 from lesson_models import Lesson, QuizQuestion
 from problem_engine import AttemptFeedback, GuidedProblemSession
 from quiz_engine import QuizEvaluation, QuizSession
+from related_question_engine import (
+    DEFINITION,
+    RelatedQuestionResponse,
+    answer_related_question,
+    classify_related_question,
+)
 from reasoning_engine import ReasoningEngine, ReasoningFeedback
 from student_engine import ProfileStore, SQLiteProfileStore, StudentRepository, StudentProfile
 from teaching_engine import LessonSection, TeachingEngine
@@ -129,7 +135,7 @@ class AppController:
         self.current_problem_hints = 0
 
     def answer_question(self, question: str) -> TutorResponse:
-        """Answer a supported topic question using local structured or legacy data."""
+        """Answer a topic question or a bounded follow-up from local lesson data."""
         topic = find_topic(question)
         if topic is not None:
             topic_subject = self._subject_for_topic(topic)
@@ -143,7 +149,35 @@ class AppController:
                     ),
                     False,
                 )
+            lesson = get_structured_lesson(topic)
+            related = (
+                answer_related_question(lesson, question, self.profile.preferred_language)
+                if lesson is not None
+                else None
+            )
+            # "What is gravity?" remains a complete lesson-opening request.
+            # More targeted requests such as a formula, example, or why-question
+            # open the lesson and then answer the requested section directly.
+            if related is not None and related.question_type != DEFINITION:
+                if self.current_lesson is None or self.current_lesson.topic != lesson.topic:
+                    self._activate_structured_lesson(lesson)
+                return self._render_related_answer(related)
+            if classify_related_question(question) not in {None, DEFINITION} and lesson is not None:
+                if self.current_lesson is None or self.current_lesson.topic != lesson.topic:
+                    self._activate_structured_lesson(lesson)
+                return self._missing_related_answer(question)
             return self._show_topic(topic)
+
+        if self.current_lesson is not None:
+            related = answer_related_question(
+                self.current_lesson,
+                question,
+                self.profile.preferred_language,
+            )
+            if related is not None:
+                return self._render_related_answer(related)
+            if classify_related_question(question) is not None:
+                return self._missing_related_answer(question)
 
         ai_result = self.ai_provider.generate_response(question)
         if self.current_lesson is not None and ai_result.intent in {
@@ -174,18 +208,40 @@ class AppController:
             False,
         )
 
+    def related_question_suggestions(self) -> tuple[str, ...]:
+        """Return only follow-up prompts that the active lesson can answer.
+
+        Suggestions are deliberately data-backed.  They do not predict a
+        student's intent or manufacture links to culture, language, or topics
+        that are not installed in the local lesson library.
+        """
+        if self.current_lesson is None:
+            return ()
+        candidates = (
+            "Why does this happen?",
+            "Give an everyday example",
+            "What are its real-world uses?",
+            "What is a common misconception?",
+            "What careers use this?",
+            "What should I learn next?",
+            "What is the formula?",
+        )
+        return tuple(
+            question
+            for question in candidates
+            if answer_related_question(
+                self.current_lesson,
+                question,
+                self.profile.preferred_language,
+            )
+            is not None
+        )
+
     def _show_topic(self, topic: str) -> TutorResponse:
         structured_lesson = get_structured_lesson(topic)
 
         if structured_lesson is not None:
-            self.current_topic = topic
-            self.current_lesson = structured_lesson
-            self.quiz_session = None
-            self.current_problem_session = None
-            self.current_problem_hints = 0
-            self.profile.record_lesson(topic)
-            self._record_event("lesson_opened", topic)
-            self._save_profile()
+            self._activate_structured_lesson(structured_lesson)
             return self.lesson_action("full")
 
         legacy_content = load_student_lesson(topic)
@@ -204,6 +260,63 @@ class AppController:
                 False,
             )
         return TutorResponse(topic, f"Knowledge file missing: {topic}.txt", False)
+
+    def _activate_structured_lesson(self, lesson: Lesson) -> None:
+        """Make one structured lesson the active local learning context."""
+        self.current_topic = lesson.topic
+        self.current_lesson = lesson
+        self.quiz_session = None
+        self.current_problem_session = None
+        self.current_problem_hints = 0
+        self.profile.record_lesson(lesson.topic)
+        self._record_event("lesson_opened", lesson.topic)
+        self._save_profile()
+
+    def _render_related_answer(self, related: RelatedQuestionResponse) -> TutorResponse:
+        """Present a stored follow-up answer with normal review safeguards."""
+        assert self.current_lesson is not None
+        sections: tuple[LessonSection, ...] = (LessonSection(related.title, related.text),)
+        if related.lesson_verification_status != "VERIFIED":
+            sections = (
+                LessonSection(
+                    "CONTENT STATUS",
+                    "This local draft lesson is functional but pending academic review. "
+                    "Verify important coursework with a teacher or textbook.",
+                ),
+                *sections,
+            )
+        if related.language.notice:
+            sections = (LessonSection("LANGUAGE NOTE", related.language.notice), *sections)
+        text = "\n\n".join(f"{section.title}\n{section.body}" for section in sections)
+        return TutorResponse(
+            self.current_lesson.topic,
+            text,
+            True,
+            sections=sections,
+        )
+
+    def _missing_related_answer(self, question: str) -> TutorResponse:
+        """Explain a local-data gap instead of filling it with a guess."""
+        assert self.current_lesson is not None
+        question_type = classify_related_question(question) or "answer"
+        readable_type = question_type.replace("_", " ")
+        body = (
+            f"This local lesson does not yet contain a stored {readable_type} answer. "
+            "I will not make one up. Try a simple explanation, everyday example, real-world use, "
+            "or another installed lesson section instead."
+        )
+        sections: tuple[LessonSection, ...] = (LessonSection("LOCAL LESSON LIMIT", body),)
+        if self.current_lesson.verification_status != "VERIFIED":
+            sections = (
+                LessonSection(
+                    "CONTENT STATUS",
+                    "This local draft lesson is functional but pending academic review. "
+                    "Verify important coursework with a teacher or textbook.",
+                ),
+                *sections,
+            )
+        text = "\n\n".join(f"{section.title}\n{section.body}" for section in sections)
+        return TutorResponse(self.current_lesson.topic, text, True, sections=sections)
 
     def lesson_action(self, action: str) -> TutorResponse:
         """Show a focused structured section without revealing a solution by default."""

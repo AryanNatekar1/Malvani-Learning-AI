@@ -13,7 +13,8 @@ ChatGPT clone and it does not require an API key.
 ## What works now
 
 - A Tkinter desktop GUI with Home, Learning, Quiz, Progress, Library, and
-  Settings screens.
+  Settings screens, organised in a responsive app shell with a consistent
+  local-first visual theme.
 - The original terminal chatbot remains available as a fallback.
 - Structured, guided starter lessons in:
   - Physics: Gravity, Force, Momentum, Newton's Laws
@@ -27,6 +28,10 @@ ChatGPT clone and it does not require an API key.
 - Simple/detailed teaching, everyday examples, think questions, challenges,
   hints, solutions, career connections, and next-topic suggestions where a
   structured lesson provides them.
+- Lesson-bound follow-up questions: after opening a structured lesson, the
+  tutor can answer stored why/how, formula, example, real-world-use,
+  misconception, career, and next-step questions. It names missing local data
+  instead of guessing.
 - Local quizzes with multiple choice and numerical/exact-answer scoring.
 - Local-only progress stored by default in `local_data/malvani_learning.db`
   (ignored by Git). No account, server, or personal information is required.
@@ -35,6 +40,9 @@ ChatGPT clone and it does not require an API key.
 - Safe cultural-context handling: entries without a source and `VERIFIED`
   status are hidden from student output.
 - Built-in Canvas diagrams for Gravity, Force, Momentum, and Newton's laws.
+- A continuing question-and-answer trail, data-backed follow-up chips, clearer
+  quiz progress, progress metrics, and lesson-library cards for a more usable
+  desktop study workflow.
 - A small deterministic local neural network routes simple UI intents such as
   “give me a hint.” It is **not an LLM** and is never used as a source of
   educational, cultural, Marathi, or Malvani facts.
@@ -86,6 +94,7 @@ src/
 ├── knowledge_engine.py    # Topic matching and lesson loading
 ├── lesson_models.py       # Structured lesson data types/validation
 ├── teaching_engine.py     # Builds paced learning responses
+├── related_question_engine.py # Lesson-bound follow-up answers
 ├── reasoning_engine.py    # Transparent local key-idea feedback
 ├── quiz_engine.py         # Offline quiz scoring
 ├── problem_engine.py      # Hint-before-solution problem flow
@@ -95,6 +104,7 @@ src/
 ├── neural_intent.py       # Small local neural intent classifier
 ├── ai_provider.py         # Provider-neutral AI boundary and offline fallback
 ├── media_engine.py        # Useful visual specifications
+├── ui_theme.py            # Shared dependency-free Tkinter visual theme
 └── voice_engine.py        # Optional voice-provider boundary
 
 data/
@@ -138,6 +148,18 @@ No provider, secret, or API key is included in this repository.
 The reasoning check is deterministic and looks for lesson-authored key ideas;
 it does **not** semantically grade a student's explanation. The UI says this
 explicitly and encourages the student to revise their own reasoning.
+
+## Related questions and data boundaries
+
+The desktop tutor handles a bounded set of follow-up questions only when an
+active structured lesson contains the needed field. For example, it can show
+the Momentum formula because that equation already appears in the stored
+lesson explanation. It cannot supply a Gravity formula from the current
+starter data, so it names that data gap instead of deriving or inventing one.
+
+This keeps the app useful while preserving the project rule that educational,
+cultural, Marathi, and Malvani content must be reviewable local data rather
+than untraceable generated text.
 
 ## Current limitations
 
