@@ -16,6 +16,8 @@
   answer trail, study-oriented cards, and honest local progress metrics.
 - Add deterministic lesson-bound follow-up questions for stored explanations,
   formulas, examples, uses, misconceptions, careers, and next steps.
+- Add one interactive Momentum visual lab with learner-controlled mass and
+  velocity, an accessible text alternative, and no decorative animation loop.
 
 ## Next: content quality and community review
 
@@ -34,9 +36,9 @@
 - Add more question types and teacher-reviewed rubrics for short answers.
 - Add optional local or hosted LLM adapters behind `AIProvider`.
 - Add more diagrams and accessible visual descriptions where they improve a
-  concept.
+  concept, using the Momentum lab as the small local implementation pattern.
 - Build one reusable, reduced-motion-aware Canvas animation at a time, starting
-  with Gravity, only after defining its learning objective and text alternative.
+  with Gravity only after defining its learning objective and text alternative.
 - Add optional, reviewed speech-recognition and text-to-speech adapters.
 - Build a lightweight web/mobile-friendly interface.
 - Conduct opt-in student testing with minimal, anonymized data collection.

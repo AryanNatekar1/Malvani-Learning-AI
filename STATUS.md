@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.2 local learning application prototype**
+Current Version: **V2.3 local learning application prototype**
 
 ## Working now
 
@@ -19,7 +19,9 @@ Current Version: **V2.2 local learning application prototype**
 - Safety gate for cultural content: only source-backed `VERIFIED` entries may
   appear in student output.
 - Small offline neural intent classifier and provider-neutral AI interface.
-- Built-in concept diagrams for selected Physics lessons.
+- Built-in concept diagrams for selected Physics lessons and an interactive,
+  local Momentum explorer with mass/velocity controls, a directional diagram,
+  and a text alternative.
 - Data-bound related-question tutor flow for why/how, formula, example, uses,
   misconceptions, careers, and next steps; missing stored data is named
   instead of invented.
@@ -28,7 +30,7 @@ Current Version: **V2.2 local learning application prototype**
 - In-progress quizzes resume when a learner navigates away and returns.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
-- 60 automated tests, including GUI flow, compact-layout reachability,
+- 65 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, and resize smoke tests.
 
 ## Not yet claimed as complete

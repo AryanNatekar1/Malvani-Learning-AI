@@ -38,6 +38,8 @@ chatbot and flat Physics files are preserved.
 - Cultural-context gate: only source-backed `VERIFIED` context can be shown.
 - Responsive Tkinter desktop UI with a compact navigation mode, page scrolling
   at 800×600, and tested in-progress quiz resume behavior.
+- An offline interactive Momentum lab: learner-controlled mass and velocity
+  update a directional cart diagram, formula result, and text alternative.
 
 ## AI and neural reality
 
@@ -67,8 +69,8 @@ is present.
 
 1. Teacher-reviewable source and curriculum records; migrate the remaining
    legacy Physics lessons into structured data.
-2. One accessible, data-bound interactive visual lab (Momentum is the first
-   candidate), then additional visuals only when they improve understanding.
+2. Add visuals only when they improve understanding; the Momentum lab is the
+   first reusable local implementation pattern.
 3. Expand local progress into evidence-based, explainable recommendations.
 4. Build an evaluation dataset for content, pedagogy, language fallback, and
    cultural safety before adding an external language model.

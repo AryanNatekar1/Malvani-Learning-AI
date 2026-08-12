@@ -71,6 +71,11 @@ def configure_theme(root: tk.Misc) -> ttk.Style:
         background=PALETTE["surface"],
         foreground=PALETTE["warning"],
     )
+    style.configure(
+        "Soft.TLabel",
+        background=PALETTE["surface_soft"],
+        foreground=PALETTE["text"],
+    )
 
     style.configure(
         "Title.TLabel",

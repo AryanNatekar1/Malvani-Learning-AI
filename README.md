@@ -40,7 +40,9 @@ ChatGPT clone and it does not require an API key.
   when reviewed Marathi or Malvani lesson text is unavailable.
 - Safe cultural-context handling: entries without a source and `VERIFIED`
   status are hidden from student output.
-- Built-in Canvas diagrams for Gravity, Force, Momentum, and Newton's laws.
+- Built-in Canvas diagrams for Gravity, Force, Momentum, and Newton's laws,
+  plus a real offline Momentum explorer: mass and velocity sliders update the
+  cart, direction, and `p = m × v` result with a text alternative.
 - A continuing question-and-answer trail, data-backed follow-up chips, clearer
   quiz progress, progress metrics, and lesson-library cards for a more usable
   desktop study workflow.
@@ -109,6 +111,7 @@ src/
 ├── neural_intent.py       # Small local neural intent classifier
 ├── ai_provider.py         # Provider-neutral AI boundary and offline fallback
 ├── media_engine.py        # Useful visual specifications
+├── visual_learning.py     # Small, interactive, offline teaching visuals
 ├── ui_theme.py            # Shared dependency-free Tkinter visual theme
 └── voice_engine.py        # Optional voice-provider boundary
 

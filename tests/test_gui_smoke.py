@@ -220,6 +220,29 @@ class GuiSmokeTests(unittest.TestCase):
         except tk.TclError:
             self.skipTest("Tk display is unavailable in this environment")
 
+    def test_momentum_visual_lab_updates_from_learner_controls_when_display_is_available(self) -> None:
+        try:
+            from gui import LearningApp
+            from visual_learning import MomentumLab
+            import tkinter as tk
+
+            app = LearningApp()
+            app.withdraw()
+            window = app.show_diagram("momentum")
+            assert window is not None
+            lab = getattr(window, "visual_lab")
+            self.assertIsInstance(lab, MomentumLab)
+            lab.set_values(4, 3)
+            app.update_idletasks()
+            app.update()
+            self.assertEqual(lab.current_state().momentum, 12)
+            self.assertIn("12 kg m/s right", lab.momentum_text.get())
+            self.assertIn("4 kg cart", lab.accessible_description.get())
+            window.destroy()
+            app.destroy()
+        except tk.TclError:
+            self.skipTest("Tk display is unavailable in this environment")
+
 
 if __name__ == "__main__":
     unittest.main()

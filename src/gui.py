@@ -9,6 +9,7 @@ from app_controller import AppController, LearningPreferences, QuizView
 from language_engine import SUPPORTED_LANGUAGES, interface_text
 from media_engine import get_visual
 from ui_theme import PALETTE, configure_theme
+from visual_learning import create_interactive_visual
 from voice_engine import DisabledVoiceProvider
 
 
@@ -446,27 +447,63 @@ class LearningApp(tk.Tk):
         self.page_title.set(title)
         self.page_meta.set(f"{meta}  •  {preferences.subject}  •  {preferences.level}")
 
-    def show_diagram(self, topic: str | None) -> None:
-        """Open a small instructional diagram only when a topic has one."""
+    def show_diagram(self, topic: str | None) -> tk.Toplevel | None:
+        """Open an installed visual only when it has a learning purpose."""
         if topic is None:
             messagebox.showinfo("Diagram", "Ask about a supported topic first.")
-            return
+            return None
         visual = get_visual(topic)
         if visual is None:
             messagebox.showinfo(
                 "Diagram",
                 "No diagram has been added for this lesson yet. A visual should be added only when it improves understanding.",
             )
-            return
+            return None
 
         window = tk.Toplevel(self)
         window.title(visual.title)
-        window.geometry("500x380")
-        ttk.Label(window, text=visual.title, style="Section.TLabel").pack(pady=(16, 4))
-        ttk.Label(window, text=visual.description, wraplength=430).pack(padx=20, pady=(0, 8))
-        canvas = tk.Canvas(window, width=430, height=220, bg="white", highlightthickness=1)
-        canvas.pack(padx=20, pady=10)
+        window.configure(background=PALETTE["app"])
+        content = ttk.Frame(window, style="App.TFrame", padding=(20, 18))
+        content.pack(fill="both", expand=True)
+        ttk.Label(content, text=visual.title, style="Section.TLabel").pack(anchor="w")
+        ttk.Label(
+            content,
+            text=visual.description,
+            style="Subtitle.TLabel",
+            wraplength=640,
+            justify="left",
+        ).pack(anchor="w", pady=(4, 2))
+        ttk.Label(
+            content,
+            text=f"Learning goal: {visual.learning_goal}",
+            style="Subtitle.TLabel",
+            wraplength=640,
+            justify="left",
+        ).pack(anchor="w", pady=(0, 12))
+
+        if visual.interaction:
+            interactive_visual = create_interactive_visual(content, topic)
+            if interactive_visual is not None:
+                window.geometry("720x620")
+                window.minsize(560, 500)
+                interactive_visual.pack(fill="both", expand=True)
+                # A public attribute makes the local component inspectable in
+                # GUI smoke tests without relying on widget-order details.
+                window.visual_lab = interactive_visual
+                return window
+
+        window.geometry("520x420")
+        canvas = tk.Canvas(
+            content,
+            width=460,
+            height=240,
+            bg=PALETTE["surface"],
+            highlightthickness=1,
+            highlightbackground=PALETTE["border"],
+        )
+        canvas.pack(fill="both", expand=True, pady=(0, 4))
         self._draw_visual(canvas, topic)
+        return window
 
     @staticmethod
     def _draw_visual(canvas: tk.Canvas, topic: str) -> None:
@@ -777,7 +814,7 @@ class LearningScreen(Screen):
             actions.columnconfigure(column, weight=1)
         ttk.Button(
             actions,
-            text="Show diagram",
+            text="Explore visual",
             style="Secondary.TButton",
             command=self.show_diagram,
         ).grid(

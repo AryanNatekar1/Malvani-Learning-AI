@@ -25,6 +25,10 @@ class AIAndAdapterTests(unittest.TestCase):
 
     def test_visuals_and_voice_are_explicit_about_availability(self) -> None:
         self.assertIsNotNone(get_visual("gravity"))
+        momentum = get_visual("momentum")
+        assert momentum is not None
+        self.assertEqual(momentum.interaction, "momentum_lab")
+        self.assertIn("momentum", momentum.learning_goal.lower())
         self.assertIsNone(get_visual("energy"))
         voice = DisabledVoiceProvider()
         self.assertFalse(voice.is_available)
