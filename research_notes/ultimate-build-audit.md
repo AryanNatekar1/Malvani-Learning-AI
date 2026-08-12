@@ -43,6 +43,8 @@ chatbot and flat Physics files are preserved.
 - Explainable local recommendations: low quiz attempt accuracy drives a review
   recommendation with its recorded evidence; otherwise only an installed,
   lesson-authored next topic is offered.
+- Resilient local persistence: malformed/unavailable profile storage falls back
+  to a usable in-memory session with a student-facing storage notice.
 
 ## AI and neural reality
 

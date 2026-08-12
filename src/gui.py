@@ -1376,12 +1376,19 @@ class SettingsScreen(Screen):
     def refresh(self) -> None:
         preferences = self.app.controller.preferences()
         voice = DisabledVoiceProvider()
+        storage_note = self.app.controller.persistence_notice()
+        storage_status = (
+            storage_note
+            if storage_note
+            else "Local progress is stored on this computer. No account or server is used."
+        )
         self.details.configure(
             text=(
                 f"Language requested: {preferences.language}\n"
                 f"Class / level: {preferences.level}\n"
                 f"Subject: {preferences.subject}\n"
                 f"Verified local-context mode: {'On' if preferences.culture_mode else 'Off'}\n\n"
+                f"Local storage: {storage_status}\n\n"
                 "The core app runs locally without an API key. The small offline neural model only routes lesson actions; it does not generate factual content.\n\n"
                 f"Voice: {voice.unavailable_reason()}"
             )

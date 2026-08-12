@@ -15,6 +15,8 @@ Current Version: **V2.3 local learning application prototype**
   solution, thinking question, and next-step exploration.
 - Offline quizzes with retry/reveal rules, progressive hints, and local SQLite
   progress/event tracking.
+- Safe local persistence fallback: malformed/unavailable profile storage does
+  not stop learning; the app shows an honest storage notice instead.
 - English lesson content with honest Marathi/Malvani fallback behavior.
 - Safety gate for cultural content: only source-backed `VERIFIED` entries may
   appear in student output.
@@ -32,7 +34,7 @@ Current Version: **V2.3 local learning application prototype**
 - In-progress quizzes resume when a learner navigates away and returns.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
-- 70 automated tests, including GUI flow, compact-layout reachability,
+- 73 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, and resize smoke tests.
 
 ## Not yet claimed as complete

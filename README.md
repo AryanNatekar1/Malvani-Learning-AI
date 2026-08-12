@@ -36,6 +36,9 @@ ChatGPT clone and it does not require an API key.
 - Local quizzes with multiple choice and numerical/exact-answer scoring.
 - Local-only progress stored by default in `local_data/malvani_learning.db`
   (ignored by Git). No account, server, or personal information is required.
+- If local storage is unavailable or malformed, the app keeps the current
+  learning session usable and shows a plain-language notice instead of a
+  traceback. It never stores raw quiz answers or reasoning text.
 - English draft lesson content, plus language selection with an honest fallback
   when reviewed Marathi or Malvani lesson text is unavailable.
 - Safe cultural-context handling: entries without a source and `VERIFIED`

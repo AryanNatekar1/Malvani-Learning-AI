@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import sqlite3
 from dataclasses import dataclass
 
 from ai_provider import AIProvider, OfflineAIProvider
@@ -85,8 +86,9 @@ class AppController:
         ai_provider: AIProvider | None = None,
         reasoning_engine: ReasoningEngine | None = None,
     ) -> None:
-        self.profile_store = profile_store or SQLiteProfileStore()
-        self.profile = self.profile_store.load()
+        self._persistence_notice: str | None = None
+        self.profile_store = profile_store or self._default_profile_store()
+        self.profile = self._load_profile_safely()
         self.teaching_engine = teaching_engine or TeachingEngine()
         self.ai_provider = ai_provider or OfflineAIProvider()
         self.reasoning_engine = reasoning_engine or ReasoningEngine()
@@ -95,6 +97,32 @@ class AppController:
         self.quiz_session: QuizSession | None = None
         self.current_problem_session: GuidedProblemSession | None = None
         self.current_problem_hints = 0
+
+    def _default_profile_store(self) -> StudentRepository | ProfileStore:
+        """Prefer SQLite, with a private in-memory-safe fallback on failure."""
+        try:
+            return SQLiteProfileStore()
+        except (OSError, sqlite3.DatabaseError):
+            self._persistence_notice = (
+                "Local progress storage could not be opened. You can keep learning, "
+                "but changes may not be saved after you close the app."
+            )
+            return ProfileStore()
+
+    def _load_profile_safely(self) -> StudentProfile:
+        """Start a usable learning session even when local storage is unavailable."""
+        try:
+            return self.profile_store.load()
+        except (OSError, sqlite3.DatabaseError, TypeError, ValueError):
+            self._persistence_notice = (
+                "Local progress could not be read. You can keep learning in this session, "
+                "but progress may not be available after you close the app."
+            )
+            return StudentProfile()
+
+    def persistence_notice(self) -> str | None:
+        """Return a learner-friendly local-storage notice, if one is needed."""
+        return self._persistence_notice
 
     def supported_subjects(self) -> tuple[str, ...]:
         """Expose only subjects with actual migrated lessons."""
@@ -558,7 +586,7 @@ class AppController:
         topics = ", ".join(self.profile.topics_studied) or "No topics studied yet"
         recommendation = self.learning_recommendation()
 
-        return (
+        summary = (
             f"Topics studied: {topics}\n"
             f"Quiz answer attempts: {self.profile.questions_attempted}\n"
             f"Correct submissions: {self.profile.questions_correct}\n"
@@ -568,6 +596,9 @@ class AppController:
             f"Challenge attempts: {self.profile.challenge_attempts}\n\n"
             f"Recommendation\n{recommendation.as_text()}"
         )
+        if self._persistence_notice:
+            summary += f"\n\nLocal storage note: {self._persistence_notice}"
+        return summary
 
     def learning_recommendation(self) -> LearningRecommendation:
         """Return one next step supported by real local evidence and lesson data."""
@@ -586,7 +617,7 @@ class AppController:
             else "Continue learning: choose your first local lesson."
         )
         recommendation = self.learning_recommendation()
-        return (
+        summary = (
             f"{continue_text}\n"
             f"Topics opened: {len(self.profile.topics_studied)}\n"
             f"Quiz answer attempts: {self.profile.questions_attempted}\n"
@@ -594,6 +625,9 @@ class AppController:
             f"{recommendation.message}\n"
             f"Reason: {recommendation.reason}"
         )
+        if self._persistence_notice:
+            summary += f"\n\nLocal storage note: {self._persistence_notice}"
+        return summary
 
     def _subject_for_topic(self, topic: str) -> str:
         """Resolve the real subject for structured topics and legacy Physics files."""
@@ -603,7 +637,13 @@ class AppController:
         return "Physics"
 
     def _save_profile(self) -> None:
-        self.profile_store.save(self.profile)
+        try:
+            self.profile_store.save(self.profile)
+        except (OSError, sqlite3.DatabaseError, TypeError, ValueError):
+            self._persistence_notice = (
+                "Local progress could not be saved. You can keep learning in this session, "
+                "but changes may not be available after you close the app."
+            )
 
     def _record_event(
         self, event_type: str, topic: str | None = None, correct: bool | None = None
@@ -611,4 +651,10 @@ class AppController:
         """Use event persistence when the selected local store supports it."""
         record_event = getattr(self.profile_store, "record_event", None)
         if callable(record_event):
-            record_event(event_type, topic, correct)
+            try:
+                record_event(event_type, topic, correct)
+            except (OSError, sqlite3.DatabaseError, TypeError, ValueError):
+                self._persistence_notice = (
+                    "Local progress could not be saved. You can keep learning in this session, "
+                    "but changes may not be available after you close the app."
+                )

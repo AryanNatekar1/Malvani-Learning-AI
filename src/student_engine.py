@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 from typing import Protocol
 
@@ -34,6 +34,40 @@ class StudentProfile:
     challenge_correct: int = 0
     topic_hints: dict[str, int] = field(default_factory=dict)
     topic_reasoning_attempts: dict[str, int] = field(default_factory=dict)
+
+    @classmethod
+    def from_mapping(cls, value: object) -> "StudentProfile":
+        """Load only safe, expected local profile values.
+
+        Local profile files can outlive a code update or be edited by hand.
+        Ignoring unknown fields and replacing malformed counters with defaults
+        keeps the desktop app usable without exposing a traceback to a learner.
+        """
+        if not isinstance(value, dict):
+            return cls()
+        defaults = cls()
+        known_fields = {item.name for item in fields(cls)}
+        data = {key: value[key] for key in known_fields if key in value}
+        return cls(
+            name=_string(data.get("name"), defaults.name),
+            class_level=_string(data.get("class_level"), defaults.class_level),
+            preferred_language=_string(
+                data.get("preferred_language"), defaults.preferred_language
+            ),
+            preferred_subject=_string(data.get("preferred_subject"), defaults.preferred_subject),
+            culture_mode=_boolean(data.get("culture_mode"), defaults.culture_mode),
+            topics_studied=_string_list(data.get("topics_studied")),
+            questions_attempted=_nonnegative_int(data.get("questions_attempted")),
+            questions_correct=_nonnegative_int(data.get("questions_correct")),
+            topic_attempts=_counter_mapping(data.get("topic_attempts")),
+            topic_correct=_counter_mapping(data.get("topic_correct")),
+            hints_used=_nonnegative_int(data.get("hints_used")),
+            reasoning_attempts=_nonnegative_int(data.get("reasoning_attempts")),
+            challenge_attempts=_nonnegative_int(data.get("challenge_attempts")),
+            challenge_correct=_nonnegative_int(data.get("challenge_correct")),
+            topic_hints=_counter_mapping(data.get("topic_hints")),
+            topic_reasoning_attempts=_counter_mapping(data.get("topic_reasoning_attempts")),
+        )
 
     def record_lesson(self, topic: str) -> None:
         """Record a lesson once, avoiding duplicate topic entries."""
@@ -97,7 +131,7 @@ class ProfileStore:
             data = json.loads(self.profile_path.read_text(encoding="utf-8"))
         except (OSError, TypeError, json.JSONDecodeError):
             return StudentProfile()
-        return StudentProfile(**data)
+        return StudentProfile.from_mapping(data)
 
     def save(self, profile: StudentProfile) -> None:
         """Save profile data locally, creating the ignored data folder as needed."""
@@ -173,7 +207,7 @@ class SQLiteProfileStore:
         if row is None:
             return StudentProfile()
         try:
-            return StudentProfile(**json.loads(row[0]))
+            return StudentProfile.from_mapping(json.loads(row[0]))
         except (TypeError, json.JSONDecodeError):
             return StudentProfile()
 
@@ -214,3 +248,44 @@ class SQLiteProfileStore:
                     (event_type,),
                 ).fetchone()
         return int(row[0])
+
+
+def _string(value: object, default: str) -> str:
+    """Return a short text profile value or its safe default."""
+    return value.strip() if isinstance(value, str) and value.strip() else default
+
+
+def _boolean(value: object, default: bool) -> bool:
+    """Accept only actual booleans for a local preference."""
+    return value if isinstance(value, bool) else default
+
+
+def _nonnegative_int(value: object) -> int:
+    """Return a valid aggregate count without accepting booleans as integers."""
+    return value if isinstance(value, int) and not isinstance(value, bool) and value >= 0 else 0
+
+
+def _string_list(value: object) -> list[str]:
+    """Filter hand-edited topic lists to non-empty unique strings."""
+    if not isinstance(value, list):
+        return []
+    result: list[str] = []
+    for item in value:
+        if isinstance(item, str) and item.strip() and item not in result:
+            result.append(item)
+    return result
+
+
+def _counter_mapping(value: object) -> dict[str, int]:
+    """Filter a topic-to-count mapping to safe aggregate values."""
+    if not isinstance(value, dict):
+        return {}
+    return {
+        key: count
+        for key, count in value.items()
+        if isinstance(key, str)
+        and key.strip()
+        and isinstance(count, int)
+        and not isinstance(count, bool)
+        and count >= 0
+    }

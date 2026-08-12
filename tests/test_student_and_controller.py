@@ -12,6 +12,31 @@ from app_controller import AppController, LearningPreferences
 from student_engine import ProfileStore, StudentProfile
 
 
+class FailingProfileStore:
+    """Test double for a local storage device that cannot be written."""
+
+    def load(self) -> StudentProfile:
+        return StudentProfile()
+
+    def save(self, _profile: StudentProfile) -> None:
+        raise OSError("storage unavailable")
+
+    def record_event(
+        self, _event_type: str, _topic: str | None = None, _correct: bool | None = None
+    ) -> None:
+        raise OSError("storage unavailable")
+
+
+class UnreadableProfileStore:
+    """Test double for a local storage device that cannot be read at startup."""
+
+    def load(self) -> StudentProfile:
+        raise OSError("storage unavailable")
+
+    def save(self, _profile: StudentProfile) -> None:
+        pass
+
+
 class StudentAndControllerTests(unittest.TestCase):
     def test_profile_records_aggregate_progress(self) -> None:
         profile = StudentProfile()
@@ -30,6 +55,19 @@ class StudentAndControllerTests(unittest.TestCase):
             loaded = store.load()
             self.assertEqual(loaded.class_level, "Class 9")
             self.assertEqual(loaded.questions_correct, 1)
+
+    def test_profile_store_ignores_unknown_or_malformed_local_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            path = Path(temporary_directory) / "profile.json"
+            path.write_text(
+                '{"class_level": "Class 9", "questions_attempted": -1, '
+                '"topic_attempts": {"momentum": "many"}, "unknown": "ignored"}',
+                encoding="utf-8",
+            )
+            profile = ProfileStore(path).load()
+            self.assertEqual(profile.class_level, "Class 9")
+            self.assertEqual(profile.questions_attempted, 0)
+            self.assertEqual(profile.topic_attempts, {})
 
     def test_controller_runs_structured_lesson_and_quiz_flow(self) -> None:
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -73,6 +111,22 @@ class StudentAndControllerTests(unittest.TestCase):
             self.assertEqual(recommendation.topic, "momentum")
             self.assertIn("0 of 1", recommendation.reason)
             self.assertIn("Reason:", controller.progress_text())
+
+    def test_controller_keeps_learning_when_local_progress_cannot_be_saved(self) -> None:
+        controller = AppController(profile_store=FailingProfileStore())
+        response = controller.answer_question("What is gravity?")
+        self.assertTrue(response.is_structured)
+        notice = controller.persistence_notice()
+        assert notice is not None
+        self.assertIn("could not be saved", notice)
+        self.assertIn("Local storage note", controller.dashboard_text())
+
+    def test_controller_starts_a_safe_session_when_local_progress_cannot_be_read(self) -> None:
+        controller = AppController(profile_store=UnreadableProfileStore())
+        self.assertEqual(controller.profile.topics_studied, [])
+        notice = controller.persistence_notice()
+        assert notice is not None
+        self.assertIn("could not be read", notice)
 
 
 if __name__ == "__main__":
