@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.3 local learning application prototype**
+Current Version: **V2.4 local learning application prototype**
 
 ## Working now
 
@@ -20,6 +20,10 @@ Current Version: **V2.3 local learning application prototype**
 - English lesson content with honest Marathi/Malvani fallback behavior.
 - Safety gate for cultural content: only source-backed `VERIFIED` entries may
   appear in student output.
+- Privacy-safe Contextual Learning Engine foundation: a student can select a
+  reviewed manual context when one is installed; it is topic-scoped,
+  session-only, and never GPS/location data. No reviewed context records are
+  installed yet, so the normal lesson path remains the default.
 - Small offline neural intent classifier and provider-neutral AI interface.
 - Built-in concept diagrams for selected Physics lessons and an interactive,
   local Momentum explorer with mass/velocity controls, a directional diagram,
@@ -34,13 +38,15 @@ Current Version: **V2.3 local learning application prototype**
 - In-progress quizzes resume when a learner navigates away and returns.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
-- 73 automated tests, including GUI flow, compact-layout reachability,
+- 82 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, and resize smoke tests.
 
 ## Not yet claimed as complete
 
 - Reviewed Marathi or Malvani educational lesson content.
 - Verified Sindhudurg/Konkan cultural data records.
+- Reviewed manual learning-context records, device location, map data, or
+  sensor data.
 - A configured external LLM or local language model.
 - Voice input/output.
 - Web/mobile interface, cloud sync, or real-student evaluation.

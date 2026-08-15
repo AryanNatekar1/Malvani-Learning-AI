@@ -9,6 +9,7 @@ SRC_DIR = Path(__file__).resolve().parent.parent / "src"
 sys.path.insert(0, str(SRC_DIR))
 
 from app_controller import AppController, LearningPreferences
+from context_engine import VERIFIED, ContextRecord, ContextRepository
 from student_engine import ProfileStore, StudentProfile
 
 
@@ -127,6 +128,42 @@ class StudentAndControllerTests(unittest.TestCase):
         notice = controller.persistence_notice()
         assert notice is not None
         self.assertIn("could not be read", notice)
+
+    def test_manual_context_is_topic_scoped_and_never_saved_as_profile_data(self) -> None:
+        """A reviewed manual choice is useful, but not a stored location proxy."""
+        context = ContextRecord(
+            identifier="momentum-cart-model",
+            title="Computer cart model",
+            category="physics model",
+            educational_prompt=(
+                "Use two labelled carts in a computer model to compare mass, velocity, "
+                "and momentum."
+            ),
+            topics=("momentum",),
+            verification_status=VERIFIED,
+            source="Teacher-reviewed classroom model",
+        )
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            profile_path = Path(temporary_directory) / "profile.json"
+            controller = AppController(
+                profile_store=ProfileStore(profile_path),
+                context_repository=ContextRepository([context]),
+            )
+
+            selection = controller.select_manual_context("momentum-cart-model")
+            self.assertTrue(selection.is_available)
+            self.assertIsNone(controller.active_manual_context())
+            momentum = controller.answer_question("Explain momentum")
+
+            self.assertIn("MANUAL LEARNING CONTEXT", momentum.text)
+            self.assertIn("You selected this learning context manually", momentum.text)
+            self.assertIn("Teacher-reviewed classroom model", momentum.text)
+            self.assertIn("momentum-cart-model", controller.selected_manual_context_id or "")
+            self.assertNotIn("momentum-cart-model", profile_path.read_text(encoding="utf-8"))
+
+            gravity = controller.answer_question("Explain gravity")
+            self.assertNotIn("MANUAL LEARNING CONTEXT", gravity.text)
+            self.assertIsNone(controller.active_manual_context())
 
 
 if __name__ == "__main__":

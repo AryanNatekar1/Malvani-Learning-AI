@@ -233,7 +233,9 @@ class ScrollableScreen(ttk.Frame):
         if self.content is not None:
             self.content.refresh()
             self._bind_descendants(self.content)
-        self.after_idle(lambda: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
+        # ``body`` owns the Configure binding that updates the scroll region
+        # after layout settles. Avoid queuing a callback here: a learner can
+        # close the desktop window while a navigation refresh is pending.
 
 
 class LearningApp(tk.Tk):
@@ -570,6 +572,8 @@ class HomeScreen(Screen):
         initial_subject = preferences.subject if preferences.subject in subjects else subjects[0]
         self.subject = tk.StringVar(value=initial_subject)
         self.culture_mode = tk.BooleanVar(value=preferences.culture_mode)
+        self.manual_context = tk.StringVar()
+        self._manual_context_choices: dict[str, str | None] = {}
 
         intro = ttk.Frame(self, style="Surface.TFrame", padding=(28, 24))
         intro.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 14))
@@ -613,8 +617,25 @@ class HomeScreen(Screen):
             text="Use verified local context when available",
             variable=self.culture_mode,
         ).grid(row=3, column=0, columnspan=2, pady=(12, 8), sticky="w")
+        self.manual_context_label = ttk.Label(form, style="Surface.TLabel")
+        self.manual_context_label.grid(row=4, column=0, padx=(0, 16), pady=8, sticky="w")
+        self.manual_context_box = ttk.Combobox(
+            form,
+            textvariable=self.manual_context,
+            state="readonly",
+        )
+        self.manual_context_box.grid(row=4, column=1, pady=8, sticky="ew")
+        self.manual_context_notice = ttk.Label(
+            form,
+            style="SurfaceMuted.TLabel",
+            wraplength=660,
+            justify="left",
+        )
+        self.manual_context_notice.grid(
+            row=5, column=0, columnspan=2, pady=(0, 6), sticky="w"
+        )
         self.start_button = ttk.Button(form, style="Primary.TButton", command=self.start_learning)
-        self.start_button.grid(row=4, column=0, columnspan=2, pady=(16, 0))
+        self.start_button.grid(row=6, column=0, columnspan=2, pady=(16, 0))
 
         dashboard = ttk.LabelFrame(self, text="Your next step", style="Card.TLabelframe", padding=18)
         dashboard.grid(row=2, column=0, columnspan=2, pady=(0, 8), sticky="ew")
@@ -651,6 +672,51 @@ class HomeScreen(Screen):
         self.level_label.configure(text=interface_text("level", language))
         self.subject_label.configure(text=interface_text("subject", language))
         self.start_button.configure(text=interface_text("start_learning", language))
+        self.manual_context_label.configure(text="Optional learning context")
+
+    def _refresh_manual_context_choices(self) -> None:
+        """Show only reviewed manual contexts; GPS is never an input here."""
+        contexts = self.app.controller.available_manual_contexts()
+        selected_identifier = self.app.controller.selected_manual_context_id
+        self._manual_context_choices = {"No additional context": None}
+        for index, context in enumerate(contexts, start=1):
+            label = f"{context.title} ({context.category})"
+            if label in self._manual_context_choices:
+                label = f"{label} {index}"
+            self._manual_context_choices[label] = context.identifier
+
+        if not contexts:
+            unavailable_label = "No reviewed learning contexts installed"
+            self.manual_context_box.configure(values=(unavailable_label,), state="disabled")
+            self.manual_context.set(unavailable_label)
+            notice = self.app.controller.context_notice()
+            self.manual_context_notice.configure(
+                text=notice
+                or (
+                    "No reviewed manual contexts are installed yet. The lesson will use "
+                    "its normal examples. GPS and location data are not used."
+                )
+            )
+            return
+
+        selected_label = next(
+            (
+                label
+                for label, identifier in self._manual_context_choices.items()
+                if identifier == selected_identifier
+            ),
+            "No additional context",
+        )
+        self.manual_context_box.configure(
+            values=tuple(self._manual_context_choices), state="readonly"
+        )
+        self.manual_context.set(selected_label)
+        self.manual_context_notice.configure(
+            text=(
+                "Optional and session-only. Choose a reviewed learning setting manually; "
+                "it appears only in matching lessons. GPS and location data are not used or saved."
+            )
+        )
 
     def start_learning(self) -> None:
         """Save preferences and move to the learning interface."""
@@ -661,6 +727,9 @@ class HomeScreen(Screen):
                 subject=self.subject.get(),
                 culture_mode=self.culture_mode.get(),
             )
+        )
+        self.app.controller.select_manual_context(
+            self._manual_context_choices.get(self.manual_context.get())
         )
         self.app.show_screen("learning")
 
@@ -678,6 +747,7 @@ class HomeScreen(Screen):
         self.level.set(preferences.level)
         self.subject.set(preferences.subject)
         self.culture_mode.set(preferences.culture_mode)
+        self._refresh_manual_context_choices()
         self.dashboard_text.configure(text=self.app.controller.dashboard_text())
         recommendation = self.app.controller.learning_recommendation()
         if recommendation.topic is not None:
@@ -859,12 +929,18 @@ class LearningScreen(Screen):
                 self.app.show_screen("quiz")
                 return
         if response.topic and self.app.controller.current_topic == response.topic:
-            self.status.set(f"Offline local mode • Topic: {response.topic}")
+            self._set_topic_status(response.topic)
             if topic_changed:
                 self._reset_lesson_interaction_widgets()
             self._trail_topic = response.topic
         self.refresh_related_questions()
         self.question.set("")
+
+    def _set_topic_status(self, topic: str) -> None:
+        """Show a selected context only when it is authored for this topic."""
+        context = self.app.controller.active_manual_context()
+        context_suffix = f" • Context: {context.title}" if context is not None else ""
+        self.status.set(f"Offline local mode • Topic: {topic}{context_suffix}")
 
     def show_action(self, action: str) -> None:
         response = self.app.controller.lesson_action(action)
@@ -976,8 +1052,11 @@ class LearningScreen(Screen):
         preferences = self.app.controller.preferences()
         if self.app.controller.current_topic is None:
             self._reset_lesson_interaction_widgets()
+        context = self.app.controller.active_manual_context()
+        context_suffix = f" • Context: {context.title}" if context is not None else ""
         self.status.set(
-            f"Offline local mode • {preferences.subject} • {preferences.level} • Requested language: {preferences.language}"
+            f"Offline local mode • {preferences.subject} • {preferences.level} • "
+            f"Requested language: {preferences.language}{context_suffix}"
         )
         if not self.lesson_cards.rendered_text().strip():
             self.write_output(

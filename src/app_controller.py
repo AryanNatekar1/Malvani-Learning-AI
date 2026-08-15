@@ -6,6 +6,7 @@ import sqlite3
 from dataclasses import dataclass
 
 from ai_provider import AIProvider, OfflineAIProvider
+from context_engine import ContextFormatError, ContextRepository, ContextSelection, StudentContext
 from knowledge_engine import (
     available_subjects,
     find_topic,
@@ -85,13 +86,19 @@ class AppController:
         teaching_engine: TeachingEngine | None = None,
         ai_provider: AIProvider | None = None,
         reasoning_engine: ReasoningEngine | None = None,
+        context_repository: ContextRepository | None = None,
     ) -> None:
         self._persistence_notice: str | None = None
+        self._context_notice: str | None = None
         self.profile_store = profile_store or self._default_profile_store()
         self.profile = self._load_profile_safely()
         self.teaching_engine = teaching_engine or TeachingEngine()
         self.ai_provider = ai_provider or OfflineAIProvider()
         self.reasoning_engine = reasoning_engine or ReasoningEngine()
+        self.context_repository = context_repository or self._default_context_repository()
+        # This is deliberately session-only. It is a learning preference for
+        # the current window, not a saved location, school, or identifier.
+        self.selected_manual_context_id: str | None = None
         self.current_lesson: Lesson | None = None
         self.current_topic: str | None = None
         self.quiz_session: QuizSession | None = None
@@ -120,9 +127,55 @@ class AppController:
             )
             return StudentProfile()
 
+    def _default_context_repository(self) -> ContextRepository:
+        """Load reviewed local context data without making it required for learning."""
+        try:
+            return ContextRepository.from_directory()
+        except (OSError, ContextFormatError):
+            self._context_notice = (
+                "Reviewed learning-context data could not be loaded. Lessons will continue "
+                "without a local context."
+            )
+            return ContextRepository()
+
     def persistence_notice(self) -> str | None:
         """Return a learner-friendly local-storage notice, if one is needed."""
         return self._persistence_notice
+
+    def context_notice(self) -> str | None:
+        """Return a learner-safe context-data notice, if loading failed."""
+        return self._context_notice
+
+    def available_manual_contexts(self) -> tuple[StudentContext, ...]:
+        """Return only source-backed context choices safe for the Home screen."""
+        return self.context_repository.student_options()
+
+    def select_manual_context(self, identifier: str | None) -> ContextSelection:
+        """Remember one reviewed manual choice for this session only.
+
+        The selection is intentionally not written to the profile or event
+        store. It can become a location proxy, so closing the application or
+        choosing "no context" removes it.
+        """
+        selection = self.context_repository.select_manual(identifier)
+        self.selected_manual_context_id = (
+            selection.context.identifier if selection.context is not None else None
+        )
+        return selection
+
+    def clear_manual_context(self) -> None:
+        """Discard the session-only manual learning context."""
+        self.selected_manual_context_id = None
+
+    def active_manual_context(self) -> StudentContext | None:
+        """Return the chosen context only if it is authored for the active lesson."""
+        if self.current_topic is None:
+            return None
+        selection = self.context_repository.select_manual(
+            self.selected_manual_context_id,
+            self.current_topic,
+        )
+        return selection.context
 
     def supported_subjects(self) -> tuple[str, ...]:
         """Expose only subjects with actual migrated lessons."""
@@ -414,6 +467,10 @@ class AppController:
             culture_mode=preferences.culture_mode,
         )
         sections = response.sections
+        if action == "full":
+            context = self.active_manual_context()
+            if context is not None:
+                sections = (self._manual_context_section(context), *sections)
         if action == "full" and self.current_lesson.verification_status != "VERIFIED":
             sections = (
                 LessonSection(
@@ -430,6 +487,19 @@ class AppController:
             self._rendered_text(response.title, sections),
             True,
             sections=sections,
+        )
+
+    @staticmethod
+    def _manual_context_section(context: StudentContext) -> LessonSection:
+        """Render a reviewed, manual context without implying device location."""
+        return LessonSection(
+            "MANUAL LEARNING CONTEXT",
+            (
+                "You selected this learning context manually. The app did not use GPS "
+                "or collect your location.\n\n"
+                f"{context.educational_prompt}\n\n"
+                f"Source: {context.source}"
+            ),
         )
 
     @staticmethod

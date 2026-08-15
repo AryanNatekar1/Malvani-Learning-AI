@@ -243,6 +243,49 @@ class GuiSmokeTests(unittest.TestCase):
         except tk.TclError:
             self.skipTest("Tk display is unavailable in this environment")
 
+    def test_manual_context_picker_is_optional_and_topic_scoped_when_display_is_available(self) -> None:
+        try:
+            from app_controller import AppController
+            from context_engine import VERIFIED, ContextRecord, ContextRepository
+            from gui import LearningApp
+            from student_engine import ProfileStore
+            import tkinter as tk
+
+            context = ContextRecord(
+                identifier="momentum-cart-model",
+                title="Computer cart model",
+                category="physics model",
+                educational_prompt="Compare labelled carts in a reviewed classroom model.",
+                topics=("momentum",),
+                verification_status=VERIFIED,
+                source="Teacher-reviewed classroom model",
+            )
+            with tempfile.TemporaryDirectory() as temporary_directory:
+                profile_path = Path(temporary_directory) / "profile.json"
+                controller = AppController(
+                    profile_store=ProfileStore(profile_path),
+                    context_repository=ContextRepository([context]),
+                )
+                app = LearningApp(controller=controller)
+                app.withdraw()
+                options = app.home_screen.manual_context_box.cget("values")
+                label = next(value for value in options if "Computer cart model" in value)
+                app.home_screen.manual_context.set(label)
+                app.home_screen.start_learning()
+                self.assertEqual(controller.selected_manual_context_id, "momentum-cart-model")
+
+                app.learning_screen.question.set("Explain momentum")
+                app.learning_screen.ask_question()
+                trail = app.learning_screen.lesson_cards.rendered_text()
+                self.assertIn("MANUAL LEARNING CONTEXT", trail)
+                self.assertIn("did not use GPS", trail)
+                self.assertNotIn("momentum-cart-model", profile_path.read_text(encoding="utf-8"))
+                app.update_idletasks()
+                app.update()
+                app.destroy()
+        except tk.TclError:
+            self.skipTest("Tk display is unavailable in this environment")
+
 
 if __name__ == "__main__":
     unittest.main()

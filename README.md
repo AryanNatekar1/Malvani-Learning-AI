@@ -43,6 +43,11 @@ ChatGPT clone and it does not require an API key.
   when reviewed Marathi or Malvani lesson text is unavailable.
 - Safe cultural-context handling: entries without a source and `VERIFIED`
   status are hidden from student output.
+- A privacy-safe Contextual Learning Engine foundation: reviewed, source-backed
+  contexts can be selected manually for matching lessons, remain only in the
+  current app session, and are never treated as GPS data or saved location.
+  No reviewed context records are installed yet, so the normal lesson path is
+  used by default.
 - Built-in Canvas diagrams for Gravity, Force, Momentum, and Newton's laws,
   plus a real offline Momentum explorer: mass and velocity sliders update the
   cart, direction, and `p = m × v` result with a text alternative.
@@ -115,6 +120,7 @@ src/
 ├── student_engine.py      # Local profile and aggregate progress
 ├── language_engine.py     # Language selection and honest fallback
 ├── culture_engine.py      # Verification-safe cultural context display
+├── context_engine.py      # Manual, source-gated contextual-learning data
 ├── neural_intent.py       # Small local neural intent classifier
 ├── ai_provider.py         # Provider-neutral AI boundary and offline fallback
 ├── media_engine.py        # Useful visual specifications
@@ -125,6 +131,7 @@ src/
 data/
 ├── *.txt                  # Original V1 Physics knowledge files (preserved)
 ├── lessons/               # Editable structured JSON lessons
+├── contexts/              # Reviewed optional manual learning contexts
 └── culture/               # Future source-backed cultural-context entries
 ```
 
@@ -144,6 +151,21 @@ invent Malvani words, local slang, traditions, or historical claims.
 When a verified local connection is not available, the student interface says
 so in plain language. It does not expose internal terms such as draft state or
 verification metadata as part of a lesson.
+
+## Contextual learning and privacy
+
+`context_engine.py` is the first foundation for the future “Learn From Your
+World” experience. It currently accepts only a **manual** learner choice from
+reviewed local JSON records. It does not access GPS, Windows location services,
+the network, maps, or sensors. A selected context is kept only in memory for
+the current session and is never written to the SQLite progress database or
+student profile.
+
+Each record is scoped to specific lesson topics and needs both `VERIFIED`
+status and a source before it can be shown. This prevents a water-body example
+from being forced into unrelated lessons and prevents the app from claiming
+facts about a student’s school or neighbourhood. See
+[data/contexts/README.md](data/contexts/README.md) before adding any record.
 
 ## Language support
 
@@ -188,6 +210,9 @@ than untraceable generated text.
   review.
 - No cultural entries are yet verified and therefore none are injected into
   student lessons.
+- No reviewed manual learning-context records, GPS integration, map lookup, or
+  sensor data are installed. The context engine intentionally falls back to
+  ordinary lessons until reviewed data is available.
 - The small neural model is a routing demonstration, not conversational AI or
   a personalized language model.
 - Voice architecture exists, but no speech provider is installed.

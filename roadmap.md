@@ -22,6 +22,9 @@
   author-linked next lessons; do not imply mastery or predict ability.
 - Harden local profile loading/saving so malformed or unavailable local storage
   preserves the live session and produces a student-friendly notice.
+- Add a topic-scoped, manual Contextual Learning Engine boundary. It accepts
+  only source-backed `VERIFIED` records, keeps the selection session-only, and
+  never accesses or stores device location.
 
 ## Next: content quality and community review
 
@@ -33,6 +36,9 @@
    linguistic/community verification.
 5. Migrate and enrich the remaining original Physics files.
 6. Add more actual lessons before creating additional subject folders.
+7. Create the first teacher-reviewed contextual learning record and a matching
+   Waves lesson; begin with a manual generic setting before considering device
+   location, maps, or sensors.
 
 ## Later product work
 
