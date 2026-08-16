@@ -22,12 +22,24 @@
       "id": "cart-a-momentum",
       "prompt": "What is Cart A's momentum? Show the number and unit if you can.",
       "accepted_answers": ["6", "6 kg m/s"],
+      "numeric_answer": {
+        "value": 6,
+        "unit": "kg m/s",
+        "allow_unit_omission": true,
+        "accepted_symbols": ["p", "momentum"]
+      },
       "success_feedback": "Correct. Cart A has momentum 2 kg x 3 m/s = 6 kg m/s."
     },
     {
       "id": "cart-b-momentum",
       "prompt": "What is Cart B's momentum? Show the number and unit if you can.",
       "accepted_answers": ["6", "6 kg m/s"],
+      "numeric_answer": {
+        "value": 6,
+        "unit": "kg m/s",
+        "allow_unit_omission": true,
+        "accepted_symbols": ["p", "momentum"]
+      },
       "success_feedback": "Correct. Cart B has momentum 3 kg x 2 m/s = 6 kg m/s."
     },
     {

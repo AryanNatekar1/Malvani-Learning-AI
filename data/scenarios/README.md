@@ -58,6 +58,12 @@ measurement. Do not describe invented numbers as observed data.
       "id": "unique-step-id",
       "prompt": "One calculation or comparison",
       "accepted_answers": ["one accepted answer"],
+      "numeric_answer": {
+        "value": 6,
+        "unit": "kg m/s",
+        "allow_unit_omission": true,
+        "accepted_symbols": ["p"]
+      },
       "success_feedback": "Feedback after an exact accepted answer"
     }
   ],
@@ -75,6 +81,13 @@ measurement. Do not describe invented numbers as observed data.
   }
 }
 ```
+
+`numeric_answer` is optional and belongs only on a calculation step with an
+explicitly authored number and unit. It accepts a complete compact response
+such as `6`, `6.0 kg m/s`, or `p = 6 kg*m/s` when those forms match the
+declared rule. It does not pull a number from arbitrary prose, infer a unit,
+or evaluate reasoning. Keep a qualitative comparison on `accepted_answers`
+unless a separate reviewable rule is genuinely needed.
 
 ## Review status
 

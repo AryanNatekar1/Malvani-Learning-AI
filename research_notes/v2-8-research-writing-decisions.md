@@ -13,7 +13,7 @@ connected sentences without the app pretending to evaluate them.
 ## Privacy and assessment boundary
 
 The writing exists only inside the visible Tkinter field for the current app
-session. When the learner marks a prompt complete, `AppController` receives
+session. When the learner records a writing check-in, `AppController` receives
 the text only long enough to reject an empty submission. It records an
 aggregate completion counter and a fixed event name. The completed text stays
 visible only in its disabled on-screen field until the learner changes or
@@ -26,7 +26,7 @@ need teacher-reviewed rubrics and evaluation with real student work.
 
 ## Interaction decision
 
-After a prompt is marked complete its writing field is disabled for the rest
+After a prompt's writing check-in is recorded its field is disabled for the rest
 of that session. This prevents accidental duplicate completion events and
 shows the learner which step they have finished. The next unfinished field is
 scrolled into view and receives keyboard focus, including on the supported

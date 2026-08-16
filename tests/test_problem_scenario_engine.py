@@ -84,6 +84,32 @@ class ProblemScenarioEngineTests(unittest.TestCase):
         self.assertIsNone(session.current_step)
         self.assertIn("completed", session.submit_attempt("anything").message.lower())
 
+    def test_declared_numeric_rule_accepts_safe_formats_but_not_guesses(self) -> None:
+        """Calculation steps accept declared decimal/unit forms, not arbitrary prose."""
+        cart_a, cart_b, comparison = self.scenario.guided_steps
+
+        self.assertIsNotNone(cart_a.numeric_answer)
+        self.assertTrue(cart_a.matches_answer("6.0"))
+        self.assertTrue(cart_a.matches_answer("6.0 kg m/s"))
+        self.assertTrue(cart_a.matches_answer("p = 6 kg*m/s"))
+        self.assertTrue(cart_a.matches_answer("p = 6 kg × m/s"))
+        self.assertTrue(cart_a.matches_answer("momentum = 6 kg m/s"))
+        self.assertFalse(cart_a.matches_answer("6 kg"))
+        self.assertFalse(cart_a.matches_answer("6 m/s"))
+        self.assertFalse(cart_a.matches_answer("6 kg/m*s"))
+        self.assertFalse(cart_a.matches_answer("6 kg^m/s"))
+        self.assertFalse(cart_a.matches_answer("6 kg--m/s"))
+        self.assertFalse(cart_a.matches_answer("6 kg..m/s"))
+        self.assertFalse(cart_a.matches_answer("6.5 kg m/s"))
+        self.assertFalse(cart_a.matches_answer("the answer is 6 kg m/s"))
+        self.assertFalse(cart_a.matches_answer("force = 6 kg m/s"))
+        self.assertIsNone(comparison.numeric_answer)
+        self.assertFalse(comparison.matches_answer("6.0"))
+
+        session = ProblemScenarioSession(self.scenario)
+        self.assertTrue(session.submit_attempt("p = 6.0 kg*m/s").correct)
+        self.assertTrue(session.submit_attempt("6.0 kg m/s").correct)
+
     def test_empty_answer_does_not_count_as_a_student_attempt(self) -> None:
         session = ProblemScenarioSession(self.scenario)
 
@@ -140,6 +166,52 @@ class ProblemScenarioEngineTests(unittest.TestCase):
         )
         raw["guided_steps"][1]["id"] = raw["guided_steps"][0]["id"].upper()
         with self.assertRaisesRegex(ScenarioFormatError, "identifiers must be unique"):
+            ProblemScenario.from_mapping(raw)
+
+        raw = json.loads(
+            (SCENARIOS_DIR / "physics" / "momentum_cart_comparison.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        raw["guided_steps"][0]["numeric_answer"]["value"] = 7
+        with self.assertRaisesRegex(ScenarioFormatError, "must match every numeric"):
+            ProblemScenario.from_mapping(raw)
+
+        raw = json.loads(
+            (SCENARIOS_DIR / "physics" / "momentum_cart_comparison.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        raw["guided_steps"][0]["numeric_answer"]["allow_unit_omission"] = False
+        with self.assertRaisesRegex(ScenarioFormatError, "must match every numeric"):
+            ProblemScenario.from_mapping(raw)
+
+        raw = json.loads(
+            (SCENARIOS_DIR / "physics" / "momentum_cart_comparison.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        raw["guided_steps"][0]["accepted_answers"] = ["6"]
+        raw["guided_steps"][0]["numeric_answer"]["unit"] = None
+        with self.assertRaisesRegex(ScenarioFormatError, "unit must be a non-empty string"):
+            ProblemScenario.from_mapping(raw)
+
+        raw = json.loads(
+            (SCENARIOS_DIR / "physics" / "momentum_cart_comparison.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        raw["guided_steps"][0]["numeric_answer"]["value"] = "6"
+        with self.assertRaisesRegex(ScenarioFormatError, "value must be a finite number"):
+            ProblemScenario.from_mapping(raw)
+
+        raw = json.loads(
+            (SCENARIOS_DIR / "physics" / "momentum_cart_comparison.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        raw["guided_steps"][0]["numeric_answer"]["accepted_symbols"] = [None]
+        with self.assertRaisesRegex(ScenarioFormatError, "must contain only strings"):
             ProblemScenario.from_mapping(raw)
 
     def test_repository_lookup_is_explicit_and_file_errors_name_the_file(self) -> None:

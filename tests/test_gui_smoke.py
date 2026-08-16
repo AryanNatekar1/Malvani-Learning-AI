@@ -331,6 +331,14 @@ class GuiSmokeTests(unittest.TestCase):
                 app.learning_screen.start_go_deeper()
                 app.update_idletasks()
                 self.assertTrue(bool(app.learning_screen.research_frame.grid_info()))
+                self.assertEqual(
+                    app.learning_screen.research_entries["hypothesis"].cget("state"),
+                    "normal",
+                )
+                self.assertEqual(
+                    app.learning_screen.research_entries["analysis"].cget("state"),
+                    "disabled",
+                )
                 app.geometry("800x600")
                 app.update_idletasks()
                 self.assertGreater(
@@ -350,6 +358,10 @@ class GuiSmokeTests(unittest.TestCase):
                 self.assertEqual(hypothesis_entry.cget("state"), "disabled")
                 self.assertIn(
                     "momentum increases.", hypothesis_entry.get("1.0", "end-1c")
+                )
+                self.assertEqual(
+                    app.learning_screen.research_entries["analysis"].cget("state"),
+                    "normal",
                 )
                 self.assertNotIn("If velocity increases", profile_path.read_text(encoding="utf-8"))
 

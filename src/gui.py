@@ -1055,7 +1055,7 @@ class LearningScreen(Screen):
             self.research_entries[stage] = entry
             submit_button = ttk.Button(
                 stage_frame,
-                text="Mark prompt complete",
+                text="Record writing check-in",
                 command=lambda item=stage: self.submit_research_stage(item),
             )
             submit_button.grid(row=1, column=1, sticky="ne", pady=(3, 0))
@@ -1274,8 +1274,9 @@ class LearningScreen(Screen):
             return
         self.research_intro.configure(
             text=(
-                "Use the supplied computer-model data in the cards above. Your writing stays "
-                "on this screen; the app records only completed prompt counts and cannot grade it."
+                "Use this guided beginner order: hypothesis, analysis, fair next test, then reflection. "
+                "Your writing stays on this screen; the app records only writing check-in counts "
+                "and cannot grade it."
             )
         )
         prompts = {
@@ -1292,26 +1293,37 @@ class LearningScreen(Screen):
         }
         for stage, prompt in prompts.items():
             completed = stage in view.completed_stages
-            suffix = " | Complete" if completed else ""
-            self.research_prompts[stage].configure(text=f"{labels[stage]}{suffix}\n{prompt}")
+            available = stage == view.next_stage
+            suffix = " | Check-in recorded" if completed else " | Ready" if available else " | Locked"
+            guided_note = ""
+            if not completed and not available and view.next_stage is not None:
+                guided_note = (
+                    f"\nGuided order: record {labels[view.next_stage].lower()} first."
+                )
+            self.research_prompts[stage].configure(
+                text=f"{labels[stage]}{suffix}\n{prompt}{guided_note}"
+            )
             self.research_entries[stage].configure(
-                state="disabled" if completed else "normal"
+                state="normal" if available else "disabled"
             )
             self.research_submit_buttons[stage].configure(
-                state="disabled" if completed else "normal",
-                text="Completed" if completed else "Mark prompt complete",
+                state="normal" if available else "disabled",
+                text=(
+                    "Check-in recorded"
+                    if completed
+                    else "Record writing check-in"
+                    if available
+                    else "Locked"
+                ),
             )
         self.research_frame.grid()
 
     def _focus_next_research_input(self) -> None:
         """Place the learner at the next incomplete research prompt, if one exists."""
         view = self.app.controller.research_view()
-        if view is None:
+        if view is None or view.next_stage is None:
             return
-        for stage in ("hypothesis", "analysis", "proposal", "reflection"):
-            if stage not in view.completed_stages:
-                self._focus_guided_input(self.research_entries[stage])
-                return
+        self._focus_guided_input(self.research_entries[view.next_stage])
 
     def submit_research_stage(self, stage: str) -> None:
         """Record only a completed research prompt, never the student text itself."""
@@ -1384,7 +1396,7 @@ class LearningScreen(Screen):
             entry.delete("1.0", "end")
             self.research_prompts[stage].configure(text="")
             self.research_submit_buttons[stage].configure(
-                state="normal", text="Mark prompt complete"
+                state="normal", text="Record writing check-in"
             )
         self.research_intro.configure(text="")
         self.research_feedback.configure(text="")

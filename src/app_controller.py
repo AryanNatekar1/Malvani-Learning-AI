@@ -61,6 +61,7 @@ RESEARCH_STAGE_LABELS = {
     "proposal": "Proposed next test",
     "reflection": "Reflection",
 }
+RESEARCH_STAGE_ORDER = ("hypothesis", "analysis", "proposal", "reflection")
 
 
 @dataclass(frozen=True)
@@ -123,6 +124,7 @@ class ResearchView:
     proposed_solution_prompt: str
     reflection_prompt: str
     completed_stages: frozenset[str]
+    next_stage: str | None
 
 
 class AppController:
@@ -853,7 +855,15 @@ class AppController:
             proposed_solution_prompt=activity.proposed_solution_prompt,
             reflection_prompt=activity.reflection_prompt,
             completed_stages=frozenset(self._research_completed_stages),
+            next_stage=self._next_research_stage(),
         )
+
+    def _next_research_stage(self) -> str | None:
+        """Keep this beginner investigation in an authored, transparent order."""
+        for stage in RESEARCH_STAGE_ORDER:
+            if stage not in self._research_completed_stages:
+                return stage
+        return None
 
     def submit_research_response(self, stage: str, response: str) -> TutorResponse:
         """Acknowledge a research prompt without storing or falsely grading free text."""
@@ -870,6 +880,29 @@ class AppController:
                 f"Go Deeper: {session.scenario.title}",
                 (LessonSection("RESEARCH CHECK-IN", "That research prompt is not available."),),
             )
+        if normalized_stage in self._research_completed_stages:
+            message = (
+                f"Your {RESEARCH_STAGE_LABELS[normalized_stage].lower()} writing check-in was "
+                "already recorded in this session. The app does not save or semantically grade "
+                "the text you wrote. Compare it with the supplied model data and its limits."
+            )
+            return self._scenario_response(
+                f"Go Deeper: {session.scenario.title}",
+                (LessonSection("RESEARCH CHECK-IN", message),),
+            )
+
+        next_stage = self._next_research_stage()
+        if normalized_stage != next_stage:
+            next_label = RESEARCH_STAGE_LABELS[next_stage] if next_stage is not None else ""
+            message = (
+                f"This beginner investigation follows a guided order. Record your "
+                f"{next_label.lower()} writing check-in before moving to "
+                f"{RESEARCH_STAGE_LABELS[normalized_stage].lower()}."
+            )
+            return self._scenario_response(
+                f"Go Deeper: {session.scenario.title}",
+                (LessonSection("RESEARCH CHECK-IN", message),),
+            )
         if not response.strip():
             return self._scenario_response(
                 f"Go Deeper: {session.scenario.title}",
@@ -877,26 +910,19 @@ class AppController:
                     LessonSection(
                         "RESEARCH CHECK-IN",
                         f"Write your {RESEARCH_STAGE_LABELS[normalized_stage].lower()} before "
-                        "marking this prompt complete.",
+                        "recording this writing check-in.",
                     ),
                 ),
             )
-        if normalized_stage in self._research_completed_stages:
-            message = (
-                f"Your {RESEARCH_STAGE_LABELS[normalized_stage].lower()} was already marked "
-                "complete in this session. The app does not save or semantically grade the text "
-                "you wrote. Compare it with the supplied model data and its limits."
-            )
-        else:
-            self._research_completed_stages.add(normalized_stage)
-            self.profile.record_research_stage()
-            self._record_event(f"research_{normalized_stage}_completed", self.current_topic)
-            self._save_profile()
-            message = (
-                f"{RESEARCH_STAGE_LABELS[normalized_stage]} marked complete for this session. "
-                "The app did not save your writing and cannot determine whether it is scientifically "
-                "correct. Check your ideas against the supplied model data, assumptions, and limits."
-            )
+        self._research_completed_stages.add(normalized_stage)
+        self.profile.record_research_stage()
+        self._record_event(f"research_{normalized_stage}_completed", self.current_topic)
+        self._save_profile()
+        message = (
+            f"{RESEARCH_STAGE_LABELS[normalized_stage]} writing check-in recorded for this session. "
+            "The app did not save your writing and cannot determine whether it is scientifically "
+            "correct. Check your ideas against the supplied model data, assumptions, and limits."
+        )
         return self._scenario_response(
             f"Go Deeper: {session.scenario.title}",
             (LessonSection("RESEARCH CHECK-IN", message),),

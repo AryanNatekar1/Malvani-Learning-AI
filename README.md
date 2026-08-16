@@ -77,7 +77,7 @@ ChatGPT clone and it does not require an API key.
   local measurements, or student data. Its model-step checks, progressive
   hints, worked-solution gate, and multi-line research-writing prompts are
   separate from the lesson challenge and quiz. The app stores aggregate
-  completion counts only, never the learner's model answers, hypothesis,
+  writing check-in counts only, never the learner's model answers, hypothesis,
   analysis, proposed test, or reflection.
 
 ## Run the application
@@ -197,9 +197,13 @@ solution. Go Deeper then provides labelled research-question, hypothesis,
 data, analysis, proposed-next-test, and reflection prompts. The four writing
 prompts use multi-line fields so a learner can develop an idea rather than fit
 it into a single line. Writing remains only in the current screen session; the
-app records a completed prompt count, not the text. It is a structured thinking
-activity, not a claim that the app understands or grades free-text scientific
-reasoning. Scenario content is currently `NEEDS_REVIEW`.
+app records a writing check-in count, not the text. The current activity uses
+a clearly labelled beginner sequence—hypothesis, analysis, fair next test,
+then reflection—rather than claiming that every real investigation is linear.
+Its two numerical momentum steps also accept only author-declared compact
+number/unit formats such as `6.0 kg m/s`; this is not free-text grading. It is
+a structured thinking activity, not a claim that the app understands or grades
+free-text scientific reasoning. Scenario content is currently `NEEDS_REVIEW`.
 
 ## Language support
 

@@ -36,6 +36,11 @@
 - Give Go Deeper's hypothesis, analysis, proposed-test, and reflection prompts
   multi-line local writing areas, while retaining the no-free-text-storage and
   no-semantic-grading boundaries.
+- Guide the first Go Deeper activity through a transparent beginner sequence
+  (hypothesis, analysis, fair next test, reflection), with later stages locked
+  until the preceding local check-in is recorded. Add an explicitly
+  schema-scoped numeric/unit matcher for the two authored momentum calculation
+  steps; do not broaden it into a free-text grader.
 
 ## Next: content quality and community review
 

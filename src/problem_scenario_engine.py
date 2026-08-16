@@ -15,6 +15,7 @@ as field data.
 from __future__ import annotations
 
 import json
+import math
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -90,6 +91,143 @@ def _normalize_answer(answer: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", answer.lower())).strip()
 
 
+def _normalize_unit(unit: str) -> str | None:
+    """Canonicalize only explicit multiplication/division unit notation.
+
+    Spaces, ``*``, and ``×`` can express multiplication. Their position still
+    matters: changing a division into a multiplication is not a harmless
+    formatting variation.
+    """
+    if not isinstance(unit, str):
+        return None
+    text = unit.strip().lower().replace("×", "*")
+    if not text or re.search(r"[^a-z0-9\s*/]", text):
+        return None
+    tokens = re.findall(r"[a-z]+(?:\d+)?|[*/]", text)
+    if not tokens or "".join(tokens) != re.sub(r"\s+", "", text):
+        return None
+
+    normalized: list[str] = []
+    for token in tokens:
+        if token in {"*", "/"}:
+            if not normalized or normalized[-1] in {"*", "/"}:
+                return None
+            normalized.append(token)
+        else:
+            if normalized and normalized[-1] not in {"*", "/"}:
+                normalized.append("*")
+            normalized.append(token)
+    if normalized[-1] in {"*", "/"}:
+        return None
+    return "".join(normalized)
+
+
+_NUMERIC_RESPONSE_PATTERN = re.compile(
+    r"^\s*(?:(?P<symbol>[A-Za-z][A-Za-z0-9 ]*)\s*=\s*)?"
+    r"(?P<value>[+-]?(?:\d+(?:\.\d*)?|\.\d+))"
+    r"(?:\s*(?P<unit>[A-Za-z][A-Za-z0-9\s*/×]*))?\s*$"
+)
+_NUMERIC_RESPONSE_START_PATTERN = re.compile(
+    r"^\s*(?:(?:[A-Za-z][A-Za-z0-9 ]*)\s*=\s*)?[+-]?(?:\d|\.\d)"
+)
+
+
+def _looks_like_numeric_response(answer: str) -> bool:
+    """Recognize numeric-shaped input so legacy punctuation matching cannot bypass a rule."""
+    return isinstance(answer, str) and _NUMERIC_RESPONSE_START_PATTERN.match(answer) is not None
+
+
+@dataclass(frozen=True)
+class NumericAnswerRule:
+    """One explicitly authored numeric answer rule for a scenario calculation.
+
+    This deliberately parses a complete, compact numerical response only. It
+    does not extract a number from a sentence, infer a unit, or assess a
+    learner's scientific reasoning.
+    """
+
+    value: float
+    unit: str
+    allow_unit_omission: bool
+    accepted_symbols: tuple[str, ...]
+
+    @classmethod
+    def from_mapping(cls, value: Mapping[str, Any]) -> "NumericAnswerRule":
+        """Read a finite value and an author-declared unit without coercion."""
+        if not isinstance(value, Mapping):
+            raise ScenarioFormatError("numeric_answer must be a JSON object.")
+        raw_number = value.get("value")
+        if isinstance(raw_number, bool) or not isinstance(raw_number, (int, float)):
+            raise ScenarioFormatError("numeric_answer.value must be a finite number.")
+        number = float(raw_number)
+        if not math.isfinite(number):
+            raise ScenarioFormatError("numeric_answer.value must be a finite number.")
+
+        raw_unit = value.get("unit")
+        if not isinstance(raw_unit, str) or not raw_unit.strip():
+            raise ScenarioFormatError("numeric_answer.unit must be a non-empty string.")
+        unit = raw_unit.strip()
+        if _normalize_unit(unit) is None:
+            raise ScenarioFormatError("numeric_answer.unit must contain letters or numbers.")
+        if not isinstance(value.get("allow_unit_omission"), bool):
+            raise ScenarioFormatError(
+                "numeric_answer.allow_unit_omission must be true or false."
+            )
+
+        raw_symbols = value.get("accepted_symbols", [])
+        if not isinstance(raw_symbols, list):
+            raise ScenarioFormatError("numeric_answer.accepted_symbols must be a list.")
+        if not all(isinstance(symbol, str) for symbol in raw_symbols):
+            raise ScenarioFormatError(
+                "numeric_answer.accepted_symbols must contain only strings."
+            )
+        symbols = tuple(symbol.strip().lower() for symbol in raw_symbols)
+        if any(not symbol or not re.fullmatch(r"[a-z][a-z0-9 ]*", symbol) for symbol in symbols):
+            raise ScenarioFormatError(
+                "numeric_answer.accepted_symbols must contain simple non-empty labels."
+            )
+        if len(set(symbols)) != len(symbols):
+            raise ScenarioFormatError("numeric_answer.accepted_symbols must not repeat labels.")
+
+        return cls(
+            value=number,
+            unit=unit,
+            allow_unit_omission=value["allow_unit_omission"],
+            accepted_symbols=symbols,
+        )
+
+    def matches(self, answer: str) -> bool:
+        """Check a full numerical response against this one declared rule."""
+        if not isinstance(answer, str):
+            return False
+        match = _NUMERIC_RESPONSE_PATTERN.fullmatch(answer)
+        if match is None:
+            return False
+        try:
+            submitted_value = float(match.group("value"))
+        except (TypeError, ValueError):
+            return False
+        if not math.isfinite(submitted_value) or not math.isclose(
+            submitted_value,
+            self.value,
+            rel_tol=1e-9,
+            abs_tol=1e-9,
+        ):
+            return False
+
+        symbol = match.group("symbol")
+        if symbol is not None and symbol.strip().lower() not in self.accepted_symbols:
+            return False
+        submitted_unit = match.group("unit")
+        if submitted_unit is None:
+            return self.allow_unit_omission
+        normalized_submitted_unit = _normalize_unit(submitted_unit)
+        return (
+            normalized_submitted_unit is not None
+            and normalized_submitted_unit == _normalize_unit(self.unit)
+        )
+
+
 @dataclass(frozen=True)
 class SourceReference:
     """A source for the scientific concept, not the source of model values."""
@@ -161,6 +299,7 @@ class ScenarioStep:
     prompt: str
     accepted_answers: tuple[str, ...]
     success_feedback: str
+    numeric_answer: NumericAnswerRule | None = None
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, Any]) -> "ScenarioStep":
@@ -170,11 +309,36 @@ class ScenarioStep:
         normalized_answers = tuple(_normalize_answer(answer) for answer in answers)
         if len(set(normalized_answers)) != len(normalized_answers):
             raise ScenarioFormatError("A guided step cannot repeat equivalent accepted answers.")
+        numeric_answer = None
+        if "numeric_answer" in value:
+            numeric_answer = NumericAnswerRule.from_mapping(value["numeric_answer"])
+            numeric_answers = tuple(
+                answer for answer in answers if _looks_like_numeric_response(answer)
+            )
+            if not numeric_answers or any(
+                not numeric_answer.matches(answer) for answer in numeric_answers
+            ):
+                raise ScenarioFormatError(
+                    "numeric_answer must match every numeric accepted answer."
+                )
         return cls(
             identifier=_required_text(value, "id"),
             prompt=_required_text(value, "prompt"),
             accepted_answers=answers,
             success_feedback=_required_text(value, "success_feedback"),
+            numeric_answer=numeric_answer,
+        )
+
+    def matches_answer(self, answer: str) -> bool:
+        """Use exact authored answers, plus an explicitly declared numeric rule."""
+        if not isinstance(answer, str):
+            return False
+        if self.numeric_answer is not None and _looks_like_numeric_response(answer):
+            return self.numeric_answer.matches(answer)
+        normalized_answer = _normalize_answer(answer)
+        accepted = {_normalize_answer(expected) for expected in self.accepted_answers}
+        return normalized_answer in accepted or bool(
+            self.numeric_answer is not None and self.numeric_answer.matches(answer)
         )
 
 
@@ -433,8 +597,7 @@ class ProblemScenarioSession:
             )
 
         self.attempts += 1
-        accepted = {_normalize_answer(expected) for expected in step.accepted_answers}
-        if normalized_answer in accepted:
+        if step.matches_answer(answer):
             self.current_step_index += 1
             if self.is_complete:
                 return ScenarioAttemptFeedback(

@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.8 local learning application prototype**
+Current Version: **V2.9 local learning application prototype**
 
 ## Working now
 
@@ -50,10 +50,17 @@ Current Version: **V2.8 local learning application prototype**
   immediately instead of searching below the fold.
 - Go Deeper now gives each hypothesis, analysis, proposed-test, and reflection
   prompt a multi-line writing area. The text is available only while that
-  screen is open; marking a prompt complete saves only an aggregate count.
+  screen is open; recording a writing check-in saves only an aggregate count.
+- The Momentum investigation now guides beginner writing in order—hypothesis,
+  analysis, fair next test, then reflection—without claiming that writing is
+  correct or that all real investigations must be linear. Later stages remain
+  visibly locked until the preceding check-in is recorded.
+- Its two calculation steps use an author-declared numeric/unit rule, so safe
+  forms such as `6.0`, `p = 6 kg m/s`, and `6 kg*m/s` work while wrong values,
+  wrong units, and arbitrary prose stay unsupported.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
-- 102 automated tests, including GUI flow, compact-layout reachability,
+- 104 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests.
 
 ## Not yet claimed as complete

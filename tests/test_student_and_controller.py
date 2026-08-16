@@ -289,6 +289,76 @@ class StudentAndControllerTests(unittest.TestCase):
             self.assertTrue(rows)
             self.assertTrue(all(len(row) == 3 for row in rows))
 
+    def test_research_check_ins_follow_the_guided_order_without_saving_writing(self) -> None:
+        """A later prompt cannot claim progress before the preceding thinking step."""
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            database_path = Path(temporary_directory) / "learning.db"
+            store = SQLiteProfileStore(database_path)
+            controller = AppController(profile_store=store)
+            controller.answer_question("Explain momentum")
+            controller.start_problem_solver()
+            for answer in ("6.0", "p = 6 kg m/s", "equal"):
+                feedback = controller.submit_problem_solver_attempt(answer)
+                assert feedback is not None
+                self.assertTrue(feedback.correct)
+            controller.start_go_deeper()
+
+            view = controller.research_view()
+            assert view is not None
+            self.assertEqual(view.next_stage, "hypothesis")
+            private_out_of_order_text = "my private reflection must not be saved"
+            blocked = controller.submit_research_response("reflection", private_out_of_order_text)
+            self.assertIn("guided order", blocked.text)
+            self.assertEqual(controller.profile.research_stages_completed, 0)
+            self.assertEqual(store.event_count("research_reflection_completed"), 0)
+            self.assertNotIn(private_out_of_order_text.encode("utf-8"), database_path.read_bytes())
+
+            recorded = controller.submit_research_response(
+                "hypothesis",
+                "If velocity rises while mass stays fixed, momentum rises.",
+            )
+            self.assertIn("writing check-in recorded", recorded.text)
+            self.assertEqual(controller.profile.research_stages_completed, 1)
+            self.assertEqual(store.event_count("research_hypothesis_completed"), 1)
+            next_view = controller.research_view()
+            assert next_view is not None
+            self.assertEqual(next_view.next_stage, "analysis")
+
+            later_check_ins = (
+                (
+                    "analysis",
+                    "Mass stayed fixed, velocity changed, and model momentum increased.",
+                    "proposal",
+                ),
+                (
+                    "proposal",
+                    "Keep mass fixed, change velocity, and record model momentum.",
+                    "reflection",
+                ),
+                (
+                    "reflection",
+                    "A real moving object would need real measurements and assumptions.",
+                    None,
+                ),
+            )
+            for stage, writing, expected_next_stage in later_check_ins:
+                response = controller.submit_research_response(stage, writing)
+                self.assertIn("writing check-in recorded", response.text)
+                view = controller.research_view()
+                assert view is not None
+                self.assertEqual(view.next_stage, expected_next_stage)
+                self.assertNotIn(writing.encode("utf-8"), database_path.read_bytes())
+
+            self.assertEqual(controller.profile.research_stages_completed, 4)
+            self.assertEqual(store.event_count("research_reflection_completed"), 1)
+            duplicate = controller.submit_research_response(
+                "reflection",
+                "A replacement reflection must not be saved.",
+            )
+            self.assertIn("already recorded", duplicate.text)
+            self.assertEqual(controller.profile.research_stages_completed, 4)
+            self.assertEqual(store.event_count("research_reflection_completed"), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
