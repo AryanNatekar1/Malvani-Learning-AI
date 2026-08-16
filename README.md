@@ -75,9 +75,10 @@ ChatGPT clone and it does not require an API key.
 - A first **Problem Solver → Go Deeper** path for Momentum. It uses a sourced,
   supplied two-cart computer model with labelled illustrative values—not GPS,
   local measurements, or student data. Its model-step checks, progressive
-  hints, worked-solution gate, and research prompts are separate from the
-  lesson challenge and quiz. The app stores aggregate completion counts only,
-  never the learner's model answers, hypothesis, analysis, or reflection.
+  hints, worked-solution gate, and multi-line research-writing prompts are
+  separate from the lesson challenge and quiz. The app stores aggregate
+  completion counts only, never the learner's model answers, hypothesis,
+  analysis, proposed test, or reflection.
 
 ## Run the application
 
@@ -193,9 +194,12 @@ activity.
 Students work one transparent model step at a time, can request progressive
 hints, and must make an attempt or request two hints before viewing a worked
 solution. Go Deeper then provides labelled research-question, hypothesis,
-data, analysis, proposed-next-test, and reflection prompts. It is a structured
-thinking activity, not a claim that the app understands or grades free-text
-scientific reasoning. Scenario content is currently `NEEDS_REVIEW`.
+data, analysis, proposed-next-test, and reflection prompts. The four writing
+prompts use multi-line fields so a learner can develop an idea rather than fit
+it into a single line. Writing remains only in the current screen session; the
+app records a completed prompt count, not the text. It is a structured thinking
+activity, not a claim that the app understands or grades free-text scientific
+reasoning. Scenario content is currently `NEEDS_REVIEW`.
 
 ## Language support
 

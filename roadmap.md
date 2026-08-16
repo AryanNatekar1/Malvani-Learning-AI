@@ -33,6 +33,9 @@
   non-semantic research prompts while storing aggregate progress only.
 - Make guided desktop actions usable on compact screens: opening Problem Solver
   or Go Deeper scrolls the next input into view and gives it keyboard focus.
+- Give Go Deeper's hypothesis, analysis, proposed-test, and reflection prompts
+  multi-line local writing areas, while retaining the no-free-text-storage and
+  no-semantic-grading boundaries.
 
 ## Next: content quality and community review
 

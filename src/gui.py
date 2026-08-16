@@ -824,12 +824,6 @@ class LearningScreen(Screen):
         self.reasoning = tk.StringVar()
         self.challenge_answer = tk.StringVar()
         self.problem_solver_answer = tk.StringVar()
-        self.research_answers = {
-            "hypothesis": tk.StringVar(),
-            "analysis": tk.StringVar(),
-            "proposal": tk.StringVar(),
-            "reflection": tk.StringVar(),
-        }
         self.status = tk.StringVar(value="Offline local mode")
         self._trail_topic: str | None = None
         self._last_learning_state_version = app.controller.learning_state_version
@@ -1020,7 +1014,7 @@ class LearningScreen(Screen):
         )
         self.research_intro.grid(row=0, column=0, sticky="w", pady=(0, 5))
         self.research_prompts: dict[str, ttk.Label] = {}
-        self.research_entries: dict[str, ttk.Entry] = {}
+        self.research_entries: dict[str, tk.Text] = {}
         self.research_submit_buttons: dict[str, ttk.Button] = {}
         research_stages = (
             ("hypothesis", "Hypothesis"),
@@ -1040,7 +1034,21 @@ class LearningScreen(Screen):
             )
             prompt_label.grid(row=0, column=0, columnspan=2, sticky="w")
             self.research_prompts[stage] = prompt_label
-            entry = ttk.Entry(stage_frame, textvariable=self.research_answers[stage])
+            entry = tk.Text(
+                stage_frame,
+                height=3,
+                wrap="word",
+                background=PALETTE["surface"],
+                foreground=PALETTE["text"],
+                insertbackground=PALETTE["text"],
+                highlightthickness=1,
+                highlightbackground=PALETTE["border"],
+                highlightcolor=PALETTE["primary"],
+                relief="solid",
+                bd=0,
+                padx=8,
+                pady=6,
+            )
             entry.grid(
                 row=1, column=0, sticky="ew", padx=(0, 8), pady=(3, 0)
             )
@@ -1050,7 +1058,7 @@ class LearningScreen(Screen):
                 text="Mark prompt complete",
                 command=lambda item=stage: self.submit_research_stage(item),
             )
-            submit_button.grid(row=1, column=1, pady=(3, 0))
+            submit_button.grid(row=1, column=1, sticky="ne", pady=(3, 0))
             self.research_submit_buttons[stage] = submit_button
         self.research_feedback = ttk.Label(
             self.research_frame,
@@ -1286,6 +1294,9 @@ class LearningScreen(Screen):
             completed = stage in view.completed_stages
             suffix = " | Complete" if completed else ""
             self.research_prompts[stage].configure(text=f"{labels[stage]}{suffix}\n{prompt}")
+            self.research_entries[stage].configure(
+                state="disabled" if completed else "normal"
+            )
             self.research_submit_buttons[stage].configure(
                 state="disabled" if completed else "normal",
                 text="Completed" if completed else "Mark prompt complete",
@@ -1304,14 +1315,14 @@ class LearningScreen(Screen):
 
     def submit_research_stage(self, stage: str) -> None:
         """Record only a completed research prompt, never the student text itself."""
+        entry = self.research_entries[stage]
         response = self.app.controller.submit_research_response(
             stage,
-            self.research_answers[stage].get(),
+            entry.get("1.0", "end-1c"),
         )
         self.render_response(response, append=True)
         if response.sections:
             self.research_feedback.configure(text=response.sections[-1].body)
-        self.research_answers[stage].set("")
         self._refresh_research_view()
         self._focus_next_research_input()
 
@@ -1368,8 +1379,9 @@ class LearningScreen(Screen):
         self.problem_solver_solution_button.configure(state="normal")
         self.go_deeper_button.configure(state="normal")
         self.problem_solver_frame.grid_remove()
-        for stage, answer in self.research_answers.items():
-            answer.set("")
+        for stage, entry in self.research_entries.items():
+            entry.configure(state="normal")
+            entry.delete("1.0", "end")
             self.research_prompts[stage].configure(text="")
             self.research_submit_buttons[stage].configure(
                 state="normal", text="Mark prompt complete"

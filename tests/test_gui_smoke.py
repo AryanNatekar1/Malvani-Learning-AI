@@ -340,10 +340,17 @@ class GuiSmokeTests(unittest.TestCase):
                 app.learning_viewport.canvas.yview_moveto(1.0)
                 app.update_idletasks()
                 self.assertAlmostEqual(app.learning_viewport.canvas.yview()[1], 1.0, places=2)
-                app.learning_screen.research_answers["hypothesis"].set(
-                    "If velocity increases while mass stays fixed, momentum increases."
+                hypothesis_entry = app.learning_screen.research_entries["hypothesis"]
+                self.assertIsInstance(hypothesis_entry, tk.Text)
+                hypothesis_entry.insert(
+                    "1.0",
+                    "If velocity increases while mass stays fixed,\nmomentum increases.",
                 )
                 app.learning_screen.submit_research_stage("hypothesis")
+                self.assertEqual(hypothesis_entry.cget("state"), "disabled")
+                self.assertIn(
+                    "momentum increases.", hypothesis_entry.get("1.0", "end-1c")
+                )
                 self.assertNotIn("If velocity increases", profile_path.read_text(encoding="utf-8"))
 
                 app.learning_screen.question.set("Explain force")

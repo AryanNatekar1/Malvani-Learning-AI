@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.7 local learning application prototype**
+Current Version: **V2.8 local learning application prototype**
 
 ## Working now
 
@@ -48,6 +48,9 @@ Current Version: **V2.7 local learning application prototype**
 - Opening Problem Solver or Go Deeper on a compact screen scrolls its next
   answer field into view and gives it keyboard focus, so the learner can act
   immediately instead of searching below the fold.
+- Go Deeper now gives each hypothesis, analysis, proposed-test, and reflection
+  prompt a multi-line writing area. The text is available only while that
+  screen is open; marking a prompt complete saves only an aggregate count.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
 - 102 automated tests, including GUI flow, compact-layout reachability,
