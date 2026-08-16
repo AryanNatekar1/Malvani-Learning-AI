@@ -46,6 +46,10 @@
 - Place research check-in feedback beside the relevant writing field and keep
   it visible on compact screens, rather than putting a validation message at
   the bottom of the whole research form.
+- Add a scenario-bound, prediction-first Momentum cart visual. It consumes a
+  typed `visual_model` from reviewed scenario JSON, unlocks only after its
+  authored calculation placement, provides a text alternative, and keeps its
+  local prediction outside progress storage.
 
 ## Next: content quality and community review
 

@@ -8,19 +8,29 @@ from pathlib import Path
 SRC_DIR = Path(__file__).resolve().parent.parent / "src"
 sys.path.insert(0, str(SRC_DIR))
 
+from problem_scenario_engine import load_problem_scenarios
 from visual_learning import (
     PREDICTION_GREATER,
     PREDICTION_SAME,
     PREDICTION_SMALLER,
     compare_momentum_size,
+    compare_momentum_cart_sizes,
+    evaluate_momentum_cart_comparison_prediction,
     evaluate_momentum_prediction,
     make_momentum_state,
+    momentum_cart_comparison_description,
     momentum_description,
     momentum_prediction_pending_description,
 )
 
 
 class MomentumVisualLearningTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls) -> None:
+        scenario = load_problem_scenarios()[0]
+        assert scenario.visual_model is not None
+        cls.cart_visual = scenario.visual_model
+
     def test_momentum_uses_the_stored_relationship_between_mass_and_velocity(self) -> None:
         state = make_momentum_state(2, 5)
         self.assertEqual(state.momentum, 10)
@@ -87,6 +97,37 @@ class MomentumVisualLearningTests(unittest.TestCase):
         pending = momentum_prediction_pending_description(reference, candidate)
         self.assertIn("Prediction pending", pending)
         self.assertNotIn("12 kg m/s", pending)
+
+    def test_fixed_cart_visual_hides_calculation_until_a_prediction_is_tested(self) -> None:
+        """A scenario visual must not give away the two calculation answers early."""
+        pending = momentum_cart_comparison_description(self.cart_visual, revealed=False)
+
+        self.assertIn("Cart A has mass 2 kg", pending)
+        self.assertIn("Cart B has mass 3 kg", pending)
+        self.assertIn("3 m/s", pending)
+        self.assertIn("2 m/s", pending)
+        self.assertIn("hidden", pending.lower())
+        self.assertNotIn("6 kg m/s", pending)
+        self.assertEqual(compare_momentum_cart_sizes(self.cart_visual), PREDICTION_SAME)
+
+        result = evaluate_momentum_cart_comparison_prediction("same", self.cart_visual)
+        self.assertTrue(result.supported)
+        self.assertEqual(result.actual, PREDICTION_SAME)
+        self.assertIn("6 kg m/s right", result.message)
+
+        revealed = momentum_cart_comparison_description(self.cart_visual, revealed=True)
+        self.assertIn("Revealed result", revealed)
+        self.assertIn("6 kg m/s", revealed)
+        self.assertIn("both move right", revealed)
+
+    def test_fixed_cart_visual_prediction_rejects_unknown_values(self) -> None:
+        label_prediction = evaluate_momentum_cart_comparison_prediction(
+            "Cart A",
+            self.cart_visual,
+        )
+        self.assertFalse(label_prediction.supported)
+        with self.assertRaisesRegex(ValueError, "Cart A, Cart B"):
+            evaluate_momentum_cart_comparison_prediction("maybe", self.cart_visual)
 
 
 if __name__ == "__main__":

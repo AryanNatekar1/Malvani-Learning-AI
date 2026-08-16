@@ -41,6 +41,9 @@ STUDENT_VISIBLE_STATUSES = {VERIFIED, NEEDS_REVIEW}
 COMPUTER_MODEL = "COMPUTER_MODEL"
 SCENARIO_TYPES = {COMPUTER_MODEL}
 
+MOMENTUM_CART_COMPARISON = "MOMENTUM_CART_COMPARISON"
+SCENARIO_VISUAL_KINDS = {MOMENTUM_CART_COMPARISON}
+
 ILLUSTRATIVE_COMPUTER_MODEL = "ILLUSTRATIVE_COMPUTER_MODEL"
 DATA_PROVENANCE_KINDS = {ILLUSTRATIVE_COMPUTER_MODEL}
 
@@ -57,6 +60,14 @@ def _required_text(value: Mapping[str, Any], field_name: str) -> str:
     if not text:
         raise ScenarioFormatError(f"Scenario field '{field_name}' must not be empty.")
     return text
+
+
+def _required_string(value: Mapping[str, Any], field_name: str) -> str:
+    """Read a non-empty JSON string without silently turning null into text."""
+    raw_value = value.get(field_name)
+    if not isinstance(raw_value, str) or not raw_value.strip():
+        raise ScenarioFormatError(f"Scenario field '{field_name}' must be a non-empty string.")
+    return raw_value.strip()
 
 
 def _optional_text(value: Mapping[str, Any], field_name: str) -> str | None:
@@ -292,6 +303,121 @@ class DataProvenance:
 
 
 @dataclass(frozen=True)
+class MomentumCartVisualInput:
+    """One typed cart input for a static, authored Momentum comparison visual."""
+
+    identifier: str
+    label: str
+    mass_kg: float
+    velocity_m_per_s: float
+
+    @classmethod
+    def from_mapping(cls, value: Mapping[str, Any]) -> "MomentumCartVisualInput":
+        """Read finite model values without accepting strings or local measurements."""
+        if not isinstance(value, Mapping):
+            raise ScenarioFormatError("Each visual cart must be a JSON object.")
+        raw_mass = value.get("mass_kg")
+        raw_velocity = value.get("velocity_m_per_s")
+        if isinstance(raw_mass, bool) or not isinstance(raw_mass, (int, float)):
+            raise ScenarioFormatError("visual_model cart mass_kg must be a finite number.")
+        if isinstance(raw_velocity, bool) or not isinstance(raw_velocity, (int, float)):
+            raise ScenarioFormatError(
+                "visual_model cart velocity_m_per_s must be a finite number."
+            )
+        mass = float(raw_mass)
+        velocity = float(raw_velocity)
+        if not math.isfinite(mass) or mass <= 0:
+            raise ScenarioFormatError(
+                "visual_model cart mass_kg must be a finite number greater than zero."
+            )
+        if not math.isfinite(velocity):
+            raise ScenarioFormatError(
+                "visual_model cart velocity_m_per_s must be a finite number."
+            )
+        if not math.isfinite(mass * velocity):
+            raise ScenarioFormatError(
+                "visual_model cart momentum must be finite for this computer model."
+            )
+        return cls(
+            identifier=_required_string(value, "id"),
+            label=_required_string(value, "label"),
+            mass_kg=mass,
+            velocity_m_per_s=velocity,
+        )
+
+    @property
+    def momentum(self) -> float:
+        """Calculate the model's momentum rather than storing a duplicate answer."""
+        return self.mass_kg * self.velocity_m_per_s
+
+    @property
+    def direction(self) -> str:
+        """Return the direction displayed by the authored velocity sign."""
+        if self.velocity_m_per_s > 0:
+            return "right"
+        if self.velocity_m_per_s < 0:
+            return "left"
+        return "at rest"
+
+
+@dataclass(frozen=True)
+class MomentumCartComparisonVisual:
+    """A narrow visual model for two carts moving in the same direction."""
+
+    kind: str
+    prediction_prompt: str
+    carts: tuple[MomentumCartVisualInput, MomentumCartVisualInput]
+    available_after_step_id: str
+
+    @classmethod
+    def from_mapping(
+        cls,
+        value: Mapping[str, Any],
+        scenario_type: str,
+        topic: str,
+        guided_step_ids: tuple[str, ...],
+    ) -> "MomentumCartComparisonVisual":
+        """Validate a visual only where this small offline schema can support it."""
+        if not isinstance(value, Mapping):
+            raise ScenarioFormatError("visual_model must be a JSON object.")
+        kind = _required_string(value, "kind")
+        if kind not in SCENARIO_VISUAL_KINDS:
+            raise ScenarioFormatError(f"Unsupported visual_model kind: {kind}")
+        if scenario_type != COMPUTER_MODEL or topic != "momentum":
+            raise ScenarioFormatError(
+                "MOMENTUM_CART_COMPARISON is available only for a Momentum COMPUTER_MODEL scenario."
+            )
+        raw_carts = value.get("carts")
+        if not isinstance(raw_carts, list) or len(raw_carts) != 2:
+            raise ScenarioFormatError("MOMENTUM_CART_COMPARISON must contain exactly two carts.")
+        carts = tuple(MomentumCartVisualInput.from_mapping(cart) for cart in raw_carts)
+        cart_ids = tuple(_normalize_identifier(cart.identifier) for cart in carts)
+        cart_labels = tuple(cart.label.casefold() for cart in carts)
+        if len(set(cart_ids)) != len(cart_ids):
+            raise ScenarioFormatError("visual_model cart ids must be unique.")
+        if len(set(cart_labels)) != len(cart_labels):
+            raise ScenarioFormatError("visual_model cart labels must be unique.")
+        directions = {cart.direction for cart in carts}
+        if len(directions) != 1 or "at rest" in directions:
+            raise ScenarioFormatError(
+                "MOMENTUM_CART_COMPARISON requires two carts moving in the same non-zero direction."
+            )
+        available_after_step_id = _required_string(value, "available_after_step_id")
+        normalized_available_step_id = _normalize_identifier(available_after_step_id)
+        normalized_step_ids = {_normalize_identifier(step_id) for step_id in guided_step_ids}
+        if normalized_available_step_id not in normalized_step_ids:
+            raise ScenarioFormatError(
+                "visual_model.available_after_step_id must name an installed guided step."
+            )
+        return cls(
+            kind=kind,
+            prediction_prompt=_required_string(value, "prediction_prompt"),
+            carts=(carts[0], carts[1]),
+            available_after_step_id=available_after_step_id,
+        )
+
+
+@dataclass(frozen=True)
 class ScenarioStep:
     """One transparent calculation or comparison in a guided scenario."""
 
@@ -414,6 +540,7 @@ class ProblemScenario:
     progressive_hints: tuple[str, ...]
     worked_solution: str
     go_deeper: GoDeeperActivity
+    visual_model: MomentumCartComparisonVisual | None = None
 
     @classmethod
     def from_mapping(cls, value: Mapping[str, Any]) -> "ProblemScenario":
@@ -439,18 +566,27 @@ class ProblemScenario:
         if len(set(normalized_step_ids)) != len(normalized_step_ids):
             raise ScenarioFormatError("guided step identifiers must be unique.")
 
+        topic = _required_text(value, "topic").lower()
         content_source = SourceReference.from_mapping(value.get("content_source", {}))
         data_provenance = DataProvenance.from_mapping(value.get("data_provenance", {}))
         if scenario_type == COMPUTER_MODEL and data_provenance.kind != ILLUSTRATIVE_COMPUTER_MODEL:
             raise ScenarioFormatError(
                 "A COMPUTER_MODEL scenario needs ILLUSTRATIVE_COMPUTER_MODEL provenance."
             )
+        visual_model = None
+        if "visual_model" in value:
+            visual_model = MomentumCartComparisonVisual.from_mapping(
+                value["visual_model"],
+                scenario_type,
+                topic,
+                tuple(step.identifier for step in steps),
+            )
 
         return cls(
             identifier=_required_text(value, "id"),
             title=_required_text(value, "title"),
             subject=_required_text(value, "subject"),
-            topic=_required_text(value, "topic").lower(),
+            topic=topic,
             scenario_type=scenario_type,
             verification_status=verification_status,
             content_source=content_source,
@@ -461,6 +597,7 @@ class ProblemScenario:
             progressive_hints=_text_list(value, "progressive_hints"),
             worked_solution=_required_text(value, "worked_solution"),
             go_deeper=GoDeeperActivity.from_mapping(value.get("go_deeper", {})),
+            visual_model=visual_model,
         )
 
     @property
@@ -567,6 +704,19 @@ class ProblemScenarioSession:
     def is_complete(self) -> bool:
         """Whether the learner has completed all authored guided steps."""
         return self.current_step is None
+
+    def has_completed_step(self, step_id: str) -> bool:
+        """Return whether one explicitly authored step has been completed.
+
+        Scenario visuals use this narrow helper for their placement in the
+        learning sequence.  It deliberately does not inspect answer text or
+        infer progress from a hint or a prose field.
+        """
+        normalized_step_id = _normalize_identifier(step_id)
+        return any(
+            _normalize_identifier(step.identifier) == normalized_step_id
+            for step in self.scenario.guided_steps[: self.current_step_index]
+        )
 
     def current_step_section(self) -> ScenarioSection | None:
         """Provide a UI-ready current-step prompt without exposing the solution."""

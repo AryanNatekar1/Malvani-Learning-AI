@@ -89,6 +89,38 @@ declared rule. It does not pull a number from arbitrary prose, infer a unit,
 or evaluate reasoning. Keep a qualitative comparison on `accepted_answers`
 unless a separate reviewable rule is genuinely needed.
 
+## Optional scenario visual model
+
+Use `visual_model` only when a fixed visual materially supports an authored
+step. It is optional so a scenario is never forced to include a decorative
+graphic. The first supported kind is a two-cart Momentum comparison:
+
+```json
+"visual_model": {
+  "kind": "MOMENTUM_CART_COMPARISON",
+  "prediction_prompt": "Which cart has greater momentum size?",
+  "available_after_step_id": "cart-b-momentum",
+  "carts": [
+    {"id": "cart-a", "label": "Cart A", "mass_kg": 2, "velocity_m_per_s": 3},
+    {"id": "cart-b", "label": "Cart B", "mass_kg": 3, "velocity_m_per_s": 2}
+  ]
+}
+```
+
+This model is accepted only for a `COMPUTER_MODEL` Momentum scenario. It
+requires exactly two named carts, finite positive numeric masses, finite
+numeric velocities, and the same non-zero direction. It also needs an
+`available_after_step_id` that exactly names an installed guided step; this
+keeps the visual's reveal placement reviewable instead of guessing from prose.
+The engine rejects strings, booleans, non-finite values, duplicate cart names,
+and values whose calculated momentum would overflow.
+
+The visual may show authored inputs before a prediction, but it must not expose
+derived momentum values or the comparison until its local prediction gate is
+used. Do not use it for collision claims, road-safety advice, local
+measurements, GPS data, or student data. A prediction stays in the open desktop
+window only; it is not a Problem Solver attempt, event, or profile field.
+
 ## Review status
 
 Use `NEEDS_REVIEW` for drafts. The renderer displays that status rather than

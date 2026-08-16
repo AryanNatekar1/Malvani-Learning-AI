@@ -13,7 +13,9 @@ from dataclasses import dataclass
 import math
 import tkinter as tk
 from tkinter import ttk
+from typing import Callable
 
+from problem_scenario_engine import MomentumCartComparisonVisual
 from ui_theme import PALETTE
 
 
@@ -56,6 +58,16 @@ class MomentumPredictionResult:
     prediction: str
     actual: str
     correct: bool
+    message: str
+
+
+@dataclass(frozen=True)
+class MomentumCartComparisonPredictionResult:
+    """A local prediction check for one fixed, authored two-cart model."""
+
+    prediction: str
+    actual: str
+    supported: bool
     message: str
 
 
@@ -164,6 +176,381 @@ def momentum_prediction_pending_description(
         f"The new cart has mass {candidate_mass} kg and moves {candidate.direction} at "
         f"{candidate_speed} m/s. Choose greater, smaller, or same before revealing its momentum."
     )
+
+
+def compare_momentum_cart_sizes(visual_model: MomentumCartComparisonVisual) -> str:
+    """Return which named cart has the greater *momentum size*, or ``same``.
+
+    The scenario schema permits this visual only when both carts move in the
+    same non-zero direction.  That makes the later student-facing result safe
+    to describe as both the same size and the same direction for this narrow
+    computer model.
+    """
+    first, second = visual_model.carts
+    first_size = abs(first.momentum)
+    second_size = abs(second.momentum)
+    if math.isclose(first_size, second_size, rel_tol=1e-9, abs_tol=1e-9):
+        return PREDICTION_SAME
+    return first.identifier if first_size > second_size else second.identifier
+
+
+def evaluate_momentum_cart_comparison_prediction(
+    prediction: str,
+    visual_model: MomentumCartComparisonVisual,
+) -> MomentumCartComparisonPredictionResult:
+    """Check one explicit visual prediction using only the authored model.
+
+    This does not evaluate written reasoning, change a Problem Solver step,
+    or make a claim about student mastery.  It is deliberately local to the
+    visual and is not a persistence or progress event.
+    """
+    if not isinstance(prediction, str):
+        raise ValueError("Choose Cart A, Cart B, or the same momentum size first.")
+    first, second = visual_model.carts
+    aliases = {
+        first.identifier.casefold(): first.identifier,
+        second.identifier.casefold(): second.identifier,
+        first.label.casefold(): first.identifier,
+        second.label.casefold(): second.identifier,
+        "same": PREDICTION_SAME,
+        "equal": PREDICTION_SAME,
+    }
+    normalized_prediction = aliases.get(prediction.strip().casefold())
+    if normalized_prediction is None:
+        raise ValueError("Choose Cart A, Cart B, or the same momentum size first.")
+
+    actual = compare_momentum_cart_sizes(visual_model)
+    supported = normalized_prediction == actual
+    prefix = (
+        "Your prediction was supported by this computer model."
+        if supported
+        else "This computer model gives a different comparison."
+    )
+    first_value = _format_number(abs(first.momentum))
+    second_value = _format_number(abs(second.momentum))
+    first_speed = _format_number(abs(first.velocity_m_per_s))
+    second_speed = _format_number(abs(second.velocity_m_per_s))
+    if actual == PREDICTION_SAME:
+        comparison = (
+            f"Both carts have the same momentum size: {first_value} kg m/s. "
+            f"They also both move {first.direction} in this model."
+        )
+    else:
+        greater = first if actual == first.identifier else second
+        comparison = f"{greater.label} has the greater momentum size in this model."
+    message = (
+        f"{prefix} {first.label}: p = {_format_number(first.mass_kg)} kg × "
+        f"{first_speed} m/s = {first_value} kg m/s {first.direction}. "
+        f"{second.label}: p = {_format_number(second.mass_kg)} kg × "
+        f"{second_speed} m/s = {second_value} kg m/s {second.direction}. "
+        f"{comparison}"
+    )
+    return MomentumCartComparisonPredictionResult(
+        prediction=normalized_prediction,
+        actual=actual,
+        supported=supported,
+        message=message,
+    )
+
+
+def momentum_cart_comparison_description(
+    visual_model: MomentumCartComparisonVisual,
+    revealed: bool = False,
+) -> str:
+    """Return an accessible description without leaking a pending result."""
+    first, second = visual_model.carts
+    first_speed = _format_number(abs(first.velocity_m_per_s))
+    second_speed = _format_number(abs(second.velocity_m_per_s))
+    description = (
+        "Illustrative computer model, not a real measurement. "
+        f"{first.label} has mass {_format_number(first.mass_kg)} kg and moves "
+        f"{first.direction} at {first_speed} m/s. "
+        f"{second.label} has mass {_format_number(second.mass_kg)} kg and moves "
+        f"{second.direction} at {second_speed} m/s. "
+        "Cart width and velocity-arrow length are schematic visual cues, not exact scale. "
+    )
+    if not revealed:
+        return (
+            description
+            + "The model calculation and final comparison are still hidden. "
+            "Choose a prediction, then test it."
+        )
+    first_value = _format_number(abs(first.momentum))
+    second_value = _format_number(abs(second.momentum))
+    comparison = compare_momentum_cart_sizes(visual_model)
+    calculation_text = (
+        f"{first.label}: p = {_format_number(first.mass_kg)} kg × {first_speed} m/s = "
+        f"{first_value} kg m/s {first.direction}. "
+        f"{second.label}: p = {_format_number(second.mass_kg)} kg × {second_speed} m/s = "
+        f"{second_value} kg m/s {second.direction}. "
+    )
+    if comparison == PREDICTION_SAME:
+        outcome = (
+            f"Revealed result: {calculation_text}Both carts have the same momentum size and both "
+            f"move {first.direction} in this model."
+        )
+    else:
+        greater = first if comparison == first.identifier else second
+        outcome = (
+            f"Revealed result: {calculation_text}{greater.label} has the greater momentum size "
+            "in this model."
+        )
+    return f"{description}{outcome}"
+
+
+class MomentumCartComparisonLab(ttk.Frame):
+    """Fixed two-cart scenario visual with a local prediction-before-reveal gate.
+
+    Unlike :class:`MomentumLab`, this component has no sliders and takes its
+    data only from a validated ``MomentumCartComparisonVisual``.  It is a
+    visual explanation inside one Problem Solver scenario, not a general
+    simulation or a student assessment.
+    """
+
+    def __init__(
+        self,
+        parent: tk.Misc,
+        visual_model: MomentumCartComparisonVisual,
+        on_close: Callable[[], None] | None = None,
+    ) -> None:
+        super().__init__(parent, style="Surface.TFrame", padding=(16, 14))
+        self.visual_model = visual_model
+        self._on_close = on_close
+        self.prediction = tk.StringVar(value="")
+        self.prediction_feedback = tk.StringVar(
+            value="Use the visible input values, choose a prediction, then test it."
+        )
+        self.accessible_description = tk.StringVar()
+        self._result_revealed = False
+        self.close_button: ttk.Button | None = None
+
+        ttk.Label(
+            self,
+            text="Use the supplied mass and velocity values. This visual does not change the model steps.",
+            style="Subtitle.TLabel",
+            wraplength=650,
+            justify="left",
+        ).grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 7))
+
+        self.canvas = tk.Canvas(
+            self,
+            height=160,
+            background=PALETTE["surface_soft"],
+            highlightthickness=1,
+            highlightbackground=PALETTE["border"],
+            bd=0,
+        )
+        self.canvas.grid(row=1, column=0, columnspan=3, sticky="ew", pady=(0, 8))
+        self.canvas.bind("<Configure>", lambda _event: self._draw())
+
+        prediction_frame = ttk.LabelFrame(
+            self,
+            text="Predict the comparison",
+            style="Card.TLabelframe",
+            padding=(10, 5),
+        )
+        prediction_frame.grid(row=2, column=0, columnspan=3, sticky="ew", pady=(0, 7))
+        for column in range(3):
+            prediction_frame.columnconfigure(column, weight=1)
+        ttk.Label(
+            prediction_frame,
+            text=self.visual_model.prediction_prompt,
+            style="Surface.TLabel",
+            wraplength=650,
+            justify="left",
+        ).grid(row=0, column=0, columnspan=3, sticky="w")
+        first, second = self.visual_model.carts
+        options = (
+            (f"{first.label} greater", first.identifier),
+            (f"{second.label} greater", second.identifier),
+            ("Same size", PREDICTION_SAME),
+        )
+        for column, (label, value) in enumerate(options):
+            ttk.Radiobutton(
+                prediction_frame,
+                text=label,
+                value=value,
+                variable=self.prediction,
+                style="Surface.TRadiobutton",
+            ).grid(row=1, column=column, sticky="w", pady=(3, 0))
+        ttk.Button(
+            prediction_frame,
+            text="Test prediction",
+            style="Primary.TButton",
+            command=self.test_prediction,
+        ).grid(row=2, column=0, sticky="w", pady=(5, 0))
+        ttk.Button(
+            prediction_frame,
+            text="Reset prediction",
+            style="Secondary.TButton",
+            command=self.reset_prediction,
+        ).grid(row=2, column=1, sticky="w", pady=(5, 0))
+        ttk.Label(
+            prediction_frame,
+            textvariable=self.prediction_feedback,
+            style="SurfaceMuted.TLabel",
+            wraplength=650,
+            justify="left",
+        ).grid(row=3, column=0, columnspan=3, sticky="w", pady=(5, 0))
+
+        summary = ttk.Frame(self, style="Soft.TFrame", padding=(10, 8))
+        summary.grid(row=3, column=0, columnspan=3, sticky="ew", pady=(0, 7))
+        ttk.Label(
+            summary,
+            text="Text description",
+            style="CardTitle.TLabel",
+        ).pack(anchor="w", pady=(0, 1))
+        ttk.Label(
+            summary,
+            textvariable=self.accessible_description,
+            style="Soft.TLabel",
+            wraplength=650,
+            justify="left",
+        ).pack(anchor="w")
+
+        footer = ttk.Frame(self, style="Surface.TFrame")
+        footer.grid(row=4, column=0, columnspan=3, sticky="ew")
+        footer.columnconfigure(0, weight=1)
+        ttk.Label(
+            footer,
+            text="p = mass × velocity. This visual does not assess, record, or save a prediction.",
+            style="SurfaceMuted.TLabel",
+            wraplength=500,
+            justify="left",
+        ).grid(row=0, column=0, sticky="w")
+        if self._on_close is not None:
+            self.close_button = ttk.Button(
+                footer,
+                text="Close visual",
+                style="Secondary.TButton",
+                command=self._on_close,
+            )
+            self.close_button.grid(row=0, column=1, sticky="e", padx=(10, 0))
+
+        for column in range(3):
+            self.columnconfigure(column, weight=1)
+        self.refresh_visual()
+
+    @property
+    def result_revealed(self) -> bool:
+        """Tell tests/UI whether this local visual result is currently shown."""
+        return self._result_revealed
+
+    def reset_prediction(self) -> None:
+        """Hide the comparison and invite a fresh local prediction."""
+        self.prediction.set("")
+        self._result_revealed = False
+        self.prediction_feedback.set(
+            "Prediction reset. Choose an option, then test it to reveal this model comparison."
+        )
+        self.refresh_visual()
+
+    def test_prediction(self) -> MomentumCartComparisonPredictionResult | None:
+        """Reveal the fixed model comparison after an explicit prediction choice."""
+        chosen_prediction = self.prediction.get().strip()
+        if not chosen_prediction:
+            self.prediction_feedback.set(
+                "Choose Cart A, Cart B, or the same momentum size before testing your prediction."
+            )
+            self.refresh_visual()
+            return None
+        result = evaluate_momentum_cart_comparison_prediction(
+            chosen_prediction,
+            self.visual_model,
+        )
+        self._result_revealed = True
+        self.prediction_feedback.set(result.message)
+        self.refresh_visual()
+        return result
+
+    def refresh_visual(self) -> None:
+        """Refresh static labels and Canvas without changing scenario progress."""
+        self.accessible_description.set(
+            momentum_cart_comparison_description(
+                self.visual_model,
+                revealed=self._result_revealed,
+            )
+        )
+        self._draw()
+
+    def _draw(self) -> None:
+        """Draw two labelled velocity cues; their lengths are not exact scale."""
+        self.canvas.delete("all")
+        width = max(self.canvas.winfo_width(), 560)
+        height = max(self.canvas.winfo_height(), 160)
+        max_mass = max(cart.mass_kg for cart in self.visual_model.carts)
+        max_speed = max(abs(cart.velocity_m_per_s) for cart in self.visual_model.carts)
+        colors = (("#76C893", "#386641"), ("#90CAF9", "#1565C0"))
+        for index, (cart, colors_for_cart) in enumerate(zip(self.visual_model.carts, colors)):
+            fill, outline = colors_for_cart
+            lane_top = 10 + index * 67
+            ground_y = lane_top + 40
+            cart_width = 76 + (cart.mass_kg / max_mass) * 44
+            cart_height = 30
+            cart_left = 80 if cart.velocity_m_per_s > 0 else width - 80 - cart_width
+            cart_top = ground_y - cart_height
+            self.canvas.create_line(36, ground_y + 13, width - 36, ground_y + 13, fill="#94A3B8", width=2)
+            self.canvas.create_rectangle(
+                cart_left,
+                cart_top,
+                cart_left + cart_width,
+                ground_y,
+                fill=fill,
+                outline=outline,
+                width=2,
+            )
+            self.canvas.create_oval(cart_left + 12, ground_y - 2, cart_left + 29, ground_y + 14, fill="#334155")
+            self.canvas.create_oval(
+                cart_left + cart_width - 29,
+                ground_y - 2,
+                cart_left + cart_width - 12,
+                ground_y + 14,
+                fill="#334155",
+            )
+            self.canvas.create_text(
+                cart_left + cart_width / 2,
+                cart_top + cart_height / 2,
+                text=f"{cart.label}\n{_format_number(cart.mass_kg)} kg",
+                fill=PALETTE["text"],
+                font=("Segoe UI", 9, "bold"),
+                justify="center",
+            )
+            arrow_length = 55 + (abs(cart.velocity_m_per_s) / max_speed) * 105
+            if cart.velocity_m_per_s > 0:
+                arrow_start = cart_left + cart_width + 20
+                arrow_end = min(width - 42, arrow_start + arrow_length)
+                label_x = min(width - 18, arrow_end + 8)
+                label_anchor = "w"
+            else:
+                arrow_start = cart_left - 20
+                arrow_end = max(42, arrow_start - arrow_length)
+                label_x = max(18, arrow_end - 8)
+                label_anchor = "e"
+            self.canvas.create_line(
+                arrow_start,
+                cart_top + cart_height / 2,
+                arrow_end,
+                cart_top + cart_height / 2,
+                fill=outline,
+                width=4,
+                arrow=tk.LAST,
+                tags=("velocity-arrow", cart.identifier),
+            )
+            self.canvas.create_text(
+                label_x,
+                cart_top + cart_height / 2,
+                text=f"{_format_number(abs(cart.velocity_m_per_s))} m/s {cart.direction}",
+                fill=outline,
+                anchor=label_anchor,
+                font=("Segoe UI", 9, "bold"),
+            )
+        self.canvas.create_text(
+            width / 2,
+            height - 8,
+            text="Schematic cues only: cart width shows mass and arrow length shows velocity.",
+            fill=PALETTE["muted"],
+            font=("Segoe UI", 9),
+        )
 
 
 class MomentumLab(ttk.Frame):

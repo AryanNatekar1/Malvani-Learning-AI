@@ -17,6 +17,7 @@ from knowledge_engine import (
 from lesson_models import Lesson, QuizQuestion
 from problem_engine import AttemptFeedback, GuidedProblemSession
 from problem_scenario_engine import (
+    MomentumCartComparisonVisual,
     ProblemScenario,
     ProblemScenarioRepository,
     ProblemScenarioSession,
@@ -111,6 +112,24 @@ class ProblemSolverView:
     can_reveal_solution: bool
     can_go_deeper: bool
     solution_reviewed: bool
+
+
+@dataclass(frozen=True)
+class ProblemSolverVisualView:
+    """One side-effect-free visual snapshot for an active Problem Solver model.
+
+    The view contains only already-authored scenario inputs and a transparent
+    sequence gate.  It never contains student-entered text or records a
+    visual interaction.
+    """
+
+    scenario_id: str
+    title: str
+    visual_model: MomentumCartComparisonVisual
+    content_status_notice: str
+    data_notice: str
+    is_unlocked: bool
+    lock_message: str | None
 
 
 @dataclass(frozen=True)
@@ -712,6 +731,45 @@ class AppController:
             can_reveal_solution=session.can_reveal_solution(),
             can_go_deeper=self.can_go_deeper(),
             solution_reviewed=self._scenario_solution_reviewed,
+        )
+
+    def problem_solver_visual_view(self) -> ProblemSolverVisualView | None:
+        """Return a typed comparison visual only for the active model session.
+
+        The controller owns the learning-order gate so a GUI cannot expose a
+        scenario visual simply because a topic happens to have matching JSON.
+        Reading this view has no persistence or progress side effect.
+        """
+        session = self.current_scenario_session
+        scenario = self._scenario_for_active_lesson()
+        if (
+            session is None
+            or scenario is None
+            or session.scenario.identifier != scenario.identifier
+            or scenario.visual_model is None
+        ):
+            return None
+
+        visual_model = scenario.visual_model
+        is_unlocked = (
+            session.has_completed_step(visual_model.available_after_step_id)
+            or self._scenario_solution_reviewed
+        )
+        lock_message = None
+        if not is_unlocked:
+            lock_message = (
+                "Complete the linked calculation step first, or deliberately review the "
+                "worked model solution after meaningful effort. Then this visual can help "
+                "you compare the two supplied carts."
+            )
+        return ProblemSolverVisualView(
+            scenario_id=scenario.identifier,
+            title=scenario.title,
+            visual_model=visual_model,
+            content_status_notice=scenario.content_status_notice,
+            data_notice=scenario.data_provenance.student_notice,
+            is_unlocked=is_unlocked,
+            lock_message=lock_message,
         )
 
     def submit_problem_solver_attempt(self, answer: str) -> ScenarioAttemptFeedback | None:

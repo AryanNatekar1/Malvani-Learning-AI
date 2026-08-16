@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.11 local learning application prototype**
+Current Version: **V2.12 local learning application prototype**
 
 ## Working now
 
@@ -64,9 +64,17 @@ Current Version: **V2.11 local learning application prototype**
 - Research check-in feedback now appears beneath the exact writing field that
   produced it. A compact-screen validation reminder remains visible while its
   editable field stays focused for a retry.
+- Momentum's Problem Solver now has a separate, scenario-bound visual model.
+  It uses typed, validated JSON cart inputs (never values extracted from
+  prose), appears only after the linked calculation step or a deliberate
+  worked-solution review, and asks for a local prediction before revealing its
+  model comparison. It is non-modal, has a text alternative, keeps the
+  supplied-value/draft notices visible, and never stores a visual choice or
+  changes progress. Its compact popup body scrolls, including for keyboard
+  focus, so the full text alternative and controls remain reachable.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
-- 105 automated tests, including GUI flow, compact-layout reachability,
+- 116 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests.
 
 ## Not yet claimed as complete

@@ -53,6 +53,12 @@ ChatGPT clone and it does not require an API key.
   predict whether momentum size will be greater, smaller, or the same, then
   reveal the `p = m × v` result and a text alternative. It is a local learning
   prompt, not a stored assessment or an animation loop.
+- A separate **scenario-bound Momentum cart visual** inside Problem Solver.
+  It reads only typed, validated cart inputs from the authored scenario JSON,
+  not numbers scraped from prose. After the two per-cart calculation steps (or
+  a deliberately reviewed worked solution), learners predict the comparison,
+  then reveal the fixed computer-model result. The prediction stays only in
+  the open visual window and never changes progress, attempts, or stored data.
 - A continuing question-and-answer trail, data-backed follow-up chips, clearer
   quiz progress, progress metrics, and lesson-library cards for a more usable
   desktop study workflow.
@@ -211,6 +217,12 @@ Its two numerical momentum steps also accept only author-declared compact
 number/unit formats such as `6.0 kg m/s`; this is not free-text grading. It is
 a structured thinking activity, not a claim that the app understands or grades
 free-text scientific reasoning. Scenario content is currently `NEEDS_REVIEW`.
+After the two per-cart calculation steps, the optional **Explore model visual**
+button opens a fixed, non-modal comparison view. It draws the authored mass and
+velocity cues, provides a text alternative, asks for a local prediction, and
+reveals the result only after the learner tests that prediction. It does not
+replace the generic Momentum explorer, animate automatically, or record a
+visual choice.
 
 ## Language support
 

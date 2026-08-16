@@ -37,6 +37,14 @@ class ProblemScenarioEngineTests(unittest.TestCase):
         assert len(scenarios) == 1
         cls.scenario = scenarios[0]
 
+    def _raw_momentum_scenario(self) -> dict[str, object]:
+        """Return a fresh editable record for schema-validation tests."""
+        return json.loads(
+            (SCENARIOS_DIR / "physics" / "momentum_cart_comparison.json").read_text(
+                encoding="utf-8"
+            )
+        )
+
     def test_authored_model_scenario_loads_with_distinct_source_and_provenance(self) -> None:
         scenario = self.scenario
 
@@ -48,6 +56,135 @@ class ProblemScenarioEngineTests(unittest.TestCase):
         self.assertIn("OpenStax", scenario.content_source.citation)
         self.assertIn("illustrative", scenario.data_provenance.statement.lower())
         self.assertNotEqual(scenario.content_source.citation, scenario.data_provenance.statement)
+
+    def test_visual_model_uses_typed_json_inputs_not_scenario_prose(self) -> None:
+        """The static visual has explicit model inputs, rather than scraped wording."""
+        visual_model = self.scenario.visual_model
+
+        self.assertIsNotNone(visual_model)
+        assert visual_model is not None
+        self.assertEqual(visual_model.kind, "MOMENTUM_CART_COMPARISON")
+        self.assertEqual(
+            visual_model.prediction_prompt,
+            "Which cart has greater momentum size: Cart A, Cart B, or the same?",
+        )
+        self.assertEqual(visual_model.available_after_step_id, "cart-b-momentum")
+        cart_a, cart_b = visual_model.carts
+        self.assertEqual((cart_a.identifier, cart_a.label), ("cart-a", "Cart A"))
+        self.assertEqual((cart_b.identifier, cart_b.label), ("cart-b", "Cart B"))
+        self.assertEqual((cart_a.mass_kg, cart_a.velocity_m_per_s), (2.0, 3.0))
+        self.assertEqual((cart_b.mass_kg, cart_b.velocity_m_per_s), (3.0, 2.0))
+        self.assertEqual((cart_a.momentum, cart_b.momentum), (6.0, 6.0))
+        self.assertEqual((cart_a.direction, cart_b.direction), ("right", "right"))
+
+        raw = self._raw_momentum_scenario()
+        raw["introduction"] = (
+            "This deliberately misleading prose says a fictional Cart Z has mass 999 kg "
+            "and velocity 888 m/s."
+        )
+        raw["problem"] = "Do not infer visual inputs from this unrelated sentence: 12345."
+
+        parsed = ProblemScenario.from_mapping(raw)
+        assert parsed.visual_model is not None
+        self.assertEqual(
+            tuple(
+                (cart.identifier, cart.mass_kg, cart.velocity_m_per_s)
+                for cart in parsed.visual_model.carts
+            ),
+            (("cart-a", 2.0, 3.0), ("cart-b", 3.0, 2.0)),
+        )
+
+    def test_rejects_visual_model_outside_momentum_computer_model_scope(self) -> None:
+        raw = self._raw_momentum_scenario()
+        raw["topic"] = "force"
+
+        with self.assertRaisesRegex(ScenarioFormatError, "Momentum COMPUTER_MODEL"):
+            ProblemScenario.from_mapping(raw)
+
+    def test_rejects_malformed_momentum_visual_carts(self) -> None:
+        cases = (
+            ("one cart", lambda raw: raw["visual_model"]["carts"].pop()),
+            (
+                "three carts",
+                lambda raw: raw["visual_model"]["carts"].append(
+                    {
+                        "id": "cart-c",
+                        "label": "Cart C",
+                        "mass_kg": 4,
+                        "velocity_m_per_s": 1,
+                    }
+                ),
+            ),
+            (
+                "duplicate ids",
+                lambda raw: raw["visual_model"]["carts"][1].update({"id": "CART-A"}),
+            ),
+            (
+                "duplicate labels",
+                lambda raw: raw["visual_model"]["carts"][1].update({"label": "cart a"}),
+            ),
+            (
+                "non-finite mass",
+                lambda raw: raw["visual_model"]["carts"][0].update(
+                    {"mass_kg": float("nan")}
+                ),
+            ),
+            (
+                "non-finite velocity",
+                lambda raw: raw["visual_model"]["carts"][0].update(
+                    {"velocity_m_per_s": float("inf")}
+                ),
+            ),
+            (
+                "non-finite JSON-number input",
+                lambda raw: raw["visual_model"]["carts"][0].update({"mass_kg": 1e309}),
+            ),
+            (
+                "finite inputs with overflowed momentum",
+                lambda raw: raw["visual_model"]["carts"][0].update(
+                    {"mass_kg": 1e308, "velocity_m_per_s": 1e308}
+                ),
+            ),
+            (
+                "at rest",
+                lambda raw: raw["visual_model"]["carts"][0].update(
+                    {"velocity_m_per_s": 0}
+                ),
+            ),
+            (
+                "opposite directions",
+                lambda raw: raw["visual_model"]["carts"][1].update(
+                    {"velocity_m_per_s": -2}
+                ),
+            ),
+        )
+
+        for case_name, corrupt in cases:
+            with self.subTest(case_name=case_name):
+                raw = self._raw_momentum_scenario()
+                corrupt(raw)
+                with self.assertRaises(ScenarioFormatError):
+                    ProblemScenario.from_mapping(raw)
+
+    def test_visual_model_is_optional_but_its_learning_step_link_must_exist(self) -> None:
+        raw = self._raw_momentum_scenario()
+        raw.pop("visual_model")
+        self.assertIsNone(ProblemScenario.from_mapping(raw).visual_model)
+
+        raw = self._raw_momentum_scenario()
+        raw["visual_model"]["available_after_step_id"] = "missing-step"
+        with self.assertRaisesRegex(ScenarioFormatError, "installed guided step"):
+            ProblemScenario.from_mapping(raw)
+
+    def test_visual_model_can_describe_two_left_moving_carts_without_changing_scope(self) -> None:
+        """The initial model permits a shared left direction as well as right."""
+        raw = self._raw_momentum_scenario()
+        raw["visual_model"]["carts"][0]["velocity_m_per_s"] = -3
+        raw["visual_model"]["carts"][1]["velocity_m_per_s"] = -2
+
+        visual_model = ProblemScenario.from_mapping(raw).visual_model
+        assert visual_model is not None
+        self.assertEqual(tuple(cart.direction for cart in visual_model.carts), ("left", "left"))
 
     def test_renderer_marks_draft_and_illustrative_values_before_problem_steps(self) -> None:
         sections = render_problem_solver(self.scenario)
@@ -75,8 +212,11 @@ class ProblemScenarioEngineTests(unittest.TestCase):
         first = session.submit_attempt("6 kg m/s")
         self.assertTrue(first.correct)
         self.assertEqual(session.current_step_index, 1)
+        self.assertTrue(session.has_completed_step("cart-a-momentum"))
+        self.assertFalse(session.has_completed_step("cart-b-momentum"))
         self.assertNotEqual(session.hint(), session.hint())
         self.assertTrue(session.submit_attempt("6").correct)
+        self.assertTrue(session.has_completed_step("cart-b-momentum"))
         final = session.submit_attempt("Both are equal")
         self.assertTrue(final.correct)
         self.assertTrue(final.is_complete)

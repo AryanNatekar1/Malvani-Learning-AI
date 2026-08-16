@@ -5,11 +5,16 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import messagebox, ttk
 
-from app_controller import AppController, LearningPreferences, QuizView
+from app_controller import (
+    AppController,
+    LearningPreferences,
+    ProblemSolverVisualView,
+    QuizView,
+)
 from language_engine import SUPPORTED_LANGUAGES, interface_text
 from media_engine import get_visual
 from ui_theme import PALETTE, configure_theme
-from visual_learning import create_interactive_visual
+from visual_learning import MomentumCartComparisonLab, create_interactive_visual
 from voice_engine import DisabledVoiceProvider
 
 
@@ -148,6 +153,124 @@ class ScrollableLessonCards(ttk.Frame):
     def rendered_text(self) -> str:
         """Expose displayed text for lightweight GUI tests."""
         return self._rendered_text
+
+
+class ScrollableDialog(ttk.Frame):
+    """A compact, wheel-scrollable body for a non-modal teaching dialog.
+
+    Scenario visuals can include a text alternative and source/provenance
+    notice.  Keeping that body scrollable lets a small desktop window remain
+    useful without hiding the educational or safety context below the fold.
+    """
+
+    def __init__(self, parent: tk.Misc) -> None:
+        super().__init__(parent, style="App.TFrame")
+        self.canvas = tk.Canvas(
+            self,
+            highlightthickness=0,
+            background=PALETTE["app"],
+            bd=0,
+        )
+        self.scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.grid(row=0, column=0, sticky="nsew")
+        self.scrollbar.grid(row=0, column=1, sticky="ns")
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+
+        self.body = ttk.Frame(self.canvas, style="App.TFrame")
+        self._body_window = self.canvas.create_window((0, 0), window=self.body, anchor="nw")
+        self.body.bind("<Configure>", self._update_scroll_region)
+        self.canvas.bind("<Configure>", self._resize_body)
+        self._bind_scroll_events(self.canvas)
+        self._bind_scroll_events(self.body)
+
+    def _update_scroll_region(self, _event: tk.Event[tk.Misc]) -> None:
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def _resize_body(self, event: tk.Event[tk.Misc]) -> None:
+        self.canvas.itemconfigure(self._body_window, width=event.width)
+
+    def _on_mousewheel(self, event: tk.Event[tk.Misc]) -> str:
+        if event.delta:
+            self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        return "break"
+
+    def _scroll_up(self, _event: tk.Event[tk.Misc]) -> str:
+        self.canvas.yview_scroll(-1, "units")
+        return "break"
+
+    def _scroll_down(self, _event: tk.Event[tk.Misc]) -> str:
+        self.canvas.yview_scroll(1, "units")
+        return "break"
+
+    def _bind_scroll_events(self, widget: tk.Misc) -> None:
+        if getattr(widget, "_dialog_scroll_bound", False):
+            return
+        widget.bind("<MouseWheel>", self._on_mousewheel, add="+")
+        widget.bind("<Button-4>", self._scroll_up, add="+")
+        widget.bind("<Button-5>", self._scroll_down, add="+")
+        setattr(widget, "_dialog_scroll_bound", True)
+
+    def _bind_focus_scroll(self, widget: tk.Misc) -> None:
+        """Keep a keyboard-focused dialog control inside the visible viewport."""
+        if getattr(widget, "_dialog_focus_bound", False):
+            return
+        widget.bind("<FocusIn>", self._scroll_focused_widget_into_view, add="+")
+        setattr(widget, "_dialog_focus_bound", True)
+
+    def _scroll_focused_widget_into_view(self, event: tk.Event[tk.Misc]) -> None:
+        self.scroll_widget_into_view(event.widget)
+
+    def bind_descendants(self, widget: tk.Misc) -> None:
+        """Make an ordinary dialog control forward wheel input to this body."""
+        for child in widget.winfo_children():
+            if not isinstance(child, tk.Text):
+                self._bind_scroll_events(child)
+            self._bind_focus_scroll(child)
+            self.bind_descendants(child)
+
+    def scroll_widget_into_view(self, widget: tk.Misc, padding: int = 12) -> bool:
+        """Bring a dialog descendant into view without changing its focus state."""
+        if not widget.winfo_exists() or not self._is_body_descendant(widget):
+            return False
+        self.update_idletasks()
+        scroll_region = self.canvas.bbox("all")
+        if scroll_region is None:
+            return False
+        region_top, region_bottom = scroll_region[1], scroll_region[3]
+        content_height = region_bottom - region_top
+        viewport_height = self.canvas.winfo_height()
+        if content_height <= viewport_height or viewport_height <= 0:
+            return False
+        target_top = widget.winfo_rooty() - self.body.winfo_rooty()
+        target_bottom = target_top + max(widget.winfo_height(), 1)
+        visible_top = self.canvas.canvasy(0)
+        visible_bottom = visible_top + viewport_height
+        if target_top >= visible_top + padding and target_bottom <= visible_bottom - padding:
+            return False
+        if target_top < visible_top + padding:
+            desired_top = target_top - padding
+        else:
+            desired_top = target_bottom - viewport_height + padding
+        max_top = region_bottom - viewport_height
+        desired_top = max(region_top, min(desired_top, max_top))
+        self.canvas.yview_moveto((desired_top - region_top) / content_height)
+        return True
+
+    def _is_body_descendant(self, widget: tk.Misc) -> bool:
+        current: tk.Misc | None = widget
+        while current is not None:
+            if current is self.body:
+                return True
+            parent_name = current.winfo_parent()
+            if not parent_name:
+                return False
+            try:
+                current = current.nametowidget(parent_name)
+            except tk.TclError:
+                return False
+        return False
 
 
 class ScrollableScreen(ttk.Frame):
@@ -320,6 +443,8 @@ class LearningApp(tk.Tk):
         self._active_screen = "home"
         self._compact_navigation = False
         self._navigation_buttons: dict[str, ttk.Button] = {}
+        self._problem_solver_visual_window: tk.Toplevel | None = None
+        self._problem_solver_visual_scenario_id: str | None = None
 
         self.shell = ttk.Frame(self, style="App.TFrame")
         self.shell.pack(fill="both", expand=True)
@@ -575,6 +700,118 @@ class LearningApp(tk.Tk):
         canvas.pack(fill="both", expand=True, pady=(0, 4))
         self._draw_visual(canvas, topic)
         return window
+
+    def show_problem_solver_visual(
+        self,
+        view: ProblemSolverVisualView,
+    ) -> tk.Toplevel | None:
+        """Open one non-modal, scenario-bound comparison visual.
+
+        This stays separate from the topic-level ``Explore visual`` window:
+        its cart data comes from a frozen, validated Problem Solver scenario.
+        It deliberately does not create progress events or send student
+        prediction choices to the controller.
+        """
+        # Defend the educational gate here as well as in LearningScreen. This
+        # public helper may later be called by another screen or a test, and a
+        # locked or stale snapshot must never be enough to reveal model
+        # calculations after the active lesson has changed.
+        active_view = self.controller.problem_solver_visual_view()
+        if (
+            not view.is_unlocked
+            or active_view is None
+            or not active_view.is_unlocked
+            or active_view.scenario_id != view.scenario_id
+        ):
+            return None
+        view = active_view
+
+        existing = self._problem_solver_visual_window
+        if existing is not None and existing.winfo_exists():
+            if self._problem_solver_visual_scenario_id == view.scenario_id:
+                existing.deiconify()
+                existing.lift()
+                existing.focus_force()
+                return existing
+            self.close_problem_solver_visual()
+
+        window = tk.Toplevel(self)
+        window.title(f"Visual model — {view.title}")
+        window.configure(background=PALETTE["app"])
+        # The window belongs to this learning session, but it must remain
+        # non-modal so a student can consult it while working in Problem Solver.
+        window.transient(self)
+        window.geometry("720x560")
+        window.minsize(560, 400)
+        self._problem_solver_visual_window = window
+        self._problem_solver_visual_scenario_id = view.scenario_id
+
+        def close_window() -> None:
+            if window.winfo_exists():
+                window.destroy()
+            if self._problem_solver_visual_window is window:
+                self._problem_solver_visual_window = None
+                self._problem_solver_visual_scenario_id = None
+            launch_button = self.learning_screen.problem_solver_visual_button
+            if launch_button.winfo_exists() and launch_button.winfo_ismapped():
+                launch_button.focus_set()
+
+        def close_on_escape(_event: tk.Event[tk.Misc]) -> str:
+            close_window()
+            return "break"
+
+        window.protocol("WM_DELETE_WINDOW", close_window)
+        window.bind("<Escape>", close_on_escape)
+        dialog_viewport = ScrollableDialog(window)
+        dialog_viewport.pack(fill="both", expand=True)
+        content = ttk.Frame(dialog_viewport.body, style="App.TFrame", padding=(18, 12))
+        content.pack(fill="both", expand=True)
+        ttk.Label(content, text=view.title, style="Section.TLabel").pack(anchor="w")
+        ttk.Label(
+            content,
+            text=f"CONTENT STATUS: {view.content_status_notice}",
+            style="Status.TLabel",
+            wraplength=700,
+            justify="left",
+        ).pack(anchor="w", pady=(4, 2))
+        ttk.Label(
+            content,
+            text=(
+                f"MODEL DATA: {view.data_notice}\n"
+                "Scope: schematic model only; not a collision, road-safety prediction, "
+                "or observation of a real place."
+            ),
+            style="Subtitle.TLabel",
+            wraplength=700,
+            justify="left",
+        ).pack(anchor="w", pady=(0, 10))
+        visual_lab = MomentumCartComparisonLab(
+            content,
+            view.visual_model,
+            on_close=close_window,
+        )
+        visual_lab.pack(fill="both", expand=True)
+        # Public references keep this local component inspectable in GUI smoke
+        # tests without relying on Tk widget-order details.
+        window.visual_lab = visual_lab
+        window.scenario_visual = visual_lab
+        window.scenario_id = view.scenario_id
+        window.dialog_viewport = dialog_viewport
+        dialog_viewport.bind_descendants(content)
+        # Finish layout before the scroll region is inspected by a keyboard or
+        # mouse user. The dialog deliberately keeps a modest minimum size; its
+        # scrollbar, rather than a forced 740px height, makes every detail
+        # reachable on a compact desktop window.
+        window.update_idletasks()
+        return window
+
+    def close_problem_solver_visual(self) -> None:
+        """Close a stale scenario visual when its lesson session is discarded."""
+        window = self._problem_solver_visual_window
+        self._problem_solver_visual_window = None
+        self._problem_solver_visual_scenario_id = None
+        if window is not None and window.winfo_exists():
+            window.destroy()
 
     @staticmethod
     def _draw_visual(canvas: tk.Canvas, topic: str) -> None:
@@ -996,13 +1233,21 @@ class LearningScreen(Screen):
             command=self.show_problem_solver_solution,
         )
         self.problem_solver_solution_button.grid(row=0, column=1, padx=(0, 5))
+        self.problem_solver_visual_button = ttk.Button(
+            problem_controls,
+            text="Explore model visual",
+            style="Secondary.TButton",
+            command=self.show_problem_solver_visual,
+        )
+        self.problem_solver_visual_button.grid(row=0, column=2, padx=(0, 5))
+        self.problem_solver_visual_button.grid_remove()
         self.go_deeper_button = ttk.Button(
             problem_controls,
             text="Go Deeper",
             style="Primary.TButton",
             command=self.start_go_deeper,
         )
-        self.go_deeper_button.grid(row=0, column=2)
+        self.go_deeper_button.grid(row=0, column=3)
         self.problem_solver_feedback = ttk.Label(
             self.problem_solver_frame,
             text="",
@@ -1189,8 +1434,10 @@ class LearningScreen(Screen):
         if self.app.controller.problem_scenario_available():
             self.problem_solver_button.grid()
             return
+        self.app.close_problem_solver_visual()
         self.problem_solver_button.grid_remove()
         self.problem_solver_frame.grid_remove()
+        self.problem_solver_visual_button.grid_remove()
         self.research_frame.grid_remove()
 
     def _focus_guided_input(self, widget: tk.Misc) -> None:
@@ -1225,7 +1472,9 @@ class LearningScreen(Screen):
         """Synchronize focused controls with the controller's separate scenario state."""
         view = self.app.controller.problem_solver_view()
         if view is None:
+            self.app.close_problem_solver_visual()
             self.problem_solver_frame.grid_remove()
+            self.problem_solver_visual_button.grid_remove()
             return
         status = (
             f"Step {view.current_step_number} of {view.total_steps} | "
@@ -1248,6 +1497,11 @@ class LearningScreen(Screen):
             # available instead of silently presenting a dead control.
             self.go_deeper_button.configure(state="normal")
         self.problem_solver_solution_button.configure(state="normal")
+        if self.app.controller.problem_solver_visual_view() is not None:
+            self.problem_solver_visual_button.grid()
+            self.problem_solver_visual_button.configure(state="normal")
+        else:
+            self.problem_solver_visual_button.grid_remove()
 
     def submit_problem_solver_attempt(self) -> None:
         """Submit one exact, transparent model-step answer without retaining it."""
@@ -1277,6 +1531,19 @@ class LearningScreen(Screen):
         response = self.app.controller.reveal_problem_solver_solution()
         self.render_response(response, append=True)
         self._refresh_problem_solver_view()
+
+    def show_problem_solver_visual(self) -> None:
+        """Open only a sequence-ready visual tied to this active scenario."""
+        view = self.app.controller.problem_solver_visual_view()
+        if view is None:
+            self.problem_solver_feedback.configure(
+                text="This active model does not have a scenario-specific visual."
+            )
+            return
+        if not view.is_unlocked:
+            self.problem_solver_feedback.configure(text=view.lock_message or "Work the model first.")
+            return
+        self.app.show_problem_solver_visual(view)
 
     def start_go_deeper(self) -> None:
         """Open sourced research prompts after the learner has engaged with the model."""
@@ -1417,6 +1684,7 @@ class LearningScreen(Screen):
 
     def _reset_lesson_interaction_widgets(self) -> None:
         """Discard visual state that belongs to the previously selected lesson."""
+        self.app.close_problem_solver_visual()
         self.reasoning.set("")
         self.reasoning_feedback.configure(text="")
         self.challenge_answer.set("")
@@ -1430,6 +1698,7 @@ class LearningScreen(Screen):
         self.problem_solver_submit_button.configure(state="normal")
         self.problem_solver_hint_button.configure(state="normal")
         self.problem_solver_solution_button.configure(state="normal")
+        self.problem_solver_visual_button.grid_remove()
         self.go_deeper_button.configure(state="normal")
         self.problem_solver_frame.grid_remove()
         for stage, entry in self.research_entries.items():

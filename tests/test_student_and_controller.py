@@ -218,6 +218,63 @@ class StudentAndControllerTests(unittest.TestCase):
             self.assertNotIn("If velocity doubles", saved)
             self.assertIn("Problem Solver model-step attempts: 1", controller.progress_text())
 
+    def test_problem_solver_visual_is_session_scoped_and_unlocks_after_authored_steps(self) -> None:
+        """The fixed visual supports comparison without becoming a progress action."""
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            controller = AppController(
+                profile_store=ProfileStore(Path(temporary_directory) / "profile.json")
+            )
+            controller.answer_question("Explain momentum")
+            controller.lesson_action("challenge")
+            challenge_session = controller.current_problem_session
+            controller.start_quiz()
+            quiz_session = controller.quiz_session
+
+            self.assertIsNone(controller.problem_solver_visual_view())
+            controller.start_problem_solver()
+            locked = controller.problem_solver_visual_view()
+            assert locked is not None
+            self.assertFalse(locked.is_unlocked)
+            self.assertIn("Complete the linked calculation step", locked.lock_message or "")
+            self.assertIs(controller.current_problem_session, challenge_session)
+            self.assertIs(controller.quiz_session, quiz_session)
+
+            first = controller.submit_problem_solver_attempt("6")
+            assert first is not None
+            self.assertTrue(first.correct)
+            self.assertFalse(controller.problem_solver_visual_view().is_unlocked)  # type: ignore[union-attr]
+
+            second = controller.submit_problem_solver_attempt("6 kg m/s")
+            assert second is not None
+            self.assertTrue(second.correct)
+            ready = controller.problem_solver_visual_view()
+            assert ready is not None
+            self.assertTrue(ready.is_unlocked)
+            self.assertIsNone(ready.lock_message)
+            self.assertEqual(ready.scenario_id, "physics.momentum.cart-comparison")
+            self.assertEqual(ready.visual_model.carts[0].mass_kg, 2.0)
+            self.assertIn("not local measurements", ready.data_notice.lower())
+            self.assertIs(controller.current_problem_session, challenge_session)
+            self.assertIs(controller.quiz_session, quiz_session)
+
+            controller.answer_question("Explain force")
+            self.assertIsNone(controller.problem_solver_visual_view())
+
+    def test_problem_solver_visual_can_follow_a_deliberate_worked_solution_review(self) -> None:
+        """A learner who consciously opens the gated solution may inspect its visual too."""
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            controller = AppController(
+                profile_store=ProfileStore(Path(temporary_directory) / "profile.json")
+            )
+            controller.answer_question("Explain momentum")
+            controller.start_problem_solver()
+            self.assertFalse(controller.problem_solver_visual_view().is_unlocked)  # type: ignore[union-attr]
+            controller.submit_problem_solver_attempt("not the model answer")
+            controller.reveal_problem_solver_solution()
+            visual = controller.problem_solver_visual_view()
+            assert visual is not None
+            self.assertTrue(visual.is_unlocked)
+
     def test_problem_solver_state_resets_for_same_topic_reload_and_topic_change(self) -> None:
         """A same-topic full lesson reload must not leave stale solver controls alive."""
         with tempfile.TemporaryDirectory() as temporary_directory:
