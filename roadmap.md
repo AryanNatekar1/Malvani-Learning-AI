@@ -30,6 +30,8 @@
   illustrative computer-model values, preserving the normal challenge and quiz
   sessions. It has guided model steps, progressive hints, a solution gate, and
   non-semantic research prompts while storing aggregate progress only.
+- Make guided desktop actions usable on compact screens: opening Problem Solver
+  or Go Deeper scrolls the next input into view and gives it keyboard focus.
 
 ## Next: content quality and community review
 

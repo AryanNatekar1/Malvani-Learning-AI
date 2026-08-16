@@ -228,6 +228,59 @@ class ScrollableScreen(ttk.Frame):
             self._bind_scroll_events(child)
             self._bind_descendants(child)
 
+    def scroll_widget_into_view(self, widget: tk.Misc, padding: int = 16) -> bool:
+        """Bring a descendant control into the visible page area immediately.
+
+        Learning pages contain a focused lesson scrollbar inside a larger page
+        viewport. After an action adds a response below the fold, a student
+        should not have to search for the next place to type. This helper keeps
+        that handoff keyboard-friendly without using decorative animation or
+        a queued callback that could outlive a closing window.
+        """
+        if not widget.winfo_exists() or not self._is_body_descendant(widget):
+            return False
+        self.update_idletasks()
+        scroll_region = self.canvas.bbox("all")
+        if scroll_region is None:
+            return False
+        region_top = scroll_region[1]
+        region_bottom = scroll_region[3]
+        content_height = region_bottom - region_top
+        viewport_height = self.canvas.winfo_height()
+        if content_height <= viewport_height or viewport_height <= 0:
+            return False
+
+        target_top = widget.winfo_rooty() - self.body.winfo_rooty()
+        target_bottom = target_top + max(widget.winfo_height(), 1)
+        visible_top = self.canvas.canvasy(0)
+        visible_bottom = visible_top + viewport_height
+        if target_top >= visible_top + padding and target_bottom <= visible_bottom - padding:
+            return False
+
+        if target_top < visible_top + padding:
+            desired_top = target_top - padding
+        else:
+            desired_top = target_bottom - viewport_height + padding
+        max_top = region_bottom - viewport_height
+        desired_top = max(region_top, min(desired_top, max_top))
+        self.canvas.yview_moveto((desired_top - region_top) / content_height)
+        return True
+
+    def _is_body_descendant(self, widget: tk.Misc) -> bool:
+        """Avoid scrolling for a widget that belongs to another app page."""
+        current: tk.Misc | None = widget
+        while current is not None:
+            if current is self.body:
+                return True
+            parent_name = current.winfo_parent()
+            if not parent_name:
+                return False
+            try:
+                current = current.nametowidget(parent_name)
+            except tk.TclError:
+                return False
+        return False
+
     def refresh(self) -> None:
         """Forward navigation refreshes to the page's actual content body."""
         if self.content is not None:
@@ -967,6 +1020,7 @@ class LearningScreen(Screen):
         )
         self.research_intro.grid(row=0, column=0, sticky="w", pady=(0, 5))
         self.research_prompts: dict[str, ttk.Label] = {}
+        self.research_entries: dict[str, ttk.Entry] = {}
         self.research_submit_buttons: dict[str, ttk.Button] = {}
         research_stages = (
             ("hypothesis", "Hypothesis"),
@@ -986,9 +1040,11 @@ class LearningScreen(Screen):
             )
             prompt_label.grid(row=0, column=0, columnspan=2, sticky="w")
             self.research_prompts[stage] = prompt_label
-            ttk.Entry(stage_frame, textvariable=self.research_answers[stage]).grid(
+            entry = ttk.Entry(stage_frame, textvariable=self.research_answers[stage])
+            entry.grid(
                 row=1, column=0, sticky="ew", padx=(0, 8), pady=(3, 0)
             )
+            self.research_entries[stage] = entry
             submit_button = ttk.Button(
                 stage_frame,
                 text="Mark prompt complete",
@@ -1109,6 +1165,18 @@ class LearningScreen(Screen):
         self.problem_solver_frame.grid_remove()
         self.research_frame.grid_remove()
 
+    def _focus_guided_input(self, widget: tk.Misc) -> None:
+        """Move a newly opened learning action and its keyboard cursor into view."""
+        self.app.learning_viewport.scroll_widget_into_view(widget)
+        # The learner explicitly opened this activity, so moving focus inside
+        # this same window is intentional. ``focus_force`` also keeps the
+        # handoff reliable when a desktop test runner is not the foreground
+        # application; native Tk fallbacks remain safe for unusual platforms.
+        try:
+            widget.focus_force()
+        except tk.TclError:
+            widget.focus_set()
+
     def start_problem_solver(self) -> None:
         """Open or resume the separate supplied-data investigation for this lesson."""
         response = self.app.controller.start_problem_solver()
@@ -1123,6 +1191,7 @@ class LearningScreen(Screen):
         )
         self.problem_solver_frame.grid()
         self._refresh_problem_solver_view()
+        self._focus_guided_input(self.problem_solver_entry)
 
     def _refresh_problem_solver_view(self) -> None:
         """Synchronize focused controls with the controller's separate scenario state."""
@@ -1187,6 +1256,7 @@ class LearningScreen(Screen):
         self.render_response(response, append=True)
         self._refresh_problem_solver_view()
         self._refresh_research_view()
+        self._focus_next_research_input()
 
     def _refresh_research_view(self) -> None:
         """Display research prompts while being clear they are not AI-graded."""
@@ -1222,6 +1292,16 @@ class LearningScreen(Screen):
             )
         self.research_frame.grid()
 
+    def _focus_next_research_input(self) -> None:
+        """Place the learner at the next incomplete research prompt, if one exists."""
+        view = self.app.controller.research_view()
+        if view is None:
+            return
+        for stage in ("hypothesis", "analysis", "proposal", "reflection"):
+            if stage not in view.completed_stages:
+                self._focus_guided_input(self.research_entries[stage])
+                return
+
     def submit_research_stage(self, stage: str) -> None:
         """Record only a completed research prompt, never the student text itself."""
         response = self.app.controller.submit_research_response(
@@ -1233,6 +1313,7 @@ class LearningScreen(Screen):
             self.research_feedback.configure(text=response.sections[-1].body)
         self.research_answers[stage].set("")
         self._refresh_research_view()
+        self._focus_next_research_input()
 
     def clear_workspace(self) -> None:
         """Clear visible conversation cards without deleting local progress."""

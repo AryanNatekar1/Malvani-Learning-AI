@@ -54,6 +54,9 @@ ChatGPT clone and it does not require an API key.
 - A continuing question-and-answer trail, data-backed follow-up chips, clearer
   quiz progress, progress metrics, and lesson-library cards for a more usable
   desktop study workflow.
+- Guided actions now scroll their next answer field into view and place the
+  keyboard cursor there, including on an 800×600 laptop-sized window. A learner
+  can move from opening Problem Solver or Go Deeper directly into writing.
 - Explainable local recommendations: low recorded quiz accuracy suggests a
   review with its actual submission evidence; otherwise the app offers an
   author-linked next lesson only when it is installed locally.

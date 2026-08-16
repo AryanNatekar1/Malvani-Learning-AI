@@ -349,6 +349,58 @@ class GuiSmokeTests(unittest.TestCase):
         except tk.TclError:
             self.skipTest("Tk display is unavailable in this environment")
 
+    def test_guided_inputs_scroll_into_view_and_receive_keyboard_focus_when_display_is_available(
+        self,
+    ) -> None:
+        """A learner should reach the next input immediately on a compact laptop view."""
+        try:
+            from app_controller import AppController
+            from gui import LearningApp
+            from student_engine import ProfileStore
+            import tkinter as tk
+
+            def is_visible_in_page(viewport: object, widget: object) -> bool:
+                canvas = getattr(viewport, "canvas")
+                body = getattr(viewport, "body")
+                top = widget.winfo_rooty() - body.winfo_rooty()
+                bottom = top + widget.winfo_height()
+                visible_top = canvas.canvasy(0)
+                visible_bottom = visible_top + canvas.winfo_height()
+                return top >= visible_top and bottom <= visible_bottom
+
+            with tempfile.TemporaryDirectory() as temporary_directory:
+                controller = AppController(
+                    profile_store=ProfileStore(Path(temporary_directory) / "profile.json")
+                )
+                app = LearningApp(controller=controller)
+                app.geometry("800x600")
+                app.update_idletasks()
+                app.update()
+                app.home_screen.start_learning()
+                app.learning_screen.question.set("Explain momentum")
+                app.learning_screen.ask_question()
+                app.learning_screen.start_problem_solver()
+                app.update_idletasks()
+                app.update()
+
+                problem_entry = app.learning_screen.problem_solver_entry
+                self.assertTrue(is_visible_in_page(app.learning_viewport, problem_entry))
+                self.assertIs(app.focus_get(), problem_entry)
+
+                for answer in ("6", "6", "equal"):
+                    app.learning_screen.problem_solver_answer.set(answer)
+                    app.learning_screen.submit_problem_solver_attempt()
+                app.learning_screen.start_go_deeper()
+                app.update_idletasks()
+                app.update()
+
+                hypothesis_entry = app.learning_screen.research_entries["hypothesis"]
+                self.assertTrue(is_visible_in_page(app.learning_viewport, hypothesis_entry))
+                self.assertIs(app.focus_get(), hypothesis_entry)
+                app.destroy()
+        except tk.TclError:
+            self.skipTest("Tk display is unavailable in this environment")
+
 
 if __name__ == "__main__":
     unittest.main()

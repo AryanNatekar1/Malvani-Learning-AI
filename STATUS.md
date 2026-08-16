@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.5 local learning application prototype**
+Current Version: **V2.6 local learning application prototype**
 
 ## Working now
 
@@ -44,9 +44,12 @@ Current Version: **V2.5 local learning application prototype**
   a learner's typed model answer or research writing.
 - Problem Solver sessions do not replace the existing lesson challenge or quiz
   session. Reopening or changing a lesson clears stale activity controls.
+- Opening Problem Solver or Go Deeper on a compact screen scrolls its next
+  answer field into view and gives it keyboard focus, so the learner can act
+  immediately instead of searching below the fold.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
-- 97 automated tests, including GUI flow, compact-layout reachability,
+- 98 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests.
 
 ## Not yet claimed as complete
