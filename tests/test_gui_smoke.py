@@ -374,8 +374,10 @@ class GuiSmokeTests(unittest.TestCase):
                     app.learning_screen.research_entries["analysis"].cget("state"),
                     "disabled",
                 )
+                app.deiconify()
                 app.geometry("800x600")
                 app.update_idletasks()
+                app.update()
                 self.assertGreater(
                     app.learning_viewport.body.winfo_height(),
                     app.learning_viewport.canvas.winfo_height(),
@@ -387,6 +389,21 @@ class GuiSmokeTests(unittest.TestCase):
                 self.assertIsInstance(hypothesis_entry, tk.Text)
                 self.assertFalse(getattr(hypothesis_entry, "_page_scroll_bound", False))
                 self.assertTrue(getattr(hypothesis_entry, "_page_focus_bound", False))
+                app.learning_screen.submit_research_stage("hypothesis")
+                app.update_idletasks()
+                blank_feedback = app.learning_screen.research_stage_feedback["hypothesis"]
+                self.assertTrue(bool(blank_feedback.grid_info()))
+                self.assertIn("Write your hypothesis", blank_feedback.cget("text"))
+                feedback_top = (
+                    blank_feedback.winfo_rooty()
+                    - app.learning_viewport.body.winfo_rooty()
+                )
+                feedback_bottom = feedback_top + blank_feedback.winfo_height()
+                visible_top = app.learning_viewport.canvas.canvasy(0)
+                visible_bottom = visible_top + app.learning_viewport.canvas.winfo_height()
+                self.assertGreaterEqual(feedback_top, visible_top)
+                self.assertLessEqual(feedback_bottom, visible_bottom)
+                self.assertIs(app.focus_get(), hypothesis_entry)
                 hypothesis_entry.insert(
                     "1.0",
                     "If velocity increases while mass stays fixed,\nmomentum increases.",

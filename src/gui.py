@@ -1032,6 +1032,7 @@ class LearningScreen(Screen):
         self.research_prompts: dict[str, ttk.Label] = {}
         self.research_entries: dict[str, tk.Text] = {}
         self.research_submit_buttons: dict[str, ttk.Button] = {}
+        self.research_stage_feedback: dict[str, ttk.Label] = {}
         research_stages = (
             ("hypothesis", "Hypothesis"),
             ("analysis", "Analysis"),
@@ -1076,15 +1077,18 @@ class LearningScreen(Screen):
             )
             submit_button.grid(row=1, column=1, sticky="ne", pady=(3, 0))
             self.research_submit_buttons[stage] = submit_button
-        self.research_feedback = ttk.Label(
-            self.research_frame,
-            text="",
-            style="Surface.TLabel",
-            wraplength=850,
-        )
-        self.research_feedback.grid(
-            row=len(research_stages) + 1, column=0, sticky="w", pady=(7, 0)
-        )
+            stage_feedback = ttk.Label(
+                stage_frame,
+                text="",
+                style="SurfaceMuted.TLabel",
+                wraplength=820,
+                justify="left",
+            )
+            stage_feedback.grid(
+                row=2, column=0, columnspan=2, sticky="w", pady=(6, 0)
+            )
+            stage_feedback.grid_remove()
+            self.research_stage_feedback[stage] = stage_feedback
         self.research_frame.grid_remove()
 
         actions = ttk.Frame(self, style="App.TFrame")
@@ -1342,7 +1346,7 @@ class LearningScreen(Screen):
         self._focus_guided_input(self.research_entries[view.next_stage])
 
     def submit_research_stage(self, stage: str) -> None:
-        """Record only a completed research prompt, never the student text itself."""
+        """Record a research check-in without persisting the student text itself."""
         entry = self.research_entries[stage]
         response = self.app.controller.submit_research_response(
             stage,
@@ -1350,9 +1354,30 @@ class LearningScreen(Screen):
         )
         self.render_response(response, append=True)
         if response.sections:
-            self.research_feedback.configure(text=response.sections[-1].body)
+            for other_stage, feedback in self.research_stage_feedback.items():
+                if other_stage != stage:
+                    feedback.configure(text="")
+                    feedback.grid_remove()
+            feedback = self.research_stage_feedback[stage]
+            feedback.configure(text=response.sections[-1].body)
+            feedback.grid()
         self._refresh_research_view()
-        self._focus_next_research_input()
+        view = self.app.controller.research_view()
+        if view is None:
+            return
+        if view.next_stage == stage:
+            self._focus_guided_input(entry)
+            self.app.update_idletasks()
+            self.app.learning_viewport.scroll_widget_into_view(
+                self.research_stage_feedback[stage]
+            )
+        elif view.next_stage is not None:
+            self._focus_guided_input(self.research_entries[view.next_stage])
+        else:
+            self.app.update_idletasks()
+            self.app.learning_viewport.scroll_widget_into_view(
+                self.research_stage_feedback[stage]
+            )
 
     def clear_workspace(self) -> None:
         """Clear visible conversation cards without deleting local progress."""
@@ -1414,8 +1439,9 @@ class LearningScreen(Screen):
             self.research_submit_buttons[stage].configure(
                 state="normal", text="Record writing check-in"
             )
+            self.research_stage_feedback[stage].configure(text="")
+            self.research_stage_feedback[stage].grid_remove()
         self.research_intro.configure(text="")
-        self.research_feedback.configure(text="")
         self.research_frame.grid_remove()
         self._last_learning_state_version = self.app.controller.learning_state_version
 

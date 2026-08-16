@@ -63,6 +63,9 @@ ChatGPT clone and it does not require an API key.
   learner tabbing through Home does not land on an off-screen action. Multiline
   research fields keep their native mouse-wheel scrolling for reviewing longer
   local writing.
+- Research check-in feedback appears directly beneath the field that produced
+  it. On a compact screen, an empty-writing reminder stays visible while focus
+  remains in that editor for a retry.
 - Explainable local recommendations: low recorded quiz accuracy suggests a
   review with its actual submission evidence; otherwise the app offers an
   author-linked next lesson only when it is installed locally.

@@ -43,6 +43,9 @@
   steps; do not broaden it into a free-text grader.
 - Make normal keyboard focus reveal an off-screen page control in the existing
   viewport, while allowing multi-line writing fields to keep native scrolling.
+- Place research check-in feedback beside the relevant writing field and keep
+  it visible on compact screens, rather than putting a validation message at
+  the bottom of the whole research form.
 
 ## Next: content quality and community review
 
