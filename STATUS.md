@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.6 local learning application prototype**
+Current Version: **V2.7 local learning application prototype**
 
 ## Working now
 
@@ -26,8 +26,9 @@ Current Version: **V2.6 local learning application prototype**
   installed yet, so the normal lesson path remains the default.
 - Small offline neural intent classifier and provider-neutral AI interface.
 - Built-in concept diagrams for selected Physics lessons and an interactive,
-  local Momentum explorer with mass/velocity controls, a directional diagram,
-  and a text alternative.
+  local Momentum explorer with mass/velocity controls, a prediction-before-
+  reveal comparison, a directional diagram, and a text alternative. It has no
+  looping animation and does not store or claim to assess a learner's choice.
 - Data-bound related-question tutor flow for why/how, formula, example, uses,
   misconceptions, careers, and next steps; missing stored data is named
   instead of invented.
@@ -49,7 +50,7 @@ Current Version: **V2.6 local learning application prototype**
   immediately instead of searching below the fold.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
-- 98 automated tests, including GUI flow, compact-layout reachability,
+- 102 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests.
 
 ## Not yet claimed as complete

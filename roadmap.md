@@ -17,7 +17,8 @@
 - Add deterministic lesson-bound follow-up questions for stored explanations,
   formulas, examples, uses, misconceptions, careers, and next steps.
 - Add one interactive Momentum visual lab with learner-controlled mass and
-  velocity, an accessible text alternative, and no decorative animation loop.
+  velocity, a prediction-before-reveal comparison, an accessible text
+  alternative, and no decorative animation loop or stored learner choice.
 - Add explainable recommendations from real quiz-attempt evidence and installed
   author-linked next lessons; do not imply mastery or predict ability.
 - Harden local profile loading/saving so malformed or unavailable local storage

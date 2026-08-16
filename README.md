@@ -49,8 +49,10 @@ ChatGPT clone and it does not require an API key.
   No reviewed context records are installed yet, so the normal lesson path is
   used by default.
 - Built-in Canvas diagrams for Gravity, Force, Momentum, and Newton's laws,
-  plus a real offline Momentum explorer: mass and velocity sliders update the
-  cart, direction, and `p = m × v` result with a text alternative.
+  plus a real offline Momentum explorer: learners change mass and velocity,
+  predict whether momentum size will be greater, smaller, or the same, then
+  reveal the `p = m × v` result and a text alternative. It is a local learning
+  prompt, not a stored assessment or an animation loop.
 - A continuing question-and-answer trail, data-backed follow-up chips, clearer
   quiz progress, progress metrics, and lesson-library cards for a more usable
   desktop study workflow.

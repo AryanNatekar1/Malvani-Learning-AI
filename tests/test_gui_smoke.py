@@ -236,8 +236,16 @@ class GuiSmokeTests(unittest.TestCase):
             app.update_idletasks()
             app.update()
             self.assertEqual(lab.current_state().momentum, 12)
+            self.assertFalse(lab.result_revealed)
+            self.assertIn("hidden", lab.momentum_text.get().lower())
+            self.assertIn("Prediction pending", lab.accessible_description.get())
+            lab.prediction.set("greater")
+            result = lab.test_prediction()
+            assert result is not None
+            self.assertTrue(result.correct)
             self.assertIn("12 kg m/s right", lab.momentum_text.get())
             self.assertIn("4 kg cart", lab.accessible_description.get())
+            self.assertGreaterEqual(window.winfo_height(), window.winfo_reqheight())
             window.destroy()
             app.destroy()
         except tk.TclError:

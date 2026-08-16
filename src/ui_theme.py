@@ -247,6 +247,17 @@ def configure_theme(root: tk.Misc) -> ttk.Style:
     )
     style.map("TEntry", bordercolor=[("focus", PALETTE["primary"])])
     style.configure(
+        "Surface.TRadiobutton",
+        background=PALETTE["surface"],
+        foreground=PALETTE["text"],
+        font=("Segoe UI", 10),
+    )
+    style.map(
+        "Surface.TRadiobutton",
+        background=[("active", PALETTE["surface"]), ("disabled", PALETTE["surface"])],
+        foreground=[("disabled", "#94A3B8")],
+    )
+    style.configure(
         "TCombobox",
         fieldbackground=PALETTE["surface"],
         background=PALETTE["surface"],

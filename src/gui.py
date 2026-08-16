@@ -539,8 +539,8 @@ class LearningApp(tk.Tk):
         if visual.interaction:
             interactive_visual = create_interactive_visual(content, topic)
             if interactive_visual is not None:
-                window.geometry("720x620")
-                window.minsize(560, 500)
+                window.geometry("720x720")
+                window.minsize(560, 560)
                 interactive_visual.pack(fill="both", expand=True)
                 # A public attribute makes the local component inspectable in
                 # GUI smoke tests without relying on widget-order details.
