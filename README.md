@@ -67,6 +67,12 @@ ChatGPT clone and it does not require an API key.
 - A solution gate, progressive hints, retryable quizzes, and a transparent
   key-idea reasoning check support productive struggle rather than immediate
   answer delivery.
+- A first **Problem Solver → Go Deeper** path for Momentum. It uses a sourced,
+  supplied two-cart computer model with labelled illustrative values—not GPS,
+  local measurements, or student data. Its model-step checks, progressive
+  hints, worked-solution gate, and research prompts are separate from the
+  lesson challenge and quiz. The app stores aggregate completion counts only,
+  never the learner's model answers, hypothesis, analysis, or reflection.
 
 ## Run the application
 
@@ -117,6 +123,7 @@ src/
 ├── recommendation_engine.py # Evidence-based local next-step guidance
 ├── quiz_engine.py         # Offline quiz scoring
 ├── problem_engine.py      # Hint-before-solution problem flow
+├── problem_scenario_engine.py # Validated sourced computer-model activities
 ├── student_engine.py      # Local profile and aggregate progress
 ├── language_engine.py     # Language selection and honest fallback
 ├── culture_engine.py      # Verification-safe cultural context display
@@ -132,6 +139,7 @@ data/
 ├── *.txt                  # Original V1 Physics knowledge files (preserved)
 ├── lessons/               # Editable structured JSON lessons
 ├── contexts/              # Reviewed optional manual learning contexts
+├── scenarios/             # Reviewable supplied-data Problem Solver activities
 └── culture/               # Future source-backed cultural-context entries
 ```
 
@@ -166,6 +174,23 @@ status and a source before it can be shown. This prevents a water-body example
 from being forced into unrelated lessons and prevents the app from claiming
 facts about a student’s school or neighbourhood. See
 [data/contexts/README.md](data/contexts/README.md) before adding any record.
+
+## Problem Solver and Go Deeper
+
+The first Problem Solver activity is a Momentum comparison between two labelled
+carts in a computer model. Its values are authored illustrative teaching
+values: they are not measurements, GPS data, or observations from Sindhudurg
+or any other real place. The source for the *physics concept* is kept separate
+from the provenance of the supplied values. See
+[data/scenarios/README.md](data/scenarios/README.md) before authoring another
+activity.
+
+Students work one transparent model step at a time, can request progressive
+hints, and must make an attempt or request two hints before viewing a worked
+solution. Go Deeper then provides labelled research-question, hypothesis,
+data, analysis, proposed-next-test, and reflection prompts. It is a structured
+thinking activity, not a claim that the app understands or grades free-text
+scientific reasoning. Scenario content is currently `NEEDS_REVIEW`.
 
 ## Language support
 
@@ -213,6 +238,9 @@ than untraceable generated text.
 - No reviewed manual learning-context records, GPS integration, map lookup, or
   sensor data are installed. The context engine intentionally falls back to
   ordinary lessons until reviewed data is available.
+- Only one Problem Solver activity is installed, for Momentum. Its research
+  prompts use supplied model data rather than real observations, and it is not
+  a semantic assessment or a real research-data platform.
 - The small neural model is a routing demonstration, not conversational AI or
   a personalized language model.
 - Voice architecture exists, but no speech provider is installed.

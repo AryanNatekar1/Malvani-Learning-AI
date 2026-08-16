@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.4 local learning application prototype**
+Current Version: **V2.5 local learning application prototype**
 
 ## Working now
 
@@ -36,10 +36,18 @@ Current Version: **V2.4 local learning application prototype**
 - Explicit “teach/explain topic” questions open the complete guided teaching
   flow; focused follow-ups remain focused on the active lesson.
 - In-progress quizzes resume when a learner navigates away and returns.
+- Momentum now has a separate, sourced **Problem Solver → Go Deeper** flow:
+  three transparent computer-model steps, progressive hints, a gated worked
+  solution, and labelled research-question, hypothesis, data, analysis,
+  proposed-next-test, and reflection prompts. It uses illustrative supplied
+  values only—never GPS, local measurements, or student data—and never stores
+  a learner's typed model answer or research writing.
+- Problem Solver sessions do not replace the existing lesson challenge or quiz
+  session. Reopening or changing a lesson clears stale activity controls.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
-- 82 automated tests, including GUI flow, compact-layout reachability,
-  question-trail, state-reset, and resize smoke tests.
+- 97 automated tests, including GUI flow, compact-layout reachability,
+  question-trail, state-reset, privacy-boundary, and resize smoke tests.
 
 ## Not yet claimed as complete
 
@@ -47,6 +55,9 @@ Current Version: **V2.4 local learning application prototype**
 - Verified Sindhudurg/Konkan cultural data records.
 - Reviewed manual learning-context records, device location, map data, or
   sensor data.
+- Reviewed Problem Solver scenario content beyond the first `NEEDS_REVIEW`
+  Momentum computer model, real-world observation workflows, or semantic
+  free-text scientific assessment.
 - A configured external LLM or local language model.
 - Voice input/output.
 - Web/mobile interface, cloud sync, or real-student evaluation.

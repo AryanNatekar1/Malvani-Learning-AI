@@ -25,6 +25,11 @@
 - Add a topic-scoped, manual Contextual Learning Engine boundary. It accepts
   only source-backed `VERIFIED` records, keeps the selection session-only, and
   never accesses or stores device location.
+- Add the first separate **Problem Solver → Go Deeper** vertical slice for
+  Momentum. It uses source-attributed concept content and explicitly labelled
+  illustrative computer-model values, preserving the normal challenge and quiz
+  sessions. It has guided model steps, progressive hints, a solution gate, and
+  non-semantic research prompts while storing aggregate progress only.
 
 ## Next: content quality and community review
 
@@ -39,10 +44,15 @@
 7. Create the first teacher-reviewed contextual learning record and a matching
    Waves lesson; begin with a manual generic setting before considering device
    location, maps, or sensors.
+8. Review the Momentum Problem Solver with a subject teacher, then add one
+   source-backed scenario at a time with separate concept sources and data
+   provenance. Do not turn authored model values into local claims.
 
 ## Later product work
 
 - Improve adaptive recommendations using meaningful learner feedback.
+- Add teacher-reviewed short-answer rubrics before claiming that research or
+  reasoning writing can be assessed semantically.
 - Add more question types and teacher-reviewed rubrics for short answers.
 - Add optional local or hosted LLM adapters behind `AIProvider`.
 - Add more diagrams and accessible visual descriptions where they improve a

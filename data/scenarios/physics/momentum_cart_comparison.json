@@ -1,0 +1,60 @@
+{
+  "id": "physics.momentum.cart-comparison",
+  "title": "Compare Two Model Carts",
+  "subject": "Physics",
+  "topic": "momentum",
+  "scenario_type": "COMPUTER_MODEL",
+  "verification_status": "NEEDS_REVIEW",
+  "content_source": {
+    "citation": "OpenStax, Physics, 8.1 Linear Momentum, Force, and Impulse.",
+    "url": "https://openstax.org/books/physics/pages/8-1-linear-momentum-force-and-impulse",
+    "usage_note": "Concept reference for momentum = mass x velocity. The activity wording still needs teacher and curriculum review."
+  },
+  "data_provenance": {
+    "kind": "ILLUSTRATIVE_COMPUTER_MODEL",
+    "statement": "These illustrative cart masses and velocities were chosen only to make a comparison easy in this computer model.",
+    "is_local_measurement": false
+  },
+  "introduction": "Two labelled carts move in a computer model. Cart A has a mass of 2 kg and velocity of 3 m/s. Cart B has a mass of 3 kg and velocity of 2 m/s. This is not a model of a road, school, or local place.",
+  "problem": "Calculate each cart's momentum using p = mass x velocity. Then decide whether one cart has more momentum or whether they are equal.",
+  "guided_steps": [
+    {
+      "id": "cart-a-momentum",
+      "prompt": "What is Cart A's momentum? Show the number and unit if you can.",
+      "accepted_answers": ["6", "6 kg m/s"],
+      "success_feedback": "Correct. Cart A has momentum 2 kg x 3 m/s = 6 kg m/s."
+    },
+    {
+      "id": "cart-b-momentum",
+      "prompt": "What is Cart B's momentum? Show the number and unit if you can.",
+      "accepted_answers": ["6", "6 kg m/s"],
+      "success_feedback": "Correct. Cart B has momentum 3 kg x 2 m/s = 6 kg m/s."
+    },
+    {
+      "id": "compare-momentum",
+      "prompt": "Which cart has more momentum: Cart A, Cart B, or are they equal?",
+      "accepted_answers": ["equal", "they are equal", "same", "both", "both are equal"],
+      "success_feedback": "Correct. The carts have equal momentum even though their masses and velocities differ."
+    }
+  ],
+  "progressive_hints": [
+    "Use p = mass x velocity. Calculate one cart at a time.",
+    "For Cart A, multiply 2 by 3. For Cart B, multiply 3 by 2. Keep kg m/s as the unit.",
+    "Compare the two products. Different mass and velocity values can still give the same momentum."
+  ],
+  "worked_solution": "Cart A: p = 2 kg x 3 m/s = 6 kg m/s. Cart B: p = 3 kg x 2 m/s = 6 kg m/s. The carts have equal momentum. This result comes from illustrative computer-model values, not a real local measurement.",
+  "go_deeper": {
+    "research_question": "When mass stays the same in this computer model, how does changing velocity affect momentum?",
+    "hypothesis_prompt": "Write a testable hypothesis: if a cart's mass stays at 2 kg and its velocity increases, what do you predict will happen to momentum, and why?",
+    "data_label": "Illustrative computer-model output. It is supplied for analysis and is not a classroom or local measurement.",
+    "data_columns": ["Trial", "Mass (kg)", "Velocity (m/s)", "Momentum (kg m/s)"],
+    "data_rows": [
+      ["1", "2", "1", "2"],
+      ["2", "2", "2", "4"],
+      ["3", "2", "3", "6"]
+    ],
+    "analysis_prompt": "Identify the variable that changes, the variable kept constant, and the pattern in the momentum column. Does the supplied model data support your hypothesis?",
+    "proposed_solution_prompt": "Propose one fair next test for the computer model. State what you would change, what you would keep constant, and what result you would record.",
+    "reflection_prompt": "What did the model help you understand, and what would you need before making a claim about a real moving object?"
+  }
+}

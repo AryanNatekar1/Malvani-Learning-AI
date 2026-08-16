@@ -32,6 +32,9 @@ class StudentProfile:
     reasoning_attempts: int = 0
     challenge_attempts: int = 0
     challenge_correct: int = 0
+    problem_solver_attempts: int = 0
+    problem_solver_correct: int = 0
+    research_stages_completed: int = 0
     topic_hints: dict[str, int] = field(default_factory=dict)
     topic_reasoning_attempts: dict[str, int] = field(default_factory=dict)
 
@@ -65,6 +68,11 @@ class StudentProfile:
             reasoning_attempts=_nonnegative_int(data.get("reasoning_attempts")),
             challenge_attempts=_nonnegative_int(data.get("challenge_attempts")),
             challenge_correct=_nonnegative_int(data.get("challenge_correct")),
+            problem_solver_attempts=_nonnegative_int(data.get("problem_solver_attempts")),
+            problem_solver_correct=_nonnegative_int(data.get("problem_solver_correct")),
+            research_stages_completed=_nonnegative_int(
+                data.get("research_stages_completed")
+            ),
             topic_hints=_counter_mapping(data.get("topic_hints")),
             topic_reasoning_attempts=_counter_mapping(data.get("topic_reasoning_attempts")),
         )
@@ -99,6 +107,16 @@ class StudentProfile:
         self.challenge_attempts += 1
         if correct:
             self.challenge_correct += 1
+
+    def record_problem_solver_attempt(self, correct: bool) -> None:
+        """Store one model-step result without retaining the learner's answer text."""
+        self.problem_solver_attempts += 1
+        if correct:
+            self.problem_solver_correct += 1
+
+    def record_research_stage(self) -> None:
+        """Record a completed research prompt, never the learner's written response."""
+        self.research_stages_completed += 1
 
     @property
     def accuracy(self) -> float:

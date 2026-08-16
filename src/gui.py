@@ -770,8 +770,16 @@ class LearningScreen(Screen):
         self.question = tk.StringVar()
         self.reasoning = tk.StringVar()
         self.challenge_answer = tk.StringVar()
+        self.problem_solver_answer = tk.StringVar()
+        self.research_answers = {
+            "hypothesis": tk.StringVar(),
+            "analysis": tk.StringVar(),
+            "proposal": tk.StringVar(),
+            "reflection": tk.StringVar(),
+        }
         self.status = tk.StringVar(value="Offline local mode")
         self._trail_topic: str | None = None
+        self._last_learning_state_version = app.controller.learning_state_version
 
         header = ttk.Frame(self, style="Surface.TFrame", padding=(18, 14))
         header.grid(row=0, column=0, sticky="ew", pady=(0, 10))
@@ -873,14 +881,140 @@ class LearningScreen(Screen):
         self.challenge_feedback.grid(row=1, column=0, columnspan=2, sticky="w", pady=(6, 0))
         self.challenge_frame.grid_remove()
 
+        self.problem_solver_frame = ttk.LabelFrame(
+            self,
+            text="Problem Solver: supplied computer model",
+            style="Card.TLabelframe",
+            padding=10,
+        )
+        self.problem_solver_frame.grid(row=8, column=0, sticky="ew", pady=(8, 6))
+        self.problem_solver_frame.columnconfigure(0, weight=1)
+        self.problem_solver_meta = ttk.Label(
+            self.problem_solver_frame,
+            text="",
+            style="Surface.TLabel",
+            wraplength=850,
+        )
+        self.problem_solver_meta.grid(row=0, column=0, columnspan=2, sticky="w")
+        self.problem_solver_prompt = ttk.Label(
+            self.problem_solver_frame,
+            text="",
+            style="Subtitle.TLabel",
+            wraplength=850,
+        )
+        self.problem_solver_prompt.grid(row=1, column=0, columnspan=2, sticky="w", pady=(5, 7))
+        self.problem_solver_entry = ttk.Entry(
+            self.problem_solver_frame,
+            textvariable=self.problem_solver_answer,
+        )
+        self.problem_solver_entry.grid(row=2, column=0, sticky="ew", padx=(0, 8))
+        self.problem_solver_entry.bind(
+            "<Return>", lambda _event: self.submit_problem_solver_attempt()
+        )
+        self.problem_solver_submit_button = ttk.Button(
+            self.problem_solver_frame,
+            text="Submit Model Step",
+            command=self.submit_problem_solver_attempt,
+        )
+        self.problem_solver_submit_button.grid(row=2, column=1)
+        problem_controls = ttk.Frame(self.problem_solver_frame, style="Surface.TFrame")
+        problem_controls.grid(row=3, column=0, columnspan=2, sticky="w", pady=(7, 0))
+        self.problem_solver_hint_button = ttk.Button(
+            problem_controls,
+            text="Problem hint",
+            style="Secondary.TButton",
+            command=self.show_problem_solver_hint,
+        )
+        self.problem_solver_hint_button.grid(row=0, column=0, padx=(0, 5))
+        self.problem_solver_solution_button = ttk.Button(
+            problem_controls,
+            text="Show model solution",
+            style="Secondary.TButton",
+            command=self.show_problem_solver_solution,
+        )
+        self.problem_solver_solution_button.grid(row=0, column=1, padx=(0, 5))
+        self.go_deeper_button = ttk.Button(
+            problem_controls,
+            text="Go Deeper",
+            style="Primary.TButton",
+            command=self.start_go_deeper,
+        )
+        self.go_deeper_button.grid(row=0, column=2)
+        self.problem_solver_feedback = ttk.Label(
+            self.problem_solver_frame,
+            text="",
+            style="Surface.TLabel",
+            wraplength=850,
+        )
+        self.problem_solver_feedback.grid(
+            row=4, column=0, columnspan=2, sticky="w", pady=(6, 0)
+        )
+        self.problem_solver_frame.grid_remove()
+
+        self.research_frame = ttk.LabelFrame(
+            self,
+            text="Go Deeper: research with supplied model data",
+            style="Card.TLabelframe",
+            padding=10,
+        )
+        self.research_frame.grid(row=9, column=0, sticky="ew", pady=(0, 6))
+        self.research_frame.columnconfigure(0, weight=1)
+        self.research_intro = ttk.Label(
+            self.research_frame,
+            text="",
+            style="Surface.TLabel",
+            wraplength=850,
+        )
+        self.research_intro.grid(row=0, column=0, sticky="w", pady=(0, 5))
+        self.research_prompts: dict[str, ttk.Label] = {}
+        self.research_submit_buttons: dict[str, ttk.Button] = {}
+        research_stages = (
+            ("hypothesis", "Hypothesis"),
+            ("analysis", "Analysis"),
+            ("proposal", "Propose a fair next test"),
+            ("reflection", "Reflection"),
+        )
+        for row, (stage, label) in enumerate(research_stages, start=1):
+            stage_frame = ttk.Frame(self.research_frame, style="Surface.TFrame")
+            stage_frame.grid(row=row, column=0, sticky="ew", pady=3)
+            stage_frame.columnconfigure(0, weight=1)
+            prompt_label = ttk.Label(
+                stage_frame,
+                text=label,
+                style="CardTitle.TLabel",
+                wraplength=820,
+            )
+            prompt_label.grid(row=0, column=0, columnspan=2, sticky="w")
+            self.research_prompts[stage] = prompt_label
+            ttk.Entry(stage_frame, textvariable=self.research_answers[stage]).grid(
+                row=1, column=0, sticky="ew", padx=(0, 8), pady=(3, 0)
+            )
+            submit_button = ttk.Button(
+                stage_frame,
+                text="Mark prompt complete",
+                command=lambda item=stage: self.submit_research_stage(item),
+            )
+            submit_button.grid(row=1, column=1, pady=(3, 0))
+            self.research_submit_buttons[stage] = submit_button
+        self.research_feedback = ttk.Label(
+            self.research_frame,
+            text="",
+            style="Surface.TLabel",
+            wraplength=850,
+        )
+        self.research_feedback.grid(
+            row=len(research_stages) + 1, column=0, sticky="w", pady=(7, 0)
+        )
+        self.research_frame.grid_remove()
+
         actions = ttk.Frame(self, style="App.TFrame")
         actions.grid(row=7, column=0, sticky="ew")
         action_buttons = (
             ("Explain simply", "simple"),
             ("Give example", "example"),
-            ("Give hint", "hint"),
-            ("Give challenge", "challenge"),
-            ("Show solution", "solution"),
+            ("Challenge hint", "hint"),
+            ("Open challenge", "challenge"),
+            ("Challenge solution", "solution"),
             ("Ask me a question", "think"),
             ("Continue", "continue"),
         )
@@ -904,6 +1038,16 @@ class LearningScreen(Screen):
         ).grid(
             row=1, column=3, padx=2, pady=2, sticky="ew"
         )
+        self.problem_solver_button = ttk.Button(
+            actions,
+            text="Open Problem Solver",
+            style="Primary.TButton",
+            command=self.start_problem_solver,
+        )
+        self.problem_solver_button.grid(
+            row=2, column=0, columnspan=2, padx=2, pady=(6, 2), sticky="ew"
+        )
+        self.problem_solver_button.grid_remove()
 
     def navigate(self, target: str) -> None:
         self.app._navigate_from_shell(target)
@@ -913,6 +1057,7 @@ class LearningScreen(Screen):
         if not text:
             return
         previous_topic = self._trail_topic
+        previous_state_version = self.app.controller.learning_state_version
         response = self.app.controller.answer_question(text)
         active_topic = self.app.controller.current_topic
         topic_changed = (
@@ -920,8 +1065,12 @@ class LearningScreen(Screen):
             and active_topic == response.topic
             and previous_topic != response.topic
         )
-        append = bool(self.lesson_cards.rendered_text().strip()) and not topic_changed
+        state_changed = self.app.controller.learning_state_version != previous_state_version
+        reset_interactions = topic_changed or state_changed
+        append = bool(self.lesson_cards.rendered_text().strip()) and not reset_interactions
         self.render_response(response, append=append, student_question=text)
+        if reset_interactions:
+            self._reset_lesson_interaction_widgets()
         if response.start_quiz:
             quiz = self.app.controller.quiz_view()
             if quiz is not None:
@@ -930,9 +1079,8 @@ class LearningScreen(Screen):
                 return
         if response.topic and self.app.controller.current_topic == response.topic:
             self._set_topic_status(response.topic)
-            if topic_changed:
-                self._reset_lesson_interaction_widgets()
             self._trail_topic = response.topic
+        self._refresh_problem_solver_availability()
         self.refresh_related_questions()
         self.question.set("")
 
@@ -949,7 +1097,142 @@ class LearningScreen(Screen):
             self.challenge_answer.set("")
             self.challenge_feedback.configure(text="Try in your own words before opening the solution.")
             self.challenge_frame.grid()
+        self._refresh_problem_solver_availability()
         self.refresh_related_questions()
+
+    def _refresh_problem_solver_availability(self) -> None:
+        """Show the entry point only for lessons with an installed model activity."""
+        if self.app.controller.problem_scenario_available():
+            self.problem_solver_button.grid()
+            return
+        self.problem_solver_button.grid_remove()
+        self.problem_solver_frame.grid_remove()
+        self.research_frame.grid_remove()
+
+    def start_problem_solver(self) -> None:
+        """Open or resume the separate supplied-data investigation for this lesson."""
+        response = self.app.controller.start_problem_solver()
+        self.render_response(response, append=True)
+        view = self.app.controller.problem_solver_view()
+        if view is None:
+            self.problem_solver_feedback.configure(text=response.text)
+            return
+        self.problem_solver_answer.set("")
+        self.problem_solver_feedback.configure(
+            text="Work one model step at a time. The values are illustrative, not local measurements."
+        )
+        self.problem_solver_frame.grid()
+        self._refresh_problem_solver_view()
+
+    def _refresh_problem_solver_view(self) -> None:
+        """Synchronize focused controls with the controller's separate scenario state."""
+        view = self.app.controller.problem_solver_view()
+        if view is None:
+            self.problem_solver_frame.grid_remove()
+            return
+        status = (
+            f"Step {view.current_step_number} of {view.total_steps} | "
+            f"Model attempts: {view.attempts} | Hints: {view.hint_requests}"
+        )
+        if view.solution_reviewed and not view.is_complete:
+            status += " | Worked solution reviewed (not mastery)"
+        self.problem_solver_meta.configure(text=status)
+        self.problem_solver_prompt.configure(text=view.prompt)
+        if view.is_complete:
+            self.problem_solver_entry.configure(state="disabled")
+            self.problem_solver_submit_button.configure(state="disabled")
+            self.problem_solver_hint_button.configure(state="disabled")
+            self.go_deeper_button.configure(state="normal")
+        else:
+            self.problem_solver_entry.configure(state="normal")
+            self.problem_solver_submit_button.configure(state="normal")
+            self.problem_solver_hint_button.configure(state="normal")
+            # Keep this enabled so its learner-facing gating explanation is
+            # available instead of silently presenting a dead control.
+            self.go_deeper_button.configure(state="normal")
+        self.problem_solver_solution_button.configure(state="normal")
+
+    def submit_problem_solver_attempt(self) -> None:
+        """Submit one exact, transparent model-step answer without retaining it."""
+        answer = self.problem_solver_answer.get().strip()
+        if not answer:
+            self.problem_solver_feedback.configure(text="Write a model-step attempt before submitting it.")
+            return
+        feedback = self.app.controller.submit_problem_solver_attempt(answer)
+        if feedback is None:
+            self.problem_solver_feedback.configure(text="Open Problem Solver before submitting a step.")
+            return
+        category = "Correct" if feedback.correct else "Keep trying"
+        if feedback.correct is None:
+            category = "Model status"
+        self.problem_solver_feedback.configure(text=f"{category}: {feedback.message}")
+        self.problem_solver_answer.set("")
+        self._refresh_problem_solver_view()
+
+    def show_problem_solver_hint(self) -> None:
+        """Add the next authored model hint to the learning trail."""
+        response = self.app.controller.problem_solver_hint()
+        self.render_response(response, append=True)
+        self._refresh_problem_solver_view()
+
+    def show_problem_solver_solution(self) -> None:
+        """Use the model-specific solution gate, separate from the lesson challenge."""
+        response = self.app.controller.reveal_problem_solver_solution()
+        self.render_response(response, append=True)
+        self._refresh_problem_solver_view()
+
+    def start_go_deeper(self) -> None:
+        """Open sourced research prompts after the learner has engaged with the model."""
+        response = self.app.controller.start_go_deeper()
+        self.render_response(response, append=True)
+        self._refresh_problem_solver_view()
+        self._refresh_research_view()
+
+    def _refresh_research_view(self) -> None:
+        """Display research prompts while being clear they are not AI-graded."""
+        view = self.app.controller.research_view()
+        if view is None:
+            self.research_frame.grid_remove()
+            return
+        self.research_intro.configure(
+            text=(
+                "Use the supplied computer-model data in the cards above. Your writing stays "
+                "on this screen; the app records only completed prompt counts and cannot grade it."
+            )
+        )
+        prompts = {
+            "hypothesis": view.hypothesis_prompt,
+            "analysis": view.analysis_prompt,
+            "proposal": view.proposed_solution_prompt,
+            "reflection": view.reflection_prompt,
+        }
+        labels = {
+            "hypothesis": "HYPOTHESIS",
+            "analysis": "ANALYSIS",
+            "proposal": "PROPOSE A FAIR NEXT TEST",
+            "reflection": "REFLECTION",
+        }
+        for stage, prompt in prompts.items():
+            completed = stage in view.completed_stages
+            suffix = " | Complete" if completed else ""
+            self.research_prompts[stage].configure(text=f"{labels[stage]}{suffix}\n{prompt}")
+            self.research_submit_buttons[stage].configure(
+                state="disabled" if completed else "normal",
+                text="Completed" if completed else "Mark prompt complete",
+            )
+        self.research_frame.grid()
+
+    def submit_research_stage(self, stage: str) -> None:
+        """Record only a completed research prompt, never the student text itself."""
+        response = self.app.controller.submit_research_response(
+            stage,
+            self.research_answers[stage].get(),
+        )
+        self.render_response(response, append=True)
+        if response.sections:
+            self.research_feedback.configure(text=response.sections[-1].body)
+        self.research_answers[stage].set("")
+        self._refresh_research_view()
 
     def clear_workspace(self) -> None:
         """Clear visible conversation cards without deleting local progress."""
@@ -960,6 +1243,7 @@ class LearningScreen(Screen):
             "Your visible workspace is clear. Ask a new question, or use a follow-up prompt for the active lesson.",
             append=False,
         )
+        self._refresh_problem_solver_availability()
         self.refresh_related_questions()
 
     def refresh_related_questions(self) -> None:
@@ -993,6 +1277,26 @@ class LearningScreen(Screen):
         self.challenge_answer.set("")
         self.challenge_feedback.configure(text="")
         self.challenge_frame.grid_remove()
+        self.problem_solver_answer.set("")
+        self.problem_solver_meta.configure(text="")
+        self.problem_solver_prompt.configure(text="")
+        self.problem_solver_feedback.configure(text="")
+        self.problem_solver_entry.configure(state="normal")
+        self.problem_solver_submit_button.configure(state="normal")
+        self.problem_solver_hint_button.configure(state="normal")
+        self.problem_solver_solution_button.configure(state="normal")
+        self.go_deeper_button.configure(state="normal")
+        self.problem_solver_frame.grid_remove()
+        for stage, answer in self.research_answers.items():
+            answer.set("")
+            self.research_prompts[stage].configure(text="")
+            self.research_submit_buttons[stage].configure(
+                state="normal", text="Mark prompt complete"
+            )
+        self.research_intro.configure(text="")
+        self.research_feedback.configure(text="")
+        self.research_frame.grid_remove()
+        self._last_learning_state_version = self.app.controller.learning_state_version
 
     def check_reasoning(self) -> None:
         """Submit a student explanation to the transparent local feedback engine."""
@@ -1050,7 +1354,11 @@ class LearningScreen(Screen):
 
     def refresh(self) -> None:
         preferences = self.app.controller.preferences()
-        if self.app.controller.current_topic is None:
+        if (
+            self.app.controller.current_topic is None
+            or self._last_learning_state_version
+            != self.app.controller.learning_state_version
+        ):
             self._reset_lesson_interaction_widgets()
         context = self.app.controller.active_manual_context()
         context_suffix = f" • Context: {context.title}" if context is not None else ""
@@ -1062,6 +1370,7 @@ class LearningScreen(Screen):
             self.write_output(
                 "Ask about a topic in your selected subject. You can then explain your reasoning, try a challenge, and use hints before a solution."
             )
+        self._refresh_problem_solver_availability()
         self.refresh_related_questions()
 
 

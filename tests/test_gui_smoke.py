@@ -286,6 +286,69 @@ class GuiSmokeTests(unittest.TestCase):
         except tk.TclError:
             self.skipTest("Tk display is unavailable in this environment")
 
+    def test_problem_solver_and_go_deeper_flow_resets_stale_widgets_when_display_is_available(
+        self,
+    ) -> None:
+        """The model activity is visible only for Momentum and stays independently guided."""
+        try:
+            from app_controller import AppController
+            from gui import LearningApp
+            from student_engine import ProfileStore
+            import tkinter as tk
+
+            with tempfile.TemporaryDirectory() as temporary_directory:
+                profile_path = Path(temporary_directory) / "profile.json"
+                controller = AppController(profile_store=ProfileStore(profile_path))
+                app = LearningApp(controller=controller)
+                app.withdraw()
+                app.home_screen.start_learning()
+                app.learning_screen.question.set("Explain momentum")
+                app.learning_screen.ask_question()
+                app.update_idletasks()
+                self.assertTrue(bool(app.learning_screen.problem_solver_button.grid_info()))
+
+                app.learning_screen.start_problem_solver()
+                self.assertTrue(bool(app.learning_screen.problem_solver_frame.grid_info()))
+                # Opening the same topic again starts a fresh controller lesson
+                # state, so old interactive controls must disappear as well.
+                app.learning_screen.question.set("Explain momentum")
+                app.learning_screen.ask_question()
+                self.assertFalse(bool(app.learning_screen.problem_solver_frame.grid_info()))
+
+                app.learning_screen.start_problem_solver()
+                for answer in ("6 kg m/s", "6", "equal"):
+                    app.learning_screen.problem_solver_answer.set(answer)
+                    app.learning_screen.submit_problem_solver_attempt()
+                self.assertTrue(controller.can_go_deeper())
+                app.learning_screen.start_go_deeper()
+                app.update_idletasks()
+                self.assertTrue(bool(app.learning_screen.research_frame.grid_info()))
+                app.geometry("800x600")
+                app.update_idletasks()
+                self.assertGreater(
+                    app.learning_viewport.body.winfo_height(),
+                    app.learning_viewport.canvas.winfo_height(),
+                )
+                app.learning_viewport.canvas.yview_moveto(1.0)
+                app.update_idletasks()
+                self.assertAlmostEqual(app.learning_viewport.canvas.yview()[1], 1.0, places=2)
+                app.learning_screen.research_answers["hypothesis"].set(
+                    "If velocity increases while mass stays fixed, momentum increases."
+                )
+                app.learning_screen.submit_research_stage("hypothesis")
+                self.assertNotIn("If velocity increases", profile_path.read_text(encoding="utf-8"))
+
+                app.learning_screen.question.set("Explain force")
+                app.learning_screen.ask_question()
+                app.update_idletasks()
+                self.assertFalse(bool(app.learning_screen.problem_solver_frame.grid_info()))
+                self.assertFalse(bool(app.learning_screen.research_frame.grid_info()))
+                self.assertFalse(bool(app.learning_screen.problem_solver_button.grid_info()))
+                app.update()
+                app.destroy()
+        except tk.TclError:
+            self.skipTest("Tk display is unavailable in this environment")
+
 
 if __name__ == "__main__":
     unittest.main()

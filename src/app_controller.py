@@ -16,6 +16,16 @@ from knowledge_engine import (
 )
 from lesson_models import Lesson, QuizQuestion
 from problem_engine import AttemptFeedback, GuidedProblemSession
+from problem_scenario_engine import (
+    ProblemScenario,
+    ProblemScenarioRepository,
+    ProblemScenarioSession,
+    ScenarioAttemptFeedback,
+    ScenarioFormatError,
+    ScenarioSection,
+    render_go_deeper,
+    render_problem_solver,
+)
 from quiz_engine import QuizEvaluation, QuizSession
 from related_question_engine import (
     DEFINITION,
@@ -43,6 +53,14 @@ FULL_LESSON_CUES = (
     "what is",
     "define",
 )
+
+
+RESEARCH_STAGE_LABELS = {
+    "hypothesis": "Hypothesis",
+    "analysis": "Analysis",
+    "proposal": "Proposed next test",
+    "reflection": "Reflection",
+}
 
 
 @dataclass(frozen=True)
@@ -77,6 +95,36 @@ class QuizView:
     score: int
 
 
+@dataclass(frozen=True)
+class ProblemSolverView:
+    """Small UI-facing snapshot of an active authored problem model."""
+
+    topic: str
+    title: str
+    current_step_number: int
+    total_steps: int
+    prompt: str
+    attempts: int
+    hint_requests: int
+    is_complete: bool
+    can_reveal_solution: bool
+    can_go_deeper: bool
+    solution_reviewed: bool
+
+
+@dataclass(frozen=True)
+class ResearchView:
+    """UI-facing prompts for a sourced model investigation, not an AI grader."""
+
+    topic: str
+    title: str
+    hypothesis_prompt: str
+    analysis_prompt: str
+    proposed_solution_prompt: str
+    reflection_prompt: str
+    completed_stages: frozenset[str]
+
+
 class AppController:
     """Coordinate local content, teaching logic, progress, and AI fallback."""
 
@@ -87,15 +135,18 @@ class AppController:
         ai_provider: AIProvider | None = None,
         reasoning_engine: ReasoningEngine | None = None,
         context_repository: ContextRepository | None = None,
+        scenario_repository: ProblemScenarioRepository | None = None,
     ) -> None:
         self._persistence_notice: str | None = None
         self._context_notice: str | None = None
+        self._scenario_notice: str | None = None
         self.profile_store = profile_store or self._default_profile_store()
         self.profile = self._load_profile_safely()
         self.teaching_engine = teaching_engine or TeachingEngine()
         self.ai_provider = ai_provider or OfflineAIProvider()
         self.reasoning_engine = reasoning_engine or ReasoningEngine()
         self.context_repository = context_repository or self._default_context_repository()
+        self.scenario_repository = scenario_repository or self._default_scenario_repository()
         # This is deliberately session-only. It is a learning preference for
         # the current window, not a saved location, school, or identifier.
         self.selected_manual_context_id: str | None = None
@@ -104,6 +155,16 @@ class AppController:
         self.quiz_session: QuizSession | None = None
         self.current_problem_session: GuidedProblemSession | None = None
         self.current_problem_hints = 0
+        # This is intentionally separate from ``current_problem_session``.
+        # The latter belongs to a lesson's normal Try It challenge; the former
+        # owns one authored, sourced computer-model investigation.
+        self.current_scenario_session: ProblemScenarioSession | None = None
+        self._scenario_solution_reviewed = False
+        self._research_started = False
+        self._research_completed_stages: set[str] = set()
+        # The GUI uses this to remove stale widgets even when a learner opens
+        # the same topic again and its name therefore does not change.
+        self.learning_state_version = 0
 
     def _default_profile_store(self) -> StudentRepository | ProfileStore:
         """Prefer SQLite, with a private in-memory-safe fallback on failure."""
@@ -138,6 +199,17 @@ class AppController:
             )
             return ContextRepository()
 
+    def _default_scenario_repository(self) -> ProblemScenarioRepository:
+        """Load optional authored computer models without blocking the tutor."""
+        try:
+            return ProblemScenarioRepository.from_directory()
+        except (OSError, ScenarioFormatError):
+            self._scenario_notice = (
+                "Problem Solver activities could not be loaded. Lessons will continue "
+                "without those optional activities."
+            )
+            return ProblemScenarioRepository()
+
     def persistence_notice(self) -> str | None:
         """Return a learner-friendly local-storage notice, if one is needed."""
         return self._persistence_notice
@@ -145,6 +217,10 @@ class AppController:
     def context_notice(self) -> str | None:
         """Return a learner-safe context-data notice, if loading failed."""
         return self._context_notice
+
+    def scenario_notice(self) -> str | None:
+        """Return a learner-safe notice when optional Problem Solver data failed."""
+        return self._scenario_notice
 
     def available_manual_contexts(self) -> tuple[StudentContext, ...]:
         """Return only source-backed context choices safe for the Home screen."""
@@ -228,9 +304,23 @@ class AppController:
         """Clear lesson-specific state when a subject change makes it irrelevant."""
         self.current_lesson = None
         self.current_topic = None
+        self._clear_lesson_activity_state()
+
+    def _clear_lesson_activity_state(self) -> None:
+        """Discard in-memory work that belongs to one lesson topic.
+
+        A normal lesson challenge, quiz, Problem Solver session, and Go Deeper
+        prompts all have different responsibilities.  They are cleared
+        together only when the underlying lesson context changes.
+        """
         self.quiz_session = None
         self.current_problem_session = None
         self.current_problem_hints = 0
+        self.current_scenario_session = None
+        self._scenario_solution_reviewed = False
+        self._research_started = False
+        self._research_completed_stages.clear()
+        self.learning_state_version += 1
 
     def answer_question(self, question: str) -> TutorResponse:
         """Answer a topic question or a bounded follow-up from local lesson data."""
@@ -363,9 +453,7 @@ class AppController:
         if legacy_content is not None:
             self.current_topic = topic
             self.current_lesson = None
-            self.quiz_session = None
-            self.current_problem_session = None
-            self.current_problem_hints = 0
+            self._clear_lesson_activity_state()
             self.profile.record_lesson(topic)
             self._record_event("legacy_lesson_opened", topic)
             self._save_profile()
@@ -380,9 +468,7 @@ class AppController:
         """Make one structured lesson the active local learning context."""
         self.current_topic = lesson.topic
         self.current_lesson = lesson
-        self.quiz_session = None
-        self.current_problem_session = None
-        self.current_problem_hints = 0
+        self._clear_lesson_activity_state()
         self.profile.record_lesson(lesson.topic)
         self._record_event("lesson_opened", lesson.topic)
         self._save_profile()
@@ -510,6 +596,311 @@ class AppController:
             f"{section.title}\n{section.body}" for section in sections
         )
         return "\n\n".join(rendered_sections)
+
+    def _scenario_for_active_lesson(self) -> ProblemScenario | None:
+        """Return the first explicitly authored model for the current lesson only."""
+        if self.current_lesson is None:
+            return None
+        scenarios = self.scenario_repository.for_topic(
+            self.current_lesson.topic,
+            self.current_lesson.subject,
+        )
+        return scenarios[0] if scenarios else None
+
+    def problem_scenario_available(self) -> bool:
+        """Tell the GUI whether this installed lesson has a Problem Solver model."""
+        return self._scenario_for_active_lesson() is not None
+
+    @staticmethod
+    def _scenario_sections(
+        sections: tuple[ScenarioSection, ...],
+    ) -> tuple[LessonSection, ...]:
+        """Adapt framework-free scenario content to the existing lesson-card UI."""
+        return tuple(LessonSection(section.title, section.body) for section in sections)
+
+    @staticmethod
+    def _scenario_source_section(scenario: ProblemScenario) -> LessonSection:
+        """Keep the concept source distinct from the authored model values."""
+        source = scenario.content_source.citation
+        if scenario.content_source.url:
+            source += f"\n{scenario.content_source.url}"
+        if scenario.content_source.usage_note:
+            source += f"\n\n{scenario.content_source.usage_note}"
+        return LessonSection("CONCEPT SOURCE", source)
+
+    def _scenario_response(
+        self,
+        title: str,
+        sections: tuple[LessonSection, ...],
+    ) -> TutorResponse:
+        """Build one consistent terminal and GUI representation of scenario content."""
+        return TutorResponse(
+            self.current_topic,
+            self._rendered_text(title, sections),
+            True,
+            sections=sections,
+        )
+
+    def start_problem_solver(self) -> TutorResponse:
+        """Start or resume a separate sourced computer-model investigation.
+
+        This deliberately does not touch the normal lesson challenge or quiz
+        session.  The first implementation is one illustrative model, never
+        a local observation, GPS result, or claim about a real place.
+        """
+        scenario = self._scenario_for_active_lesson()
+        if scenario is None:
+            return TutorResponse(
+                self.current_topic,
+                "This installed lesson does not have a Problem Solver activity yet.",
+                False,
+            )
+
+        if (
+            self.current_scenario_session is None
+            or self.current_scenario_session.scenario.identifier != scenario.identifier
+        ):
+            self.current_scenario_session = ProblemScenarioSession(scenario)
+            self._scenario_solution_reviewed = False
+            self._research_started = False
+            self._research_completed_stages.clear()
+            self._record_event("scenario_started", self.current_topic)
+
+        session = self.current_scenario_session
+        overview = self._scenario_sections(render_problem_solver(scenario)[:4])
+        sections = (
+            overview[0],
+            self._scenario_source_section(scenario),
+            *overview[1:],
+        )
+        current_step = session.current_step_section()
+        if current_step is not None:
+            sections = (*sections, *self._scenario_sections((current_step,)))
+        else:
+            sections = (
+                *sections,
+                LessonSection(
+                    "MODEL STEPS COMPLETE",
+                    "You completed every authored model step. Choose Go Deeper to investigate "
+                    "the supplied data further.",
+                ),
+            )
+        return self._scenario_response(f"Problem Solver: {scenario.title}", sections)
+
+    def problem_solver_view(self) -> ProblemSolverView | None:
+        """Return current model-step state for the focused Problem Solver controls."""
+        session = self.current_scenario_session
+        if session is None or self.current_topic is None:
+            return None
+        step = session.current_step
+        total_steps = len(session.scenario.guided_steps)
+        return ProblemSolverView(
+            topic=self.current_topic,
+            title=session.scenario.title,
+            current_step_number=(session.current_step_index + 1 if step else total_steps),
+            total_steps=total_steps,
+            prompt=(
+                step.prompt
+                if step is not None
+                else "All guided model steps are complete. You can Go Deeper when ready."
+            ),
+            attempts=session.attempts,
+            hint_requests=session.hint_requests,
+            is_complete=session.is_complete,
+            can_reveal_solution=session.can_reveal_solution(),
+            can_go_deeper=self.can_go_deeper(),
+            solution_reviewed=self._scenario_solution_reviewed,
+        )
+
+    def submit_problem_solver_attempt(self, answer: str) -> ScenarioAttemptFeedback | None:
+        """Check one transparent model step and save only aggregate result data."""
+        session = self.current_scenario_session
+        if session is None or self.current_topic is None:
+            return None
+        feedback = session.submit_attempt(answer)
+        if feedback.correct is not None:
+            self.profile.record_problem_solver_attempt(feedback.correct)
+            self._record_event("scenario_attempt", self.current_topic, feedback.correct)
+            self._save_profile()
+        return feedback
+
+    def problem_solver_hint(self) -> TutorResponse:
+        """Return the next authored model hint without revealing an answer."""
+        session = self.current_scenario_session
+        if session is None:
+            return TutorResponse(
+                self.current_topic,
+                "Open Problem Solver first, then ask for a model hint if you need one.",
+                True,
+            )
+        if session.is_complete:
+            return self._scenario_response(
+                f"Problem Solver: {session.scenario.title}",
+                (
+                    LessonSection(
+                        "MODEL STEPS COMPLETE",
+                        "The guided steps are complete. Choose Go Deeper to investigate the "
+                        "supplied model data.",
+                    ),
+                ),
+            )
+        hint = session.hint()
+        if self.current_topic is not None:
+            self.profile.record_hint(self.current_topic)
+            self._record_event("scenario_hint", self.current_topic)
+            self._save_profile()
+        return self._scenario_response(
+            f"Problem Solver: {session.scenario.title}",
+            (LessonSection(f"PROBLEM HINT {session.hint_requests}", hint),),
+        )
+
+    def reveal_problem_solver_solution(self) -> TutorResponse:
+        """Reveal a worked model only after an attempt or two requested hints."""
+        session = self.current_scenario_session
+        if session is None:
+            return TutorResponse(
+                self.current_topic,
+                "Open Problem Solver first. Try an answer or ask for two hints before the model solution.",
+                True,
+            )
+        solution = session.reveal_solution()
+        if not solution.available:
+            return self._scenario_response(
+                f"Problem Solver: {session.scenario.title}",
+                (LessonSection("KEEP TRYING", solution.text),),
+            )
+        if not self._scenario_solution_reviewed:
+            self._scenario_solution_reviewed = True
+            self._record_event("scenario_solution_reviewed", self.current_topic, False)
+        return self._scenario_response(
+            f"Problem Solver: {session.scenario.title}",
+            (
+                LessonSection("MODEL SOLUTION", solution.text),
+                LessonSection(
+                    "LEARNING STATUS",
+                    "Viewing a worked solution lets you explore further, but it does not prove "
+                    "that you have mastered the model yet.",
+                ),
+            ),
+        )
+
+    def can_go_deeper(self) -> bool:
+        """Unlock investigation after all steps or an explicit solution review."""
+        session = self.current_scenario_session
+        return bool(
+            session is not None
+            and (session.is_complete or self._scenario_solution_reviewed)
+        )
+
+    def start_go_deeper(self) -> TutorResponse:
+        """Open a data-backed research-style extension without pretending to grade it."""
+        session = self.current_scenario_session
+        if session is None:
+            return TutorResponse(
+                self.current_topic,
+                "Complete or review a Problem Solver activity before opening Go Deeper.",
+                True,
+            )
+        if not self.can_go_deeper():
+            return self._scenario_response(
+                f"Go Deeper: {session.scenario.title}",
+                (
+                    LessonSection(
+                        "FIRST, WORK THE MODEL",
+                        "Complete the guided model steps, or deliberately review the worked "
+                        "solution after making an attempt or using two hints.",
+                    ),
+                ),
+            )
+        if not self._research_started:
+            self._research_started = True
+            self._record_event("research_started", self.current_topic)
+
+        scenario = session.scenario
+        sections = (
+            LessonSection("CONTENT STATUS", scenario.content_status_notice),
+            self._scenario_source_section(scenario),
+            *self._scenario_sections(render_go_deeper(scenario)),
+            LessonSection(
+                "RESEARCH MODE LIMIT",
+                "These are supplied computer-model values, not observations from your area. "
+                "This offline activity records only that you completed a prompt; it cannot "
+                "semantically grade your scientific writing.",
+            ),
+        )
+        if self._scenario_solution_reviewed and not session.is_complete:
+            sections = (
+                LessonSection(
+                    "LEARNING STATUS",
+                    "You reached Go Deeper after reviewing the model solution. Use the prompts "
+                    "to practise your own investigation; this is not recorded as mastery.",
+                ),
+                *sections,
+            )
+        return self._scenario_response(f"Go Deeper: {scenario.title}", sections)
+
+    def research_view(self) -> ResearchView | None:
+        """Return research prompts once the learner has opened Go Deeper."""
+        session = self.current_scenario_session
+        if session is None or self.current_topic is None or not self._research_started:
+            return None
+        activity = session.scenario.go_deeper
+        return ResearchView(
+            topic=self.current_topic,
+            title=session.scenario.title,
+            hypothesis_prompt=activity.hypothesis_prompt,
+            analysis_prompt=activity.analysis_prompt,
+            proposed_solution_prompt=activity.proposed_solution_prompt,
+            reflection_prompt=activity.reflection_prompt,
+            completed_stages=frozenset(self._research_completed_stages),
+        )
+
+    def submit_research_response(self, stage: str, response: str) -> TutorResponse:
+        """Acknowledge a research prompt without storing or falsely grading free text."""
+        normalized_stage = stage.strip().lower()
+        session = self.current_scenario_session
+        if session is None or not self._research_started:
+            return TutorResponse(
+                self.current_topic,
+                "Open Go Deeper before recording a research check-in.",
+                True,
+            )
+        if normalized_stage not in RESEARCH_STAGE_LABELS:
+            return self._scenario_response(
+                f"Go Deeper: {session.scenario.title}",
+                (LessonSection("RESEARCH CHECK-IN", "That research prompt is not available."),),
+            )
+        if not response.strip():
+            return self._scenario_response(
+                f"Go Deeper: {session.scenario.title}",
+                (
+                    LessonSection(
+                        "RESEARCH CHECK-IN",
+                        f"Write your {RESEARCH_STAGE_LABELS[normalized_stage].lower()} before "
+                        "marking this prompt complete.",
+                    ),
+                ),
+            )
+        if normalized_stage in self._research_completed_stages:
+            message = (
+                f"Your {RESEARCH_STAGE_LABELS[normalized_stage].lower()} was already marked "
+                "complete in this session. The app does not save or semantically grade the text "
+                "you wrote. Compare it with the supplied model data and its limits."
+            )
+        else:
+            self._research_completed_stages.add(normalized_stage)
+            self.profile.record_research_stage()
+            self._record_event(f"research_{normalized_stage}_completed", self.current_topic)
+            self._save_profile()
+            message = (
+                f"{RESEARCH_STAGE_LABELS[normalized_stage]} marked complete for this session. "
+                "The app did not save your writing and cannot determine whether it is scientifically "
+                "correct. Check your ideas against the supplied model data, assumptions, and limits."
+            )
+        return self._scenario_response(
+            f"Go Deeper: {session.scenario.title}",
+            (LessonSection("RESEARCH CHECK-IN", message),),
+        )
 
     def start_challenge(self) -> TutorResponse:
         """Start a challenge session so hints and solution gating have real state."""
@@ -663,7 +1054,10 @@ class AppController:
             f"Answer-attempt accuracy: {self.profile.accuracy:.0f}%\n\n"
             f"Reasoning attempts: {self.profile.reasoning_attempts}\n"
             f"Hints used: {self.profile.hints_used}\n"
-            f"Challenge attempts: {self.profile.challenge_attempts}\n\n"
+            f"Challenge attempts: {self.profile.challenge_attempts}\n"
+            f"Problem Solver model-step attempts: {self.profile.problem_solver_attempts}\n"
+            f"Correct model steps: {self.profile.problem_solver_correct}\n"
+            f"Research prompts completed: {self.profile.research_stages_completed}\n\n"
             f"Recommendation\n{recommendation.as_text()}"
         )
         if self._persistence_notice:
