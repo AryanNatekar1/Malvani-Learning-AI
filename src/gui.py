@@ -212,6 +212,17 @@ class ScrollableScreen(ttk.Frame):
         widget.bind("<Button-5>", self._scroll_down, add="+")
         setattr(widget, "_page_scroll_bound", True)
 
+    def _bind_focus_scroll(self, widget: tk.Misc) -> None:
+        """Reveal ordinary page controls when a keyboard user tabs to them."""
+        if getattr(widget, "_page_focus_bound", False):
+            return
+        widget.bind("<FocusIn>", self._scroll_focused_widget_into_view, add="+")
+        setattr(widget, "_page_focus_bound", True)
+
+    def _scroll_focused_widget_into_view(self, event: tk.Event[tk.Misc]) -> None:
+        """Use the existing geometry helper without changing focus or tab order."""
+        self.scroll_widget_into_view(event.widget)
+
     def set_content(self, content: "Screen") -> None:
         """Place one screen inside this viewport and bind its controls to scroll."""
         self.content = content
@@ -219,13 +230,18 @@ class ScrollableScreen(ttk.Frame):
         self._bind_descendants(content)
 
     def _bind_descendants(self, widget: tk.Misc) -> None:
-        """Forward wheel events from ordinary controls to this page viewport."""
+        """Forward ordinary controls while preserving nested and text editing behavior."""
         for child in widget.winfo_children():
             # Lesson cards own their focused scroll area; forwarding their
-            # wheel events to the outer page would make both canvases move.
+            # wheel/focus events to the outer page would make both canvases
+            # move. A Text editor owns native mouse-wheel scrolling so a
+            # learner can review a longer response; it still gets a focus
+            # handler so keyboard navigation brings it into view.
             if isinstance(child, (ScrollableLessonCards, ScrollableScreen)):
                 continue
-            self._bind_scroll_events(child)
+            if not isinstance(child, tk.Text):
+                self._bind_scroll_events(child)
+            self._bind_focus_scroll(child)
             self._bind_descendants(child)
 
     def scroll_widget_into_view(self, widget: tk.Misc, padding: int = 16) -> bool:

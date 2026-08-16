@@ -41,6 +41,8 @@
   until the preceding local check-in is recorded. Add an explicitly
   schema-scoped numeric/unit matcher for the two authored momentum calculation
   steps; do not broaden it into a free-text grader.
+- Make normal keyboard focus reveal an off-screen page control in the existing
+  viewport, while allowing multi-line writing fields to keep native scrolling.
 
 ## Next: content quality and community review
 

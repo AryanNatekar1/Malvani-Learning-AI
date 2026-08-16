@@ -59,6 +59,10 @@ ChatGPT clone and it does not require an API key.
 - Guided actions now scroll their next answer field into view and place the
   keyboard cursor there, including on an 800×600 laptop-sized window. A learner
   can move from opening Problem Solver or Go Deeper directly into writing.
+- Keyboard focus now brings ordinary page controls into view as well, so a
+  learner tabbing through Home does not land on an off-screen action. Multiline
+  research fields keep their native mouse-wheel scrolling for reviewing longer
+  local writing.
 - Explainable local recommendations: low recorded quiz accuracy suggests a
   review with its actual submission evidence; otherwise the app offers an
   author-linked next lesson only when it is installed locally.

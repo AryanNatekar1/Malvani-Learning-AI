@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.9 local learning application prototype**
+Current Version: **V2.10 local learning application prototype**
 
 ## Working now
 
@@ -58,9 +58,12 @@ Current Version: **V2.9 local learning application prototype**
 - Its two calculation steps use an author-declared numeric/unit rule, so safe
   forms such as `6.0`, `p = 6 kg m/s`, and `6 kg*m/s` work while wrong values,
   wrong units, and arbitrary prose stay unsupported.
+- Keyboard users are now brought to the focused page control on compact
+  screens, including Home's Start Learning action. Multiline research fields
+  retain their own mouse-wheel scrolling for longer on-screen writing.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
-- 104 automated tests, including GUI flow, compact-layout reachability,
+- 105 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests.
 
 ## Not yet claimed as complete

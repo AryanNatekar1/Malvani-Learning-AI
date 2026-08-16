@@ -220,6 +220,41 @@ class GuiSmokeTests(unittest.TestCase):
         except tk.TclError:
             self.skipTest("Tk display is unavailable in this environment")
 
+    def test_keyboard_focus_reveals_home_start_button_at_minimum_window_size_when_display_is_available(
+        self,
+    ) -> None:
+        """Tab/focus should never leave Home's primary action below the viewport."""
+        try:
+            from gui import LearningApp
+            import tkinter as tk
+
+            def is_visible_in_page(viewport: object, widget: object) -> bool:
+                canvas = getattr(viewport, "canvas")
+                body = getattr(viewport, "body")
+                top = widget.winfo_rooty() - body.winfo_rooty()
+                bottom = top + widget.winfo_height()
+                visible_top = canvas.canvasy(0)
+                visible_bottom = visible_top + canvas.winfo_height()
+                return top >= visible_top and bottom <= visible_bottom
+
+            app = LearningApp()
+            app.geometry("800x600")
+            app.show_screen("home")
+            app.home_viewport.canvas.yview_moveto(0.0)
+            app.update_idletasks()
+            app.update()
+            start_button = app.home_screen.start_button
+            self.assertFalse(is_visible_in_page(app.home_viewport, start_button))
+
+            start_button.focus_force()
+            app.update_idletasks()
+            app.update()
+            self.assertIs(app.focus_get(), start_button)
+            self.assertTrue(is_visible_in_page(app.home_viewport, start_button))
+            app.destroy()
+        except tk.TclError:
+            self.skipTest("Tk display is unavailable in this environment")
+
     def test_momentum_visual_lab_updates_from_learner_controls_when_display_is_available(self) -> None:
         try:
             from gui import LearningApp
@@ -350,6 +385,8 @@ class GuiSmokeTests(unittest.TestCase):
                 self.assertAlmostEqual(app.learning_viewport.canvas.yview()[1], 1.0, places=2)
                 hypothesis_entry = app.learning_screen.research_entries["hypothesis"]
                 self.assertIsInstance(hypothesis_entry, tk.Text)
+                self.assertFalse(getattr(hypothesis_entry, "_page_scroll_bound", False))
+                self.assertTrue(getattr(hypothesis_entry, "_page_focus_bound", False))
                 hypothesis_entry.insert(
                     "1.0",
                     "If velocity increases while mass stays fixed,\nmomentum increases.",
