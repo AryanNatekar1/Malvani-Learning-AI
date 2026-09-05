@@ -485,7 +485,7 @@ class GuiSmokeTests(unittest.TestCase):
     def test_problem_solver_and_go_deeper_flow_resets_stale_widgets_when_display_is_available(
         self,
     ) -> None:
-        """The model activity is visible only for Momentum and stays independently guided."""
+        """The model activity is topic-scoped and stays independently guided."""
         try:
             from app_controller import AppController
             from gui import LearningApp
@@ -572,7 +572,7 @@ class GuiSmokeTests(unittest.TestCase):
                 )
                 self.assertNotIn("If velocity increases", profile_path.read_text(encoding="utf-8"))
 
-                app.learning_screen.question.set("Explain force")
+                app.learning_screen.question.set("Explain newton")
                 app.learning_screen.ask_question()
                 app.update_idletasks()
                 self.assertFalse(bool(app.learning_screen.problem_solver_frame.grid_info()))

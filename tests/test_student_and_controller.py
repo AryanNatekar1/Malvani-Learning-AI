@@ -292,13 +292,17 @@ class StudentAndControllerTests(unittest.TestCase):
 
             controller.start_problem_solver()
             self.assertIsNotNone(controller.current_scenario_session)
-            controller.answer_question("Explain force")
+            controller.answer_question("Explain newton")
             self.assertIsNone(controller.current_scenario_session)
             self.assertFalse(controller.problem_scenario_available())
 
     def test_controller_problem_solver_matches_the_active_lesson_subject_and_topic(self) -> None:
         """A same-named future topic in another subject must not leak into Physics."""
-        scenario = load_problem_scenarios()[0]
+        scenario = next(
+            scenario
+            for scenario in load_problem_scenarios()
+            if scenario.identifier == "physics.momentum.cart-comparison"
+        )
         wrong_subject = replace(
             scenario,
             identifier="computer-science.momentum.wrong-subject",

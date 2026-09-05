@@ -27,7 +27,11 @@ from visual_learning import (
 class MomentumVisualLearningTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        scenario = load_problem_scenarios()[0]
+        scenario = next(
+            scenario
+            for scenario in load_problem_scenarios()
+            if scenario.identifier == "physics.momentum.cart-comparison"
+        )
         assert scenario.visual_model is not None
         cls.cart_visual = scenario.visual_model
 

@@ -1,0 +1,72 @@
+{
+  "id": "physics.force.model-comparison",
+  "title": "Compare Two Model Blocks",
+  "subject": "Physics",
+  "topic": "force",
+  "scenario_type": "COMPUTER_MODEL",
+  "verification_status": "NEEDS_REVIEW",
+  "content_source": {
+    "citation": "OpenStax, Physics, 4.3 Newton's Second Law of Motion.",
+    "url": "https://openstax.org/books/physics/pages/4-3-newtons-second-law-of-motion",
+    "usage_note": "Concept reference for Newton's second law, F_net = mass x acceleration. The activity wording still needs teacher and curriculum review."
+  },
+  "data_provenance": {
+    "kind": "ILLUSTRATIVE_COMPUTER_MODEL",
+    "statement": "These illustrative block masses and applied forces were chosen only to make a comparison easy in this computer model.",
+    "is_local_measurement": false
+  },
+  "introduction": "Two labelled blocks are pushed in a computer model. Block A has a mass of 4 kg and an applied net force of 8 N. Block B has a mass of 2 kg and the same applied net force of 8 N. This is not a model of a road, school, or local place.",
+  "problem": "Calculate each block's acceleration using Newton's second law, acceleration = force divided by mass. Then decide whether one block accelerates more, less, or the same as the other.",
+  "guided_steps": [
+    {
+      "id": "block-a-acceleration",
+      "prompt": "What is Block A's acceleration? Give the number and, if you can, the unit as m/s2.",
+      "accepted_answers": ["2", "2 m/s2"],
+      "numeric_answer": {
+        "value": 2,
+        "unit": "m/s2",
+        "allow_unit_omission": true,
+        "accepted_symbols": ["a", "acceleration"]
+      },
+      "success_feedback": "Correct. Block A accelerates at 8 N divided by 4 kg = 2 m/s2."
+    },
+    {
+      "id": "block-b-acceleration",
+      "prompt": "What is Block B's acceleration? Give the number and, if you can, the unit as m/s2.",
+      "accepted_answers": ["4", "4 m/s2"],
+      "numeric_answer": {
+        "value": 4,
+        "unit": "m/s2",
+        "allow_unit_omission": true,
+        "accepted_symbols": ["a", "acceleration"]
+      },
+      "success_feedback": "Correct. Block B accelerates at 8 N divided by 2 kg = 4 m/s2."
+    },
+    {
+      "id": "compare-acceleration",
+      "prompt": "Which block has the greater acceleration: Block A, Block B, or are they equal?",
+      "accepted_answers": ["block b", "b", "block b is greater", "block b has greater acceleration"],
+      "success_feedback": "Correct. With the same applied force, the lighter block (Block B) gains more acceleration."
+    }
+  ],
+  "progressive_hints": [
+    "Use acceleration = force divided by mass. Calculate one block at a time.",
+    "For Block A, divide 8 by 4. For Block B, divide 8 by 2. Keep m/s2 as the unit.",
+    "Compare the two results. The same force does not have to produce the same acceleration."
+  ],
+  "worked_solution": "Block A: acceleration = 8 N / 4 kg = 2 m/s2. Block B: acceleration = 8 N / 2 kg = 4 m/s2. Block B accelerates more because it has less mass for the same applied force. This result comes from illustrative computer-model values, not a real local measurement.",
+  "go_deeper": {
+    "research_question": "When the applied force stays the same in this computer model, how does changing mass affect acceleration?",
+    "hypothesis_prompt": "Write a testable hypothesis: if the applied force stays at 8 N and the mass increases, what do you predict will happen to acceleration, and why?",
+    "data_label": "Illustrative computer-model output. It is supplied for analysis and is not a classroom or local measurement.",
+    "data_columns": ["Trial", "Mass (kg)", "Force (N)", "Acceleration (m/s2)"],
+    "data_rows": [
+      ["1", "1", "8", "8"],
+      ["2", "2", "8", "4"],
+      ["3", "4", "8", "2"]
+    ],
+    "analysis_prompt": "Identify the variable that changes, the variable kept constant, and the pattern in the acceleration column. Does the supplied model data support your hypothesis?",
+    "proposed_solution_prompt": "Propose one fair next test for the computer model. State what you would change, what you would keep constant, and what result you would record.",
+    "reflection_prompt": "What did the model help you understand, and what would you need before making a claim about a real moving object?"
+  }
+}

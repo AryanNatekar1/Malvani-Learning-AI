@@ -34,8 +34,12 @@ class ProblemScenarioEngineTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         scenarios = load_problem_scenarios(SCENARIOS_DIR)
-        assert len(scenarios) == 1
-        cls.scenario = scenarios[0]
+        assert len(scenarios) == 2
+        cls.scenario = next(
+            scenario
+            for scenario in scenarios
+            if scenario.identifier == "physics.momentum.cart-comparison"
+        )
 
     def _raw_momentum_scenario(self) -> dict[str, object]:
         """Return a fresh editable record for schema-validation tests."""
@@ -402,6 +406,90 @@ class ProblemScenarioEngineTests(unittest.TestCase):
 
         with self.assertRaisesRegex(ScenarioFormatError, "https URL"):
             ProblemScenario.from_mapping(raw)
+
+
+class ForceScenarioTests(unittest.TestCase):
+    """The second authored scenario reuses the same schema for a new topic."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        scenarios = load_problem_scenarios(SCENARIOS_DIR)
+        cls.scenario = next(
+            scenario
+            for scenario in scenarios
+            if scenario.identifier == "physics.force.model-comparison"
+        )
+
+    def test_scenario_loads_with_distinct_source_and_provenance_and_no_visual(self) -> None:
+        scenario = self.scenario
+
+        self.assertEqual(scenario.topic, "force")
+        self.assertEqual(scenario.scenario_type, COMPUTER_MODEL)
+        self.assertEqual(scenario.verification_status, NEEDS_REVIEW)
+        self.assertEqual(scenario.data_provenance.kind, ILLUSTRATIVE_COMPUTER_MODEL)
+        self.assertFalse(scenario.data_provenance.is_local_measurement)
+        self.assertIn("OpenStax", scenario.content_source.citation)
+        self.assertIn("illustrative", scenario.data_provenance.statement.lower())
+        self.assertNotEqual(scenario.content_source.citation, scenario.data_provenance.statement)
+        self.assertIsNone(scenario.visual_model)
+
+    def test_renderer_marks_draft_and_illustrative_values_before_problem_steps(self) -> None:
+        sections = render_problem_solver(self.scenario)
+        text = "\n".join(f"{section.title}\n{section.body}" for section in sections)
+
+        self.assertEqual(sections[0].title, "CONTENT STATUS")
+        self.assertIn("needs review", sections[0].body.lower())
+        self.assertEqual(sections[1].title, "MODEL DATA")
+        self.assertIn("not local measurements", sections[1].body.lower())
+        self.assertNotIn("Sindhudurg", text)
+        self.assertNotIn("Konkan", text)
+
+    def test_session_progresses_through_two_calculations_then_a_comparison(self) -> None:
+        session = ProblemScenarioSession(self.scenario)
+
+        wrong = session.submit_attempt("3")
+        self.assertFalse(wrong.correct)
+        self.assertTrue(session.reveal_solution().available)
+
+        first = session.submit_attempt("2 m/s2")
+        self.assertTrue(first.correct)
+        self.assertEqual(session.current_step_index, 1)
+        self.assertTrue(session.has_completed_step("block-a-acceleration"))
+
+        second = session.submit_attempt("4")
+        self.assertTrue(second.correct)
+        self.assertTrue(session.has_completed_step("block-b-acceleration"))
+
+        final = session.submit_attempt("Block B")
+        self.assertTrue(final.correct)
+        self.assertTrue(final.is_complete)
+        self.assertTrue(session.is_complete)
+
+    def test_go_deeper_includes_hypothesis_labelled_data_analysis_and_reflection(self) -> None:
+        sections = render_go_deeper(self.scenario)
+        titles = [section.title for section in sections]
+        data_section = next(section for section in sections if section.title == "DATA / OBSERVATION")
+
+        self.assertEqual(
+            titles,
+            [
+                "GO DEEPER: RESEARCH QUESTION",
+                "HYPOTHESIS",
+                "DATA / OBSERVATION",
+                "ANALYSIS",
+                "PROPOSE A SOLUTION",
+                "REFLECT",
+            ],
+        )
+        self.assertIn("Illustrative computer-model values", data_section.body)
+        self.assertIn("Acceleration (m/s2)", data_section.body)
+        self.assertIn("|", data_section.body)
+
+    def test_repository_scopes_the_new_scenario_to_its_own_topic(self) -> None:
+        repository = ProblemScenarioRepository.from_directory(SCENARIOS_DIR)
+
+        self.assertEqual(repository.for_topic("force"), (self.scenario,))
+        self.assertNotIn(self.scenario, repository.for_topic("momentum"))
 
 
 if __name__ == "__main__":

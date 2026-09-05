@@ -50,6 +50,11 @@
   typed `visual_model` from reviewed scenario JSON, unlocks only after its
   authored calculation placement, provides a text alternative, and keeps its
   local prediction outside progress storage.
+- Add a second Problem Solver → Go Deeper scenario, Force (Newton's second
+  law), reusing the existing `COMPUTER_MODEL` schema unchanged with its own
+  verified OpenStax citation and illustrative values. This exercised the
+  schema and controller wiring beyond a single installed scenario without
+  broadening the engine itself.
 
 ## Next: content quality and community review
 
@@ -64,9 +69,10 @@
 7. Create the first teacher-reviewed contextual learning record and a matching
    Waves lesson; begin with a manual generic setting before considering device
    location, maps, or sensors.
-8. Review the Momentum Problem Solver with a subject teacher, then add one
-   source-backed scenario at a time with separate concept sources and data
-   provenance. Do not turn authored model values into local claims.
+8. Review the Momentum and Force Problem Solver scenarios with a subject
+   teacher, then continue adding one source-backed scenario at a time with
+   separate concept sources and data provenance. Do not turn authored model
+   values into local claims.
 
 ## Later product work
 

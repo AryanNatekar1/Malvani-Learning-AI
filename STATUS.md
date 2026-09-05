@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.12 local learning application prototype**
+Current Version: **V2.13 local learning application prototype**
 
 ## Working now
 
@@ -74,7 +74,13 @@ Current Version: **V2.12 local learning application prototype**
   focus, so the full text alternative and controls remain reachable.
 - Student-facing local-context notices use clear availability language without
   exposing draft or verification implementation details.
-- 116 automated tests, including GUI flow, compact-layout reachability,
+- A second Problem Solver → Go Deeper scenario now covers Force (Newton's
+  second law), reusing the same `COMPUTER_MODEL` schema as Momentum with its
+  own OpenStax-sourced concept reference and illustrative block/force values.
+  It has no scenario visual yet — the current visual kind is Momentum-only —
+  and confirms the schema and controller wiring work for more than one
+  authored scenario.
+- 121 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests.
 
 ## Not yet claimed as complete
@@ -83,9 +89,9 @@ Current Version: **V2.12 local learning application prototype**
 - Verified Sindhudurg/Konkan cultural data records.
 - Reviewed manual learning-context records, device location, map data, or
   sensor data.
-- Reviewed Problem Solver scenario content beyond the first `NEEDS_REVIEW`
-  Momentum computer model, real-world observation workflows, or semantic
-  free-text scientific assessment.
+- Reviewed Problem Solver scenario content: both the Momentum and Force
+  computer models are still `NEEDS_REVIEW`, and there are no real-world
+  observation workflows or semantic free-text scientific assessment yet.
 - A configured external LLM or local language model.
 - Voice input/output.
 - Web/mobile interface, cloud sync, or real-student evaluation.
