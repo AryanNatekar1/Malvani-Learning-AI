@@ -1,0 +1,72 @@
+{
+  "id": "physics.motion.water-carrying-journey",
+  "title": "A Real Journey: Carrying Water",
+  "subject": "Physics",
+  "topic": "motion",
+  "scenario_type": "COMPUTER_MODEL",
+  "verification_status": "NEEDS_REVIEW",
+  "content_source": {
+    "citation": "OpenStax, Physics, 2.2 Speed and Velocity.",
+    "url": "https://openstax.org/books/physics/pages/2-2-speed-and-velocity",
+    "usage_note": "Concept reference for average speed = distance / time. The activity wording still needs teacher and curriculum review."
+  },
+  "data_provenance": {
+    "kind": "ILLUSTRATIVE_COMPUTER_MODEL",
+    "statement": "These illustrative distance and speed values were chosen only to make a two-part journey easy to calculate in this computer model.",
+    "is_local_measurement": false
+  },
+  "introduction": "In many places, a person may need to walk to a well, pond, handpump, or river to collect water and carry it home. This computer model imagines one such round trip: a one-way walking distance of 300 m at a walking speed of 1.2 m/s. This is not a measurement of any real household, family, village, or specific place - it is a supplied illustrative model for practicing distance, speed, and time.",
+  "problem": "Calculate the time for the one-way walk to the water source. Then calculate the total time for the round trip, assuming the same walking speed both ways. Then think about whether the return trip would realistically take the same time.",
+  "guided_steps": [
+    {
+      "id": "one-way-time",
+      "prompt": "Using time = distance / speed, how long does the one-way 300 m walk take at 1.2 m/s? Give the number and, if you can, the unit as s.",
+      "accepted_answers": ["250", "250 s"],
+      "numeric_answer": {
+        "value": 250,
+        "unit": "s",
+        "allow_unit_omission": true,
+        "accepted_symbols": ["t", "time"]
+      },
+      "success_feedback": "Correct. time = 300 m / 1.2 m/s = 250 s."
+    },
+    {
+      "id": "round-trip-time",
+      "prompt": "If the return walk also takes 250 s at the same speed, what is the total round-trip time in seconds?",
+      "accepted_answers": ["500", "500 s"],
+      "numeric_answer": {
+        "value": 500,
+        "unit": "s",
+        "allow_unit_omission": true,
+        "accepted_symbols": ["t", "time"]
+      },
+      "success_feedback": "Correct. Total time = 250 s + 250 s = 500 s, about 8 minutes 20 seconds, if both walks are equally fast."
+    },
+    {
+      "id": "compare-return-speed",
+      "prompt": "A full water container is heavier to carry than an empty one. Would the return walk realistically take the same time, more time, or less time than the outward walk?",
+      "accepted_answers": ["more time", "more", "longer", "the return would take more time", "it would take more time"],
+      "success_feedback": "Correct reasoning. Carrying a heavier, full container typically slows walking speed, so a real return trip would likely take more time than this simple equal-speed model assumes."
+    }
+  ],
+  "progressive_hints": [
+    "Use time = distance / speed for the one-way trip first.",
+    "For the round trip, add the outward time and the return time together.",
+    "Think about how carrying extra weight usually changes a person's walking speed, not just the distance."
+  ],
+  "worked_solution": "One-way time = 300 m / 1.2 m/s = 250 s. Round-trip time under an equal-speed assumption = 250 s + 250 s = 500 s. In reality, carrying a full, heavier container on the return trip usually slows walking speed, so the actual return time would likely be greater than 250 s, making the real round trip longer than this simple equal-speed model. This result comes from illustrative computer-model values, not a real local measurement.",
+  "go_deeper": {
+    "research_question": "How much longer might a real round trip take if the return walking speed is slower than the outward speed, because of carrying a full water container?",
+    "hypothesis_prompt": "Write a testable hypothesis: if the return walking speed drops from 1.2 m/s to a slower value, what do you predict will happen to the total round-trip time, and why?",
+    "data_label": "Illustrative computer-model output for the same 300 m one-way distance at different assumed return speeds. It is supplied for analysis and is not a measurement of a real journey.",
+    "data_columns": ["Trial", "Return speed (m/s)", "Return time (s)", "Total round-trip time (s)"],
+    "data_rows": [
+      ["1", "1.2", "250", "500"],
+      ["2", "1.0", "300", "550"],
+      ["3", "0.8", "375", "625"]
+    ],
+    "analysis_prompt": "Identify the variable that changes, the variable kept constant, and the pattern in the total round-trip time column. Does the supplied model data support your hypothesis?",
+    "proposed_solution_prompt": "Propose one fair next test for this computer model. State what you would change, what you would keep constant, and what result you would record.",
+    "reflection_prompt": "What did this model help you understand about real journeys such as collecting water, and what real information would you need before making a claim about an actual person's daily walk?"
+  }
+}

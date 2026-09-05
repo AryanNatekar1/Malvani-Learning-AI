@@ -1,0 +1,68 @@
+{
+  "id": "physics.motion",
+  "title": "Motion",
+  "subject": "Physics",
+  "topic": "motion",
+  "levels": ["Beginner", "Class 6", "Class 7", "Class 8"],
+  "content": {
+    "English": {
+      "simple_explanation": "Motion means an object's position changes over time. We describe motion using distance, speed, and time.",
+      "detailed_explanation": "An object is in motion when its position changes compared with a fixed reference point. Average speed is the distance travelled divided by the time taken: speed = distance / time. Real journeys rarely happen at one constant speed the whole way.",
+      "everyday_example": "Walking to a well or shop, cycling to school, or a bus travelling between villages are all examples of motion that can be measured with distance, speed, and time."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "local_example": {
+    "text": "Many students walk to school, a shop, a field, or a water source every day. That daily walk is a real, measurable example of motion.",
+    "region": "Konkan / Sindhudurg",
+    "source": null,
+    "verification_status": "NEEDS_REVIEW",
+    "appropriate_usage": "Use as a general local-context draft only until reviewed by a community or content reviewer; do not present it as a claim about any specific student, family, or route."
+  },
+  "real_world_use": ["daily travel", "transport planning", "sports", "delivery and logistics"],
+  "common_misconceptions": [
+    "A faster average speed always means the object moved at that exact speed the whole time.",
+    "The distance and total time alone tell you everything about a journey, without needing to think about rest stops or a changing pace."
+  ],
+  "think_question": "If two people walk the same distance but one is carrying a heavy load, would you expect their time to be the same? Why or why not?",
+  "reasoning_guide": {
+    "required_keywords": ["speed", "time"],
+    "misconception_keywords": ["same time"],
+    "correct_feedback": "Good reasoning: you connected carrying a load to a change in walking speed, and therefore a change in time.",
+    "partial_feedback": "You are close. Explain how carrying a load might change walking speed, and how that affects the time taken.",
+    "misconception_feedback": "A heavier load usually changes walking speed for the same distance. Think about how that affects the time taken."
+  },
+  "challenge": {
+    "question": "Estimate how long it would take to walk 300 m at a normal walking pace, then explain your estimate.",
+    "hint": "An average walking speed is roughly 1 to 1.5 metres per second.",
+    "progressive_hints": [
+      "An average walking speed is roughly 1 to 1.5 metres per second.",
+      "Use time = distance / speed with your estimated speed.",
+      "Try 300 divided by 1.2 as one reasonable estimate."
+    ],
+    "solution": "Using a typical walking speed of about 1.2 m/s, 300 m would take roughly 250 seconds (about 4 minutes). Real answers vary with pace, terrain, and load.",
+    "accepted_answers": []
+  },
+  "career_connections": ["transport and logistics", "sports science", "civil engineering", "delivery and courier services"],
+  "further_exploration": ["velocity", "acceleration", "speed vs. velocity"],
+  "quiz_questions": [
+    {
+      "id": "motion-speed-formula",
+      "question": "Which formula correctly relates speed, distance, and time?",
+      "type": "multiple_choice",
+      "options": ["speed = distance x time", "speed = distance / time", "speed = time / distance", "speed = distance + time"],
+      "correct_answers": ["speed = distance / time", "2"],
+      "explanation": "Average speed is the distance travelled divided by the time taken, so speed = distance / time.",
+      "hint": "Think about how far you go divided by how long it takes.",
+      "progressive_hints": [
+        "Think about how far you go divided by how long it takes.",
+        "Speed increases when distance increases or when time decreases."
+      ],
+      "difficulty": "Beginner"
+    }
+  ],
+  "sources": ["Migrated and expanded from the project's original motion.txt lesson. Academic and local-context review is still needed."],
+  "verification_status": "NEEDS_REVIEW"
+}

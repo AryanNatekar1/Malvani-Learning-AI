@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.13 local learning application prototype**
+Current Version: **V2.14 local learning application prototype**
 
 ## Working now
 
@@ -80,7 +80,15 @@ Current Version: **V2.13 local learning application prototype**
   It has no scenario visual yet — the current visual kind is Momentum-only —
   and confirms the schema and controller wiring work for more than one
   authored scenario.
-- 121 automated tests, including GUI flow, compact-layout reachability,
+- A new structured **Motion** lesson (migrated from the original `motion.txt`)
+  pairs with a third Problem Solver scenario, "A Real Journey: Carrying
+  Water" — a relatable, real-life-framed distance/speed/time activity about
+  walking to collect water, instead of an abstract textbook cart or block. It
+  is explicit that its 300 m/1.2 m/s values are an illustrative computer
+  model, not a measurement of any real household, family, or place, and its
+  Go Deeper stage lets a learner investigate how a slower, load-carrying
+  return speed would change the total round-trip time.
+- 126 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests.
 
 ## Not yet claimed as complete
@@ -89,8 +97,8 @@ Current Version: **V2.13 local learning application prototype**
 - Verified Sindhudurg/Konkan cultural data records.
 - Reviewed manual learning-context records, device location, map data, or
   sensor data.
-- Reviewed Problem Solver scenario content: both the Momentum and Force
-  computer models are still `NEEDS_REVIEW`, and there are no real-world
+- Reviewed Problem Solver scenario content: the Momentum, Force, and Motion
+  computer models are all still `NEEDS_REVIEW`, and there are no real-world
   observation workflows or semantic free-text scientific assessment yet.
 - A configured external LLM or local language model.
 - Voice input/output.

@@ -18,7 +18,7 @@ ChatGPT clone and it does not require an API key.
   supported 800×600 laptop size.
 - The original terminal chatbot remains available as a fallback.
 - Structured, guided starter lessons in:
-  - Physics: Gravity, Force, Momentum, Newton's Laws
+  - Physics: Gravity, Force, Momentum, Motion, Newton's Laws
   - Mathematics: Fractions
   - Chemistry: Atoms
   - Biology: Photosynthesis
@@ -85,9 +85,11 @@ ChatGPT clone and it does not require an API key.
 - A solution gate, progressive hints, retryable quizzes, and a transparent
   key-idea reasoning check support productive struggle rather than immediate
   answer delivery.
-- A **Problem Solver → Go Deeper** path, now with two activities: Momentum
-  (two labelled carts) and Force (two labelled blocks under Newton's second
-  law). Each uses a sourced, supplied computer model with labelled
+- A **Problem Solver → Go Deeper** path, now with three activities: Momentum
+  (two labelled carts), Force (two labelled blocks under Newton's second law),
+  and Motion — "A Real Journey: Carrying Water," a distance/speed/time
+  activity framed around walking to collect water instead of an abstract
+  textbook object. Each uses a sourced, supplied computer model with labelled
   illustrative values—not GPS, local measurements, or student data. Their
   model-step checks, progressive hints, worked-solution gate, and multi-line
   research-writing prompts are separate from the lesson challenge and quiz.
@@ -197,14 +199,17 @@ facts about a student’s school or neighbourhood. See
 
 ## Problem Solver and Go Deeper
 
-Two Problem Solver activities are installed: a Momentum comparison between two
-labelled carts, and a Force comparison between two labelled blocks under
-Newton's second law. Both use authored illustrative teaching values: they are
-not measurements, GPS data, or observations from Sindhudurg or any other real
-place. The source for each *physics concept* is kept separate from the
-provenance of its supplied values. See
-[data/scenarios/README.md](data/scenarios/README.md) before authoring another
-activity.
+Three Problem Solver activities are installed: a Momentum comparison between
+two labelled carts, a Force comparison between two labelled blocks under
+Newton's second law, and a Motion activity, "A Real Journey: Carrying Water,"
+that frames distance/speed/time around walking to collect water rather than
+an abstract textbook object. All three use authored illustrative teaching
+values: they are not measurements, GPS data, or observations from Sindhudurg
+or any other real place — the Motion scenario is explicit that it does not
+describe any real household, family, village, or route. The source for each
+*physics concept* is kept separate from the provenance of its supplied
+values. See [data/scenarios/README.md](data/scenarios/README.md) before
+authoring another activity.
 
 Students work one transparent model step at a time, can request progressive
 hints, and must make an attempt or request two hints before viewing a worked
@@ -218,7 +223,7 @@ then reflection—rather than claiming that every real investigation is linear.
 Its two numerical momentum steps also accept only author-declared compact
 number/unit formats such as `6.0 kg m/s`; this is not free-text grading. It is
 a structured thinking activity, not a claim that the app understands or grades
-free-text scientific reasoning. Both scenarios' content is currently
+free-text scientific reasoning. All three scenarios' content is currently
 `NEEDS_REVIEW`. For Momentum only, after the two per-cart calculation steps
 the optional **Explore model visual** button opens a fixed, non-modal
 comparison view. It draws the authored mass and velocity cues, provides a text
@@ -273,9 +278,9 @@ than untraceable generated text.
 - No reviewed manual learning-context records, GPS integration, map lookup, or
   sensor data are installed. The context engine intentionally falls back to
   ordinary lessons until reviewed data is available.
-- Only two Problem Solver activities are installed, for Momentum and Force.
-  Their research prompts use supplied model data rather than real
-  observations, and neither is a semantic assessment or a real research-data
+- Only three Problem Solver activities are installed, for Momentum, Force, and
+  Motion. Their research prompts use supplied model data rather than real
+  observations, and none is a semantic assessment or a real research-data
   platform.
 - The small neural model is a routing demonstration, not conversational AI or
   a personalized language model.

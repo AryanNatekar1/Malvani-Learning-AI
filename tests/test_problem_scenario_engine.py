@@ -34,7 +34,7 @@ class ProblemScenarioEngineTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         scenarios = load_problem_scenarios(SCENARIOS_DIR)
-        assert len(scenarios) == 2
+        assert len(scenarios) == 3
         cls.scenario = next(
             scenario
             for scenario in scenarios
@@ -490,6 +490,72 @@ class ForceScenarioTests(unittest.TestCase):
 
         self.assertEqual(repository.for_topic("force"), (self.scenario,))
         self.assertNotIn(self.scenario, repository.for_topic("momentum"))
+
+
+class MotionRealLifeScenarioTests(unittest.TestCase):
+    """A real-life-framed scenario must stay illustrative, not a factual claim."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        scenarios = load_problem_scenarios(SCENARIOS_DIR)
+        cls.scenario = next(
+            scenario
+            for scenario in scenarios
+            if scenario.identifier == "physics.motion.water-carrying-journey"
+        )
+
+    def test_scenario_loads_with_distinct_source_and_provenance_and_no_visual(self) -> None:
+        scenario = self.scenario
+
+        self.assertEqual(scenario.topic, "motion")
+        self.assertEqual(scenario.scenario_type, COMPUTER_MODEL)
+        self.assertEqual(scenario.verification_status, NEEDS_REVIEW)
+        self.assertEqual(scenario.data_provenance.kind, ILLUSTRATIVE_COMPUTER_MODEL)
+        self.assertFalse(scenario.data_provenance.is_local_measurement)
+        self.assertIn("OpenStax", scenario.content_source.citation)
+        self.assertIsNone(scenario.visual_model)
+
+    def test_introduction_never_claims_a_real_household_or_place(self) -> None:
+        """A relatable frame must not slide into an unverified factual claim."""
+        sections = render_problem_solver(self.scenario)
+        text = "\n".join(f"{section.title}\n{section.body}" for section in sections)
+
+        self.assertIn("not a measurement of any real household", self.scenario.introduction)
+        self.assertIn("not local measurements", sections[1].body.lower())
+        self.assertNotIn("Sindhudurg", text)
+        self.assertNotIn("Konkan", text)
+
+    def test_session_progresses_through_two_calculations_then_a_reasoning_step(self) -> None:
+        session = ProblemScenarioSession(self.scenario)
+
+        wrong = session.submit_attempt("100")
+        self.assertFalse(wrong.correct)
+        self.assertTrue(session.reveal_solution().available)
+
+        first = session.submit_attempt("250 s")
+        self.assertTrue(first.correct)
+        self.assertTrue(session.has_completed_step("one-way-time"))
+
+        second = session.submit_attempt("500")
+        self.assertTrue(second.correct)
+        self.assertTrue(session.has_completed_step("round-trip-time"))
+
+        final = session.submit_attempt("more time")
+        self.assertTrue(final.correct)
+        self.assertTrue(final.is_complete)
+
+    def test_go_deeper_data_supports_the_slower_return_speed_hypothesis(self) -> None:
+        sections = render_go_deeper(self.scenario)
+        data_section = next(section for section in sections if section.title == "DATA / OBSERVATION")
+
+        self.assertIn("Illustrative computer-model output", data_section.body)
+        self.assertIn("Total round-trip time (s)", data_section.body)
+
+    def test_repository_scopes_the_new_scenario_to_its_own_topic(self) -> None:
+        repository = ProblemScenarioRepository.from_directory(SCENARIOS_DIR)
+
+        self.assertEqual(repository.for_topic("motion"), (self.scenario,))
+        self.assertNotIn(self.scenario, repository.for_topic("force"))
 
 
 if __name__ == "__main__":

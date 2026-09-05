@@ -55,6 +55,12 @@
   verified OpenStax citation and illustrative values. This exercised the
   schema and controller wiring beyond a single installed scenario without
   broadening the engine itself.
+- Migrate Motion from its original `.txt` file into a structured lesson, and
+  add a third scenario, "A Real Journey: Carrying Water," that frames
+  distance/speed/time using a relatable everyday situation (walking to
+  collect water) instead of an abstract cart or block, while still keeping
+  its values explicitly illustrative and disclaiming any real household,
+  family, or place.
 
 ## Next: content quality and community review
 
@@ -64,14 +70,15 @@
 3. Add reviewed Marathi interface and lesson content.
 4. Add reviewed Malvani vocabulary and lesson content only with appropriate
    linguistic/community verification.
-5. Migrate and enrich the remaining original Physics files.
+5. Migrate and enrich the remaining original Physics files (energy, friction,
+   acceleration, velocity, work — Motion is now migrated).
 6. Add more actual lessons before creating additional subject folders.
 7. Create the first teacher-reviewed contextual learning record and a matching
    Waves lesson; begin with a manual generic setting before considering device
    location, maps, or sensors.
-8. Review the Momentum and Force Problem Solver scenarios with a subject
-   teacher, then continue adding one source-backed scenario at a time with
-   separate concept sources and data provenance. Do not turn authored model
+8. Review the Momentum, Force, and Motion Problem Solver scenarios with a
+   subject teacher, then continue adding one source-backed scenario at a time
+   with separate concept sources and data provenance. Do not turn authored model
    values into local claims.
 
 ## Later product work
