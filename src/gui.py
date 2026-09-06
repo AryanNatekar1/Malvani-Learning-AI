@@ -20,6 +20,16 @@ from voice_engine import DisabledVoiceProvider
 
 LEVELS = ("Beginner", "Class 8", "Class 9", "Class 10", "Class 11/12")
 
+# One-click Home screen launchers for the installed Problem Solver scenarios.
+# Each tuple is (card title, short blurb, structured-lesson topic). Keeping
+# this list here, rather than hardcoding buttons, means a future scenario
+# only needs one new entry.
+REAL_LIFE_SCENARIO_LAUNCHERS = (
+    ("Carrying Water", "A real-life walk to collect water: distance, speed, and time.", "motion"),
+    ("Compare Two Carts", "Momentum: why equal momentum can come from different masses.", "momentum"),
+    ("Compare Two Blocks", "Force: Newton's second law with two different masses.", "force"),
+)
+
 
 class ScrollableLessonCards(ttk.Frame):
     """A responsive scrollable stack of focused lesson sections."""
@@ -883,6 +893,23 @@ class HomeScreen(Screen):
 
         intro = ttk.Frame(self, style="Surface.TFrame", padding=(28, 24))
         intro.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 14))
+        persona = ttk.Frame(intro, style="Surface.TFrame")
+        persona.pack(anchor="w", pady=(0, 12))
+        ttk.Label(persona, text="\U0001F393", style="PersonaMark.TLabel").pack(
+            side="left", padx=(0, 12)
+        )
+        persona_text = ttk.Frame(persona, style="Surface.TFrame")
+        persona_text.pack(side="left")
+        ttk.Label(
+            persona_text,
+            text="Hi, I'm your learning companion.",
+            style="PersonaName.TLabel",
+        ).pack(anchor="w")
+        ttk.Label(
+            persona_text,
+            text="Ask about a topic below, or jump straight into a real problem to solve.",
+            style="PersonaTagline.TLabel",
+        ).pack(anchor="w")
         ttk.Label(intro, text="MALVANI LEARNING AI", style="PageTitle.TLabel").pack(anchor="w")
         ttk.Label(
             intro,
@@ -969,8 +996,57 @@ class HomeScreen(Screen):
         self.attempts_metric.grid(row=0, column=1, sticky="ew", padx=5)
         self.accuracy_metric.grid(row=0, column=2, sticky="ew", padx=(5, 0))
 
+        scenarios = ttk.LabelFrame(
+            self,
+            text="Solve a real problem",
+            style="Highlight.TLabelframe",
+            padding=18,
+        )
+        scenarios.grid(row=4, column=0, columnspan=2, pady=(14, 0), sticky="ew")
+        for column in range(3):
+            scenarios.columnconfigure(column, weight=1)
+        ttk.Label(
+            scenarios,
+            text=(
+                "These guided activities start from something you can picture, walk you "
+                "through a calculation step by step, and then let you Go Deeper into a "
+                "short research investigation. Every value is a clearly labelled "
+                "illustrative model, not a real measurement."
+            ),
+            wraplength=780,
+            justify="left",
+            style="Surface.TLabel",
+        ).grid(row=0, column=0, columnspan=3, sticky="w", pady=(0, 12))
+        for column, (title, blurb, topic) in enumerate(REAL_LIFE_SCENARIO_LAUNCHERS):
+            card = ttk.Frame(scenarios, style="Soft.TFrame", padding=(14, 12))
+            card.grid(
+                row=1,
+                column=column,
+                sticky="nsew",
+                padx=(0, 5) if column == 0 else ((5, 0) if column == 2 else 5),
+            )
+            ttk.Label(card, text=title, style="CardTitle.TLabel").pack(anchor="w")
+            ttk.Label(
+                card,
+                text=blurb,
+                style="CardBody.TLabel",
+                wraplength=220,
+                justify="left",
+            ).pack(anchor="w", pady=(4, 10))
+            ttk.Button(
+                card,
+                text="Try it",
+                style="Scenario.TButton",
+                command=lambda topic=topic: self.start_real_life_scenario(topic),
+            ).pack(anchor="w")
+
         self.language.trace_add("write", lambda *_: self._update_labels())
         self._update_labels()
+
+    def start_real_life_scenario(self, topic: str) -> None:
+        """Open one lesson and start its guided Problem Solver in one click."""
+        self.app.library_screen.open_lesson(topic)
+        self.app.learning_screen.start_problem_solver()
 
     def _update_labels(self) -> None:
         language = self.language.get()
@@ -1084,8 +1160,13 @@ class LearningScreen(Screen):
         header = ttk.Frame(self, style="Surface.TFrame", padding=(18, 14))
         header.grid(row=0, column=0, sticky="ew", pady=(0, 10))
         header.columnconfigure(0, weight=1)
-        ttk.Label(header, text="Ask, understand, then try", style="PageTitle.TLabel").grid(
-            row=0, column=0, sticky="w"
+        title_row = ttk.Frame(header, style="Surface.TFrame")
+        title_row.grid(row=0, column=0, sticky="w")
+        ttk.Label(title_row, text="\U0001F393", style="PersonaMark.TLabel").pack(
+            side="left", padx=(0, 8)
+        )
+        ttk.Label(title_row, text="Ask, understand, then try", style="PageTitle.TLabel").pack(
+            side="left"
         )
         ttk.Label(
             header,

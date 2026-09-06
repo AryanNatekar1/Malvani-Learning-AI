@@ -271,4 +271,56 @@ def configure_theme(root: tk.Misc) -> ttk.Style:
         lightcolor=PALETTE["accent"],
         darkcolor=PALETTE["accent"],
     )
+
+    # A small, reusable "tutor is here" identity: a large emoji mark plus a
+    # short name/tagline, used on Home and the Learning screen header. It is
+    # decorative only; it never claims a capability the offline engine does
+    # not have.
+    style.configure(
+        "PersonaMark.TLabel",
+        font=("Segoe UI", 26),
+        background=PALETTE["surface"],
+        foreground=PALETTE["accent"],
+    )
+    style.configure(
+        "PersonaName.TLabel",
+        font=("Segoe UI", 12, "bold"),
+        background=PALETTE["surface"],
+        foreground=PALETTE["primary"],
+    )
+    style.configure(
+        "PersonaTagline.TLabel",
+        font=("Segoe UI", 9),
+        background=PALETTE["surface"],
+        foreground=PALETTE["muted"],
+    )
+    style.configure(
+        "Badge.TLabel",
+        font=("Segoe UI", 8, "bold"),
+        background=PALETTE["accent"],
+        foreground=PALETTE["white"],
+        padding=(8, 2),
+    )
+    style.configure(
+        "Highlight.TLabelframe",
+        background=PALETTE["surface"],
+        bordercolor=PALETTE["accent"],
+        relief="solid",
+        borderwidth=2,
+    )
+    style.configure(
+        "Highlight.TLabelframe.Label",
+        background=PALETTE["surface"],
+        foreground=PALETTE["accent"],
+        font=("Segoe UI", 11, "bold"),
+    )
+    style.configure(
+        "Scenario.TButton",
+        font=("Segoe UI", 10, "bold"),
+        foreground=PALETTE["white"],
+        background=PALETTE["accent"],
+        borderwidth=0,
+        padding=(12, 8),
+    )
+    style.map("Scenario.TButton", background=[("active", "#0C7C6D")])
     return style
