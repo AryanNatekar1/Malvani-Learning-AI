@@ -10,6 +10,11 @@ labelled local draft lesson data, guided questions, quizzes, progress tracking,
 and a small optional AI-routing component. It is not a generic
 ChatGPT clone and it does not require an API key.
 
+**[Try the live demo →](https://claude.ai/code/artifact/58464562-6724-4ebe-b4ff-229003ca03d4)**
+A browser-only version of the Problem Solver — carrying water, comparing carts,
+comparing blocks — using the same guided-step, hint, and Go Deeper content as
+the desktop app. No install required.
+
 ## What works now
 
 - A Tkinter desktop GUI with Home, Learning, Quiz, Progress, Library, and
