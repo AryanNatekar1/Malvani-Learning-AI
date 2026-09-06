@@ -1,5 +1,7 @@
 # Malvani Learning AI
 
+[![Tests](https://github.com/AryanNatekar1/Malvani-Learning-AI/actions/workflows/tests.yml/badge.svg)](https://github.com/AryanNatekar1/Malvani-Learning-AI/actions/workflows/tests.yml)
+
 Malvani Learning AI is an offline-first educational application for students
 in Sindhudurg, Maharashtra, and other regional communities. It is designed to
 help students **learn, think, solve, and explore** instead of merely receiving
