@@ -121,6 +121,12 @@ class GuiSmokeTests(unittest.TestCase):
 
             app = LearningApp()
             app.withdraw()
+            # A withdrawn (unmapped) window can report width/height of 1 under
+            # a window-manager-less display (e.g. Xvfb in CI) even after
+            # geometry() + update_idletasks(); mapping it first, as the other
+            # size-dependent smoke tests below already do, makes the check
+            # reflect the real, negotiated window size on every platform.
+            app.deiconify()
             for size in ("800x600", "1366x768", "1920x1080"):
                 with self.subTest(size=size):
                     app.geometry(size)
