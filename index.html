@@ -1,0 +1,1033 @@
+<!doctype html>
+<html lang="en" data-phase="day">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Malvani Learning AI</title>
+<meta name="description" content="An offline-first learning companion for students in Sindhudurg and the Konkan: understand a concept, think it through, solve a real problem, then investigate deeper.">
+<meta name="color-scheme" content="dark">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --void:#060A12;
+  --deep:#0B1220;
+  --panel:rgba(17,26,44,.74);
+  --panel-solid:#111A2C;
+  --edge:rgba(120,160,205,.20);
+  --edge-bright:rgba(140,210,235,.42);
+  --text:#E9F1FB;
+  --muted:#93A7C4;
+  --dim:#6C809E;
+  --cyan:#22D3EE;
+  --teal:#2DD4BF;
+  --amber:#F6A96B;
+  --violet:#A78BFA;
+  --rose:#FB7B8E;
+  --good:#34D399;
+  --warn:#FBBF24;
+  --phase-a:#22D3EE;
+  --phase-b:#3B82F6;
+  --phase-glow:rgba(34,211,238,.30);
+  --r-sm:8px; --r-md:14px; --r-lg:22px;
+  --pad:clamp(16px,4vw,28px);
+  --maxw:1120px;
+  --f-display:"Chakra Petch",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+}
+:root[data-phase="dawn"]{ --phase-a:#F6A96B; --phase-b:#2DD4BF; --phase-glow:rgba(246,169,107,.26); }
+:root[data-phase="day"]{ --phase-a:#22D3EE; --phase-b:#3B82F6; --phase-glow:rgba(34,211,238,.26); }
+:root[data-phase="dusk"]{ --phase-a:#FB7B8E; --phase-b:#A78BFA; --phase-glow:rgba(167,139,250,.28); }
+:root[data-phase="night"]{ --phase-a:#38BDF8; --phase-b:#6366F1; --phase-glow:rgba(99,102,241,.30); }
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--void); color:var(--text);
+  font-family:var(--f-body); font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+.aurora{position:fixed; inset:0; z-index:-2; background:
+  radial-gradient(60vw 48vh at 12% -6%, color-mix(in oklab,var(--phase-a) 26%, transparent), transparent 70%),
+  radial-gradient(52vw 44vh at 92% 4%, color-mix(in oklab,var(--phase-b) 24%, transparent), transparent 70%),
+  radial-gradient(70vw 50vh at 50% 108%, color-mix(in oklab,var(--phase-b) 16%, transparent), transparent 72%),
+  linear-gradient(180deg,var(--deep),var(--void) 60%);
+  transition:background 1.2s ease;
+}
+.grid-lines{position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.28;
+  background-image:linear-gradient(rgba(125,170,210,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(125,170,210,.07) 1px,transparent 1px);
+  background-size:58px 58px; mask-image:radial-gradient(70% 60% at 50% 0%,#000,transparent 85%);}
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 var(--pad)}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky; top:0; z-index:40; backdrop-filter:blur(14px);
+  background:linear-gradient(180deg,rgba(8,13,23,.92),rgba(8,13,23,.62)); border-bottom:1px solid var(--edge)}
+.topbar .wrap{display:flex; align-items:center; gap:14px; min-height:62px}
+.brand{display:flex; align-items:center; gap:11px; text-decoration:none; color:inherit; margin-right:auto}
+.mark{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;
+  background:linear-gradient(140deg,var(--phase-a),var(--phase-b)); color:#04121C;
+  font-family:var(--f-display); font-weight:700; font-size:15px; letter-spacing:.02em;
+  box-shadow:0 0 0 1px rgba(255,255,255,.14),0 6px 22px var(--phase-glow); transition:background 1.2s ease}
+.brand b{font-family:var(--f-display); font-weight:600; font-size:16.5px; letter-spacing:.015em; display:block; line-height:1.15}
+.brand span{display:block; font-family:var(--f-mono); font-size:10.5px; color:var(--dim); letter-spacing:.14em;
+  text-transform:uppercase; font-weight:400; margin-top:1px}
+.clock{font-family:var(--f-mono); font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px;
+  border:1px solid var(--edge); border-radius:999px; padding:6px 12px; background:rgba(12,20,34,.6); white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--phase-a);box-shadow:0 0 10px var(--phase-a);flex:none}
+.navbtn{font-family:var(--f-body); font-size:13.5px; font-weight:500; color:var(--muted); background:transparent;
+  border:1px solid transparent; border-radius:999px; padding:8px 14px; cursor:pointer; transition:.18s}
+.navbtn:hover{color:var(--text); background:rgba(120,170,215,.10)}
+.navbtn[aria-current="true"]{color:var(--text); border-color:var(--edge-bright); background:rgba(120,170,215,.12)}
+@media(max-width:720px){ .clock{display:none} .brand span{display:none} }
+
+/* ---------- shared ---------- */
+.eyebrow{font-family:var(--f-mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim)}
+h1,h2,h3,h4{font-family:var(--f-display); font-weight:600; text-wrap:balance; margin:0; letter-spacing:.01em}
+h1{font-size:clamp(31px,6.4vw,52px); line-height:1.06}
+h2{font-size:clamp(21px,3.4vw,28px); line-height:1.2}
+h3{font-size:clamp(17px,2.4vw,20px); line-height:1.28}
+p{margin:0}
+.lede{font-size:clamp(15.5px,2vw,18px); color:var(--muted); max-width:62ch}
+.panel{background:var(--panel); border:1px solid var(--edge); border-radius:var(--r-lg);
+  padding:clamp(18px,3vw,26px); backdrop-filter:blur(10px)}
+.section{padding:clamp(34px,6vw,60px) 0}
+.stack{display:flex; flex-direction:column}
+.gap-s{gap:10px} .gap-m{gap:18px} .gap-l{gap:28px}
+.btn{font-family:var(--f-body); font-size:14.5px; font-weight:600; border-radius:999px; padding:12px 22px;
+  border:1px solid transparent; cursor:pointer; transition:.18s; min-height:44px; display:inline-flex;
+  align-items:center; justify-content:center; gap:8px; text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--phase-a),var(--phase-b)); color:#04121C;
+  box-shadow:0 8px 26px var(--phase-glow)}
+.btn-primary:hover{filter:brightness(1.09); transform:translateY(-1px)}
+.btn-ghost{background:rgba(120,170,215,.08); color:var(--text); border-color:var(--edge)}
+.btn-ghost:hover{border-color:var(--edge-bright); background:rgba(120,170,215,.15)}
+.btn-quiet{background:transparent; color:var(--muted); border-color:var(--edge); font-weight:500}
+.btn-quiet:hover{color:var(--text); border-color:var(--edge-bright)}
+.btn:disabled{opacity:.42; cursor:not-allowed; transform:none; filter:none}
+.btn:focus-visible,.navbtn:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,.lcard:focus-visible
+  {outline:2px solid var(--phase-a); outline-offset:3px}
+.badge{display:inline-flex; align-items:center; gap:6px; font-family:var(--f-mono); font-size:10.5px;
+  letter-spacing:.1em; text-transform:uppercase; padding:5px 10px; border-radius:999px;
+  border:1px solid var(--edge); color:var(--muted); background:rgba(12,20,34,.55); white-space:nowrap}
+.badge-warn{color:var(--warn); border-color:rgba(251,191,36,.34); background:rgba(251,191,36,.09)}
+.badge-good{color:var(--good); border-color:rgba(52,211,153,.34); background:rgba(52,211,153,.09)}
+.badge-accent{color:var(--phase-a); border-color:var(--edge-bright); background:var(--phase-glow)}
+.notice{font-size:13.5px; color:var(--muted); border-left:2px solid var(--edge-bright);
+  padding:10px 0 10px 14px; background:linear-gradient(90deg,rgba(120,170,215,.07),transparent)}
+input[type=text],textarea{width:100%; font-family:var(--f-body); font-size:15.5px; color:var(--text);
+  background:rgba(7,12,21,.72); border:1px solid var(--edge); border-radius:var(--r-md); padding:13px 15px; min-height:48px}
+textarea{min-height:104px; resize:vertical; line-height:1.55}
+input::placeholder,textarea::placeholder{color:var(--dim)}
+.hidden{display:none !important}
+
+/* ---------- hero ---------- */
+.hero{padding:clamp(34px,7vw,68px) 0 clamp(26px,4vw,40px)}
+.greet{font-family:var(--f-mono); font-size:12.5px; color:var(--phase-a); letter-spacing:.12em;
+  text-transform:uppercase; display:flex; align-items:center; gap:9px; margin-bottom:16px}
+.hero h1 em{font-style:normal; background:linear-gradient(115deg,var(--phase-a),var(--phase-b));
+  -webkit-background-clip:text; background-clip:text; color:transparent}
+.hero-cta{display:flex; flex-wrap:wrap; gap:12px; margin-top:26px}
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr)); gap:12px; margin-top:30px}
+.stat{border:1px solid var(--edge); border-radius:var(--r-md); padding:14px 16px; background:rgba(12,20,34,.5)}
+.stat b{display:block; font-family:var(--f-display); font-size:25px; line-height:1.1; color:var(--text);
+  font-variant-numeric:tabular-nums}
+.stat span{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim)}
+
+/* ---------- mode cards ---------- */
+.modes{display:grid; grid-template-columns:repeat(auto-fit,minmax(248px,1fr)); gap:16px}
+.mode{position:relative; text-align:left; border:1px solid var(--edge); border-radius:var(--r-lg);
+  padding:22px; background:var(--panel); cursor:pointer; transition:.2s; font:inherit; color:inherit; overflow:hidden}
+.mode:hover{border-color:var(--edge-bright); transform:translateY(-3px); box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.mode::after{content:""; position:absolute; inset:auto -30% -60% -30%; height:120px;
+  background:radial-gradient(closest-side,var(--phase-glow),transparent); opacity:0; transition:opacity .25s}
+.mode:hover::after{opacity:1}
+.mode .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;margin-bottom:14px;
+  border:1px solid var(--edge-bright); background:rgba(34,211,238,.09)}
+.mode h3{margin-bottom:7px}
+.mode p{font-size:14px; color:var(--muted)}
+
+/* ---------- lesson grid ---------- */
+.subjrail{display:flex; gap:9px; overflow-x:auto; padding-bottom:6px; margin-bottom:20px; scrollbar-width:thin}
+.chip{font-family:var(--f-body); font-size:13.5px; font-weight:500; white-space:nowrap; padding:9px 16px;
+  border-radius:999px; border:1px solid var(--edge); background:rgba(12,20,34,.55); color:var(--muted);
+  cursor:pointer; transition:.16s; min-height:40px}
+.chip:hover{color:var(--text); border-color:var(--edge-bright)}
+.chip[aria-pressed="true"]{color:#04121C; background:linear-gradient(135deg,var(--phase-a),var(--phase-b));
+  border-color:transparent; font-weight:600}
+.lgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(258px,1fr)); gap:15px}
+.lcard{text-align:left; font:inherit; color:inherit; cursor:pointer; border:1px solid var(--edge);
+  border-radius:var(--r-lg); padding:20px; background:var(--panel); transition:.2s; display:flex;
+  flex-direction:column; gap:11px; min-height:100%}
+.lcard:hover{border-color:var(--edge-bright); transform:translateY(-3px); box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.lcard .row{display:flex; align-items:center; justify-content:space-between; gap:10px}
+.lcard h3{font-size:18.5px}
+.lcard p{font-size:13.8px; color:var(--muted); flex:1}
+.lcard .meta{display:flex; flex-wrap:wrap; gap:7px}
+
+/* ---------- lesson detail ---------- */
+.backbar{display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:20px}
+.tabs{display:flex; gap:6px; overflow-x:auto; border-bottom:1px solid var(--edge); margin-bottom:24px; padding-bottom:2px}
+.tab{font-family:var(--f-body); font-size:14px; font-weight:500; color:var(--muted); background:none; border:none;
+  border-bottom:2px solid transparent; padding:12px 15px; cursor:pointer; white-space:nowrap; min-height:44px; transition:.16s}
+.tab:hover{color:var(--text)}
+.tab[aria-selected="true"]{color:var(--phase-a); border-bottom-color:var(--phase-a)}
+.block{border:1px solid var(--edge); border-radius:var(--r-md); padding:18px 20px; background:rgba(12,20,34,.42)}
+.block h4{font-size:12px; font-family:var(--f-mono); font-weight:500; letter-spacing:.15em; text-transform:uppercase;
+  color:var(--dim); margin-bottom:9px}
+.pills{display:flex; flex-wrap:wrap; gap:8px}
+.pill{font-size:13px; padding:7px 13px; border-radius:999px; border:1px solid var(--edge);
+  background:rgba(120,170,215,.07); color:var(--muted)}
+.linkish{font:inherit; font-size:13px; color:var(--phase-a); background:none; border:none; cursor:pointer;
+  padding:7px 13px; border-radius:999px; border:1px solid var(--edge-bright); min-height:38px}
+.linkish:hover{background:var(--phase-glow)}
+
+/* ---------- interactive blocks ---------- */
+.feedback{font-size:14.5px; border-radius:var(--r-md); padding:13px 16px; border:1px solid var(--edge);
+  background:rgba(12,20,34,.6)}
+.feedback.ok{border-color:rgba(52,211,153,.42); background:rgba(52,211,153,.10); color:#B6F3DC}
+.feedback.no{border-color:rgba(251,123,142,.42); background:rgba(251,123,142,.10); color:#FFD2D9}
+.feedback.hint{border-color:rgba(251,191,36,.38); background:rgba(251,191,36,.09); color:#FCE9B8}
+.answerrow{display:flex; gap:10px; flex-wrap:wrap}
+.answerrow input{flex:1; min-width:190px}
+.opts{display:grid; gap:9px}
+.opt{text-align:left; font:inherit; font-size:15px; color:var(--text); cursor:pointer; padding:14px 17px;
+  border-radius:var(--r-md); border:1px solid var(--edge); background:rgba(12,20,34,.55); transition:.16s; min-height:48px}
+.opt:hover:not(:disabled){border-color:var(--edge-bright); background:rgba(120,170,215,.12)}
+.opt.correct{border-color:rgba(52,211,153,.6); background:rgba(52,211,153,.14)}
+.opt.wrong{border-color:rgba(251,123,142,.55); background:rgba(251,123,142,.12)}
+.opt:disabled{cursor:default}
+
+/* ---------- solver ---------- */
+.steps{display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap}
+.stepdot{display:flex; align-items:center; gap:8px; font-family:var(--f-mono); font-size:11px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--dim); border:1px solid var(--edge); border-radius:999px; padding:6px 13px}
+.stepdot.active{color:var(--phase-a); border-color:var(--edge-bright); background:var(--phase-glow)}
+.stepdot.done{color:var(--good); border-color:rgba(52,211,153,.4)}
+.dtable{width:100%; border-collapse:collapse; font-size:14px; font-variant-numeric:tabular-nums}
+.dtable th,.dtable td{text-align:left; padding:10px 13px; border-bottom:1px solid var(--edge)}
+.dtable th{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--dim)}
+.dtable tr:last-child td{border-bottom:none}
+.scroller{overflow-x:auto; border:1px solid var(--edge); border-radius:var(--r-md); background:rgba(12,20,34,.42)}
+.stage{border:1px solid var(--edge); border-radius:var(--r-md); padding:18px; background:rgba(12,20,34,.42);
+  display:flex; flex-direction:column; gap:12px}
+.stage.locked{opacity:.5}
+.stage-head{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+figure.sv{margin:0; border:1px solid var(--edge); border-radius:var(--r-md); padding:16px;
+  background:rgba(7,12,21,.5); overflow-x:auto}
+figure.sv figcaption{font-size:13px; color:var(--muted); margin-top:11px}
+figure.sv svg{margin:0 auto; max-width:540px; width:100%}
+svg{display:block; max-width:100%; height:auto}
+
+/* ---------- progress ---------- */
+.bar{height:7px; border-radius:999px; background:rgba(120,170,215,.15); overflow:hidden}
+.bar i{display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,var(--phase-a),var(--phase-b))}
+.plist{display:grid; gap:10px}
+.prow{display:flex; align-items:center; gap:12px; padding:12px 15px; border:1px solid var(--edge);
+  border-radius:var(--r-md); background:rgba(12,20,34,.42); font-size:14.5px}
+.prow .tick{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;flex:none;
+  border:1px solid var(--edge); font-size:12px; color:var(--dim)}
+.prow.done .tick{border-color:rgba(52,211,153,.5); color:var(--good); background:rgba(52,211,153,.12)}
+
+footer{border-top:1px solid var(--edge); margin-top:50px; padding:30px 0 46px; color:var(--dim); font-size:13.5px}
+footer a{color:var(--muted)}
+.loading{display:flex; align-items:center; gap:12px; color:var(--muted); font-family:var(--f-mono); font-size:13px;
+  padding:60px 0; justify-content:center}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid var(--edge);border-top-color:var(--phase-a);
+  animation:sp .8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms !important; transition-duration:.001ms !important}
+  .mode:hover,.lcard:hover,.btn-primary:hover{transform:none}
+}
+</style>
+</head>
+<body>
+<div class="aurora"></div><div class="grid-lines"></div>
+
+<header class="topbar"><div class="wrap">
+  <a class="brand" href="#/" aria-label="Malvani Learning AI home">
+    <span class="mark" aria-hidden="true">ML</span>
+    <b>Malvani Learning AI<span>Learn · Think · Solve</span></b>
+  </a>
+  <div class="clock"><span class="dot" aria-hidden="true"></span><span id="clock-text">--:--</span></div>
+  <button class="navbtn" data-nav="#/">Learn</button>
+  <button class="navbtn" data-nav="#/progress">Progress</button>
+</div></header>
+
+<main id="app"><div class="loading"><span class="spin"></span> Loading lessons…</div></main>
+
+<footer><div class="wrap stack gap-s">
+  <p>Offline-first learning companion for students in Sindhudurg &amp; the Konkan.
+     All lesson content is a local draft pending teacher review — verify important coursework with a teacher or textbook.</p>
+  <p><a href="https://github.com/AryanNatekar1/Malvani-Learning-AI">Source code on GitHub</a> ·
+     Content and activity values are illustrative teaching models, never real measurements or personal data.</p>
+</div></footer>
+
+<script>
+"use strict";
+
+/* ============ content manifest — same files the desktop app reads ============ */
+const LESSON_FILES = [
+  "data/lessons/physics/motion.json",
+  "data/lessons/physics/force.json",
+  "data/lessons/physics/gravity.json",
+  "data/lessons/physics/momentum.json",
+  "data/lessons/physics/newton.json",
+  "data/lessons/mathematics/fractions.json",
+  "data/lessons/chemistry/atoms.json",
+  "data/lessons/biology/photosynthesis.json",
+  "data/lessons/computer_science/algorithms.json"
+];
+const SCENARIO_FILES = [
+  "data/scenarios/physics/motion_water_carrying_journey.json",
+  "data/scenarios/physics/momentum_cart_comparison.json",
+  "data/scenarios/physics/force_model_comparison.json"
+];
+
+const state = { lessons:[], scenarios:[], subject:"All", progress:loadProgress() };
+
+/* ============ progress (per-browser convenience only) ============ */
+function loadProgress(){
+  const empty = { opened:[], quizAttempts:0, quizCorrect:0, solved:[], challenges:[] };
+  try{
+    const raw = localStorage.getItem("mla.progress.v2");
+    if(!raw) return empty;
+    const p = JSON.parse(raw);
+    return {
+      opened:Array.isArray(p.opened)?p.opened:[],
+      quizAttempts:Number(p.quizAttempts)||0,
+      quizCorrect:Number(p.quizCorrect)||0,
+      solved:Array.isArray(p.solved)?p.solved:[],
+      challenges:Array.isArray(p.challenges)?p.challenges:[]
+    };
+  }catch(e){ return empty; }
+}
+function saveProgress(){
+  try{ localStorage.setItem("mla.progress.v2", JSON.stringify(state.progress)); }catch(e){}
+}
+function markOpened(t){ if(!state.progress.opened.includes(t)){ state.progress.opened.push(t); saveProgress(); } }
+function markSolved(id){ if(!state.progress.solved.includes(id)){ state.progress.solved.push(id); saveProgress(); } }
+function markChallenge(t){ if(!state.progress.challenges.includes(t)){ state.progress.challenges.push(t); saveProgress(); } }
+
+/* ============ time phase ============ */
+function phaseFor(h){
+  if(h>=5 && h<9) return "dawn";
+  if(h>=9 && h<17) return "day";
+  if(h>=17 && h<20) return "dusk";
+  return "night";
+}
+const GREETINGS = {
+  dawn:["Good morning","An early start is a good start — pick one idea and take it apart."],
+  day:["Good afternoon","Prime thinking hours. Try a problem before you read the answer."],
+  dusk:["Good evening","Golden hour. A short, honest attempt beats a long, passive read."],
+  night:["Good night","Late session. Do one small thing well, then rest — sleep is where it sticks."]
+};
+function tickClock(){
+  const now = new Date();
+  const ph = phaseFor(now.getHours());
+  if(document.documentElement.dataset.phase !== ph){
+    document.documentElement.dataset.phase = ph;
+    const g = document.getElementById("greet-text");
+    const s = document.getElementById("greet-sub");
+    if(g) g.textContent = GREETINGS[ph][0];
+    if(s) s.textContent = GREETINGS[ph][1];
+  }
+  const c = document.getElementById("clock-text");
+  if(c) c.textContent = now.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"}) + " · " + ph;
+}
+
+/* ============ helpers ============ */
+const $ = s => document.querySelector(s);
+const app = () => document.getElementById("app");
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function el(html){ const t=document.createElement("template"); t.innerHTML=html.trim(); return t.content.firstElementChild; }
+function list(arr){ return (arr||[]).map(x=>`<span class="pill">${esc(x)}</span>`).join(""); }
+
+/* Only source-backed VERIFIED context may be shown to a student — same rule the
+   Python culture/context engine enforces. Drafts stay hidden, never guessed at. */
+function verifiedOnly(entry){
+  return entry && entry.verification_status === "VERIFIED" && entry.source ? entry : null;
+}
+
+/* ============ answer checking (ported from problem_scenario_engine.py) ============ */
+const normalizeAnswer = s => String(s).toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+
+function normalizeUnit(unit){
+  if(typeof unit !== "string") return null;
+  const text = unit.trim().toLowerCase().replace(/×/g,"*");
+  if(!text || /[^a-z0-9\s*/]/.test(text)) return null;
+  const tokens = text.match(/[a-z]+\d*|[*/]/g);
+  if(!tokens || tokens.join("") !== text.replace(/\s+/g,"")) return null;
+  const out = [];
+  for(const t of tokens){
+    if(t === "*" || t === "/"){
+      if(!out.length || out[out.length-1] === "*" || out[out.length-1] === "/") return null;
+      out.push(t);
+    } else {
+      if(out.length && out[out.length-1] !== "*" && out[out.length-1] !== "/") out.push("*");
+      out.push(t);
+    }
+  }
+  if(out[out.length-1] === "*" || out[out.length-1] === "/") return null;
+  return out.join("");
+}
+const NUM_RE = /^\s*(?:([A-Za-z][A-Za-z0-9 ]*)\s*=\s*)?([+-]?(?:\d+(?:\.\d*)?|\.\d+))(?:\s*([A-Za-z][A-Za-z0-9\s*/×]*))?\s*$/;
+const NUM_START = /^\s*(?:(?:[A-Za-z][A-Za-z0-9 ]*)\s*=\s*)?[+-]?(?:\d|\.\d)/;
+
+function matchesNumeric(rule, answer){
+  if(typeof answer !== "string") return false;
+  const m = NUM_RE.exec(answer);
+  if(!m) return false;
+  const value = parseFloat(m[2]);
+  if(!isFinite(value)) return false;
+  const tol = Math.max(1e-9, Math.abs(rule.value) * 1e-9);
+  if(Math.abs(value - rule.value) > tol) return false;
+  const symbol = m[1];
+  const accepted = (rule.accepted_symbols||[]).map(s => String(s).trim().toLowerCase());
+  if(symbol != null && !accepted.includes(symbol.trim().toLowerCase())) return false;
+  const unit = m[3];
+  if(unit == null) return !!rule.allow_unit_omission;
+  const nu = normalizeUnit(unit);
+  return nu !== null && nu === normalizeUnit(rule.unit);
+}
+function stepMatches(step, answer){
+  if(typeof answer !== "string") return false;
+  if(step.numeric_answer && NUM_START.test(answer)) return matchesNumeric(step.numeric_answer, answer);
+  const na = normalizeAnswer(answer);
+  const accepted = (step.accepted_answers||[]).map(normalizeAnswer);
+  if(accepted.includes(na)) return true;
+  return step.numeric_answer ? matchesNumeric(step.numeric_answer, answer) : false;
+}
+function quizMatches(q, answer){
+  const na = normalizeAnswer(answer);
+  return (q.correct_answers||[]).some(a => normalizeAnswer(a) === na);
+}
+
+/* ============ data ============ */
+async function loadAll(){
+  const grab = async f => { const r = await fetch(f); if(!r.ok) throw new Error(f+" "+r.status); return r.json(); };
+  const [lessons, scenarios] = await Promise.all([
+    Promise.all(LESSON_FILES.map(grab)),
+    Promise.all(SCENARIO_FILES.map(grab))
+  ]);
+  state.lessons = lessons;
+  state.scenarios = scenarios;
+}
+const lessonByTopic = t => state.lessons.find(l => l.topic === t);
+const scenarioById = id => state.scenarios.find(s => s.id === id);
+const scenariosForTopic = t => state.scenarios.filter(s => s.topic === t);
+const subjects = () => ["All", ...Array.from(new Set(state.lessons.map(l => l.subject))).sort()];
+
+/* ============ views ============ */
+function renderHome(){
+  const p = state.progress;
+  const acc = p.quizAttempts ? Math.round(p.quizCorrect / p.quizAttempts * 100) : 0;
+  const ph = document.documentElement.dataset.phase;
+  const g = GREETINGS[ph];
+  const view = el(`<div>
+    <section class="hero"><div class="wrap">
+      <div class="greet"><span class="dot" aria-hidden="true"></span>
+        <span id="greet-text">${esc(g[0])}</span></div>
+      <h1>Physics you can <em>actually picture</em>,<br>not just memorise.</h1>
+      <p class="lede" style="margin-top:18px" id="greet-sub">${esc(g[1])}</p>
+      <div class="hero-cta">
+        <button class="btn btn-primary" data-solve-first>Solve a real problem</button>
+        <button class="btn btn-ghost" data-scroll="#lessons">Browse ${state.lessons.length} lessons</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><b>${state.lessons.length}</b><span>Lessons</span></div>
+        <div class="stat"><b>${state.scenarios.length}</b><span>Real problems</span></div>
+        <div class="stat"><b>${p.opened.length}</b><span>You've opened</span></div>
+        <div class="stat"><b>${p.quizAttempts?acc+"%":"—"}</b><span>Quiz accuracy</span></div>
+      </div>
+    </div></section>
+
+    <section class="section"><div class="wrap stack gap-m">
+      <div class="stack gap-s"><span class="eyebrow">Three ways to work</span>
+        <h2>Understand it, then prove you understand it</h2></div>
+      <div class="modes">
+        <button class="mode" data-scroll="#lessons">
+          <span class="ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--phase-a)" stroke-width="1.7"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg></span>
+          <h3>Learn</h3><p>A plain explanation, an everyday example, then a question that makes you think before you move on.</p></button>
+        <button class="mode" data-solve-first>
+          <span class="ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--phase-a)" stroke-width="1.7"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6.3 6.3l2.8 2.8M14.9 14.9l2.8 2.8M17.7 6.3l-2.8 2.8M9.1 14.9l-2.8 2.8"/></svg></span>
+          <h3>Solve</h3><p>Work a real situation step by step — with hints when you're stuck, and the answer only after you've tried.</p></button>
+        <button class="mode" data-nav="#/progress">
+          <span class="ic" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--phase-a)" stroke-width="1.7"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg></span>
+          <h3>Investigate</h3><p>Go Deeper turns a solved problem into a small research question: hypothesis, data, analysis, next test.</p></button>
+      </div>
+    </div></section>
+
+    <section class="section" id="lessons"><div class="wrap stack gap-m">
+      <div class="stack gap-s"><span class="eyebrow">Lesson library</span>
+        <h2>Pick a concept</h2></div>
+      <div class="subjrail" id="rail"></div>
+      <div class="lgrid" id="lgrid"></div>
+      <p class="notice">Five more Physics topics from the original prototype (energy, friction, acceleration,
+        velocity, work) are still being rewritten into this format and aren't published here yet.</p>
+    </div></section>
+  </div>`);
+  app().replaceChildren(view);
+  renderRail(); renderGrid();
+}
+
+function renderRail(){
+  const rail = $("#rail");
+  rail.replaceChildren(...subjects().map(s => {
+    const b = el(`<button class="chip" aria-pressed="${s===state.subject}">${esc(s)}</button>`);
+    b.addEventListener("click", () => { state.subject = s; renderRail(); renderGrid(); });
+    return b;
+  }));
+}
+function renderGrid(){
+  const items = state.lessons.filter(l => state.subject === "All" || l.subject === state.subject);
+  $("#lgrid").replaceChildren(...items.map(l => {
+    const solver = scenariosForTopic(l.topic).length;
+    const done = state.progress.opened.includes(l.topic);
+    const c = el(`<button class="lcard">
+      <div class="row"><span class="eyebrow">${esc(l.subject)}</span>
+        ${done?'<span class="badge badge-good">Opened</span>':""}</div>
+      <h3>${esc(l.title)}</h3>
+      <p>${esc(l.content.English.simple_explanation)}</p>
+      <div class="meta">
+        ${solver?'<span class="badge badge-accent">Real problem</span>':""}
+        ${(l.quiz_questions||[]).length?'<span class="badge">Quiz</span>':""}
+        <span class="badge badge-warn">Draft</span>
+      </div></button>`);
+    c.addEventListener("click", () => { location.hash = "#/lesson/" + l.topic; });
+    return c;
+  }));
+}
+
+/* ---------- lesson detail ---------- */
+function renderLesson(topic){
+  const l = lessonByTopic(topic);
+  if(!l){ location.hash = "#/"; return; }
+  markOpened(topic);
+  const en = l.content.English;
+  const localEx = verifiedOnly(l.local_example);
+  const culture = verifiedOnly(l.culture_connection);
+  const scen = scenariosForTopic(topic);
+
+  const view = el(`<div class="section"><div class="wrap">
+    <div class="backbar">
+      <button class="btn btn-quiet" data-nav="#/">← All lessons</button>
+      <span class="badge">${esc(l.subject)}</span>
+      <span class="badge badge-warn">Draft · needs teacher review</span>
+    </div>
+    <h1 style="font-size:clamp(27px,5vw,40px)">${esc(l.title)}</h1>
+    <p class="lede" style="margin-top:14px">${esc(en.simple_explanation)}</p>
+
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="understand" aria-selected="true">Understand</button>
+      <button class="tab" role="tab" data-tab="think" aria-selected="false">Think</button>
+      ${(l.quiz_questions||[]).length?'<button class="tab" role="tab" data-tab="quiz" aria-selected="false">Quiz</button>':""}
+      ${scen.length?'<button class="tab" role="tab" data-tab="solve" aria-selected="false">Solve a real problem</button>':""}
+    </div>
+    <div id="tabpanel"></div>
+  </div></div>`);
+  app().replaceChildren(view);
+
+  const panel = view.querySelector("#tabpanel");
+  const panels = {
+    understand: () => {
+      const p = el(`<div class="stack gap-m">
+        <div class="block"><h4>In more detail</h4><p>${esc(en.detailed_explanation)}</p></div>
+        ${en.everyday_example?`<div class="block"><h4>An everyday example</h4><p>${esc(en.everyday_example)}</p></div>`:""}
+        ${localEx?`<div class="block"><h4>Near you</h4><p>${esc(localEx.text)}</p></div>`:""}
+        ${culture?`<div class="block"><h4>In daily life here</h4><p>${esc(culture.text)}</p></div>`:""}
+        ${(l.common_misconceptions||[]).length?`<div class="block"><h4>Watch out for this</h4>
+          ${l.common_misconceptions.map(m=>`<p>${esc(m)}</p>`).join("")}</div>`:""}
+        ${(l.real_world_use||[]).length?`<div class="block"><h4>Where it's used</h4>
+          <div class="pills">${list(l.real_world_use)}</div></div>`:""}
+        ${(l.career_connections||[]).length?`<div class="block"><h4>Jobs that use this</h4>
+          <div class="pills">${list(l.career_connections)}</div></div>`:""}
+        ${(l.further_exploration||[]).length?`<div class="block"><h4>Next, look into</h4>
+          <div class="pills">${list(l.further_exploration)}</div></div>`:""}
+        <p class="notice">${esc((l.sources||[])[0]||"Local draft content pending review.")}</p>
+      </div>`);
+      return p;
+    },
+    think: () => buildThink(l),
+    quiz: () => buildQuiz(l),
+    solve: () => buildSolvePicker(scen)
+  };
+  function show(name){
+    view.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
+    panel.replaceChildren(panels[name]());
+  }
+  view.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => show(t.dataset.tab)));
+  show("understand");
+}
+
+function buildThink(l){
+  const box = el(`<div class="stack gap-m">
+    ${l.think_question?`<div class="block"><h4>Think about it</h4>
+      <p style="font-size:17px">${esc(l.think_question)}</p>
+      <p style="color:var(--muted);font-size:13.5px;margin-top:10px">Say your answer out loud or write it down before you read on —
+        that's the part that actually builds understanding.</p></div>`:""}
+  </div>`);
+  const ch = l.challenge;
+  if(ch){
+    const hints = ch.progressive_hints && ch.progressive_hints.length ? ch.progressive_hints : [ch.hint];
+    let used = 0, tried = 0, revealed = false;
+    const card = el(`<div class="block stack gap-m">
+      <h4>Your turn</h4>
+      <p style="font-size:16.5px">${esc(ch.question)}</p>
+      <div class="answerrow">
+        <input type="text" id="ch-in" placeholder="Type your attempt…" autocomplete="off">
+        <button class="btn btn-primary" id="ch-go">Check</button>
+      </div>
+      <div class="stack gap-s" id="ch-fb"></div>
+      <div class="answerrow">
+        <button class="btn btn-quiet" id="ch-hint">Give me a hint</button>
+        <button class="btn btn-quiet" id="ch-sol" disabled>Show worked answer</button>
+      </div>
+      <p style="color:var(--dim);font-size:12.5px">The answer unlocks after one real attempt, or two hints.</p>
+    </div>`);
+    const fb = card.querySelector("#ch-fb");
+    const solBtn = card.querySelector("#ch-sol");
+    const unlock = () => { if(tried>0 || used>=2) solBtn.disabled = false; };
+    const say = (cls, msg) => fb.prepend(el(`<div class="feedback ${cls}">${esc(msg)}</div>`));
+
+    card.querySelector("#ch-go").addEventListener("click", () => {
+      const v = card.querySelector("#ch-in").value.trim();
+      if(!v){ say("", "Write an attempt first — even a rough one."); return; }
+      tried++; unlock();
+      const accepted = (ch.accepted_answers||[]).map(normalizeAnswer);
+      if(accepted.length){
+        if(accepted.includes(normalizeAnswer(v))){
+          say("ok","Correct. "+(ch.solution||""));
+          markChallenge(l.topic);
+        } else {
+          say("no","Not yet. Try a hint, check your working, then attempt it again.");
+        }
+      } else {
+        say("", "Attempt recorded. This one is open-ended, so compare your reasoning with the worked answer when you're ready.");
+        markChallenge(l.topic);
+      }
+    });
+    card.querySelector("#ch-hint").addEventListener("click", () => {
+      const h = hints[Math.min(used, hints.length-1)];
+      used++; unlock();
+      say("hint","Hint "+Math.min(used,hints.length)+": "+h);
+    });
+    solBtn.addEventListener("click", () => {
+      if(revealed) return;
+      revealed = true; solBtn.disabled = true;
+      say("ok","Worked answer: "+ch.solution);
+      markChallenge(l.topic);
+    });
+    box.appendChild(card);
+  }
+  return box;
+}
+
+function buildQuiz(l){
+  const qs = l.quiz_questions || [];
+  let idx = 0;
+  const wrap = el(`<div class="stack gap-m"></div>`);
+  function renderQ(){
+    wrap.replaceChildren();
+    if(idx >= qs.length){
+      wrap.appendChild(el(`<div class="block stack gap-m">
+        <h4>Quiz complete</h4>
+        <p>You worked through ${qs.length} question${qs.length>1?"s":""} in ${esc(l.title)}.
+           Retrying a question you got wrong is worth more than a first-try guess.</p>
+        <div><button class="btn btn-ghost" id="q-again">Start over</button></div></div>`));
+      wrap.querySelector("#q-again").addEventListener("click", () => { idx = 0; renderQ(); });
+      return;
+    }
+    const q = qs[idx];
+    const hints = q.progressive_hints && q.progressive_hints.length ? q.progressive_hints : [q.hint];
+    let used = 0, wrong = 0, settled = false;
+    const card = el(`<div class="block stack gap-m">
+      <div class="stage-head"><h4>Question ${idx+1} of ${qs.length}</h4>
+        <span class="badge">${esc(q.difficulty||"Beginner")}</span></div>
+      <p style="font-size:17px">${esc(q.question)}</p>
+      <div id="q-body"></div>
+      <div class="stack gap-s" id="q-fb"></div>
+      <div class="answerrow">
+        <button class="btn btn-quiet" id="q-hint">Hint</button>
+        <button class="btn btn-quiet" id="q-reveal" disabled>Show answer</button>
+        <button class="btn btn-primary hidden" id="q-next">Next question →</button>
+      </div>
+      <p style="color:var(--dim);font-size:12.5px">Wrong answers stay open for another try — the answer unlocks after two attempts.</p>
+    </div>`);
+    const body = card.querySelector("#q-body");
+    const fb = card.querySelector("#q-fb");
+    const revealBtn = card.querySelector("#q-reveal");
+    const nextBtn = card.querySelector("#q-next");
+    const say = (cls,msg) => fb.prepend(el(`<div class="feedback ${cls}">${esc(msg)}</div>`));
+    const finish = ok => {
+      settled = true;
+      nextBtn.classList.remove("hidden");
+      revealBtn.disabled = true;
+      if(ok) say("ok","Correct. "+q.explanation);
+      else say("", "Answer: "+(q.correct_answers||[])[0]+". "+q.explanation);
+    };
+    const attempt = (value, btn, all) => {
+      if(settled) return;
+      state.progress.quizAttempts++;
+      const ok = quizMatches(q, value);
+      if(ok){ state.progress.quizCorrect++; }
+      saveProgress();
+      if(ok){
+        if(btn){ btn.classList.add("correct"); all && all.forEach(b => b.disabled = true); }
+        finish(true);
+      } else {
+        wrong++;
+        if(btn) btn.classList.add("wrong");
+        if(wrong >= 2) revealBtn.disabled = false;
+        say("no", wrong >= 2 ? "Still not right — take a hint, or reveal the answer and read why."
+                             : "Not quite. Try once more.");
+      }
+    };
+    if(q.type === "multiple_choice" && (q.options||[]).length){
+      const opts = el(`<div class="opts"></div>`);
+      const btns = q.options.map(o => {
+        const b = el(`<button class="opt">${esc(o)}</button>`);
+        b.addEventListener("click", () => attempt(o, b, btns));
+        return b;
+      });
+      opts.replaceChildren(...btns);
+      body.appendChild(opts);
+    } else {
+      const row = el(`<div class="answerrow">
+        <input type="text" placeholder="Type your answer…" autocomplete="off">
+        <button class="btn btn-primary">Check</button></div>`);
+      const input = row.querySelector("input");
+      row.querySelector("button").addEventListener("click", () => {
+        const v = input.value.trim();
+        if(!v){ say("","Type an answer first."); return; }
+        attempt(v, null, null);
+      });
+      input.addEventListener("keydown", e => { if(e.key === "Enter") row.querySelector("button").click(); });
+      body.appendChild(row);
+    }
+    card.querySelector("#q-hint").addEventListener("click", () => {
+      const h = hints[Math.min(used, hints.length-1)];
+      used++;
+      if(used >= 2) revealBtn.disabled = false;
+      say("hint","Hint "+Math.min(used,hints.length)+": "+h);
+    });
+    revealBtn.addEventListener("click", () => finish(false));
+    nextBtn.addEventListener("click", () => { idx++; renderQ(); });
+    wrap.appendChild(card);
+  }
+  renderQ();
+  return wrap;
+}
+
+function buildSolvePicker(scen){
+  const box = el(`<div class="stack gap-m"></div>`);
+  scen.forEach(s => {
+    const c = el(`<div class="block stack gap-m">
+      <div class="stage-head"><h4>Real problem</h4>
+        <span class="badge badge-warn">Illustrative model</span></div>
+      <h3>${esc(s.title)}</h3>
+      <p style="color:var(--muted);font-size:14.5px">${esc(s.problem)}</p>
+      <div><button class="btn btn-primary">Start solving →</button></div>
+    </div>`);
+    c.querySelector("button").addEventListener("click", () => { location.hash = "#/solve/" + s.id; });
+    box.appendChild(c);
+  });
+  return box;
+}
+
+/* ---------- solver ---------- */
+function scenarioSvg(s){
+  const v = s.visual_model;
+  if(v && v.kind === "MOMENTUM_CART_COMPARISON"){
+    const [a,b] = v.carts;
+    const maxM = Math.max(a.mass_kg, b.mass_kg);
+    const cart = (c,y) => {
+      const w = 52 + (c.mass_kg/maxM)*46;
+      const dir = c.velocity_m_per_s >= 0 ? 1 : -1;
+      const len = 30 + Math.abs(c.velocity_m_per_s) * 13;
+      const x = 96;
+      return `<g>
+        <text x="12" y="${y+20}" fill="var(--muted)" font-size="12" font-family="IBM Plex Mono">${esc(c.label)}</text>
+        <rect x="${x}" y="${y}" width="${w}" height="30" rx="6" fill="var(--phase-glow)" stroke="var(--phase-a)"/>
+        <circle cx="${x+13}" cy="${y+34}" r="5" fill="none" stroke="var(--muted)"/>
+        <circle cx="${x+w-13}" cy="${y+34}" r="5" fill="none" stroke="var(--muted)"/>
+        <line x1="${x+w+12}" y1="${y+15}" x2="${x+w+12+len*dir}" y2="${y+15}" stroke="var(--teal)" stroke-width="2"/>
+        <polygon points="${x+w+12+len*dir},${y+15} ${x+w+12+(len-9)*dir},${y+10} ${x+w+12+(len-9)*dir},${y+20}" fill="var(--teal)"/>
+        <text x="${x+w+22}" y="${y+34}" fill="var(--dim)" font-size="11" font-family="IBM Plex Mono">${c.mass_kg} kg · ${c.velocity_m_per_s} m/s</text>
+      </g>`;
+    };
+    return `<figure class="sv"><svg viewBox="0 0 340 130" role="img" aria-label="Two model carts drawn to their authored mass and velocity">
+      ${cart(a,16)}${cart(b,80)}</svg>
+      <figcaption>Box width shows mass, arrow length shows speed — both taken from the scenario's own values, not from the text.</figcaption></figure>`;
+  }
+  if(s.topic === "motion"){
+    return `<figure class="sv"><svg viewBox="0 0 340 108" role="img" aria-label="A round trip between a home and a water source">
+      <line x1="42" y1="60" x2="298" y2="60" stroke="var(--edge-bright)" stroke-width="2" stroke-dasharray="5 5"/>
+      <circle cx="42" cy="60" r="12" fill="var(--phase-glow)" stroke="var(--phase-a)"/>
+      <circle cx="298" cy="60" r="12" fill="var(--phase-glow)" stroke="var(--teal)"/>
+      <text x="42" y="90" fill="var(--muted)" font-size="11" font-family="IBM Plex Mono" text-anchor="middle">home</text>
+      <text x="298" y="90" fill="var(--muted)" font-size="11" font-family="IBM Plex Mono" text-anchor="middle">water</text>
+      <line x1="60" y1="36" x2="280" y2="36" stroke="var(--teal)" stroke-width="1.6"/>
+      <polygon points="280,36 271,31 271,41" fill="var(--teal)"/>
+      <text x="170" y="26" fill="var(--dim)" font-size="11" font-family="IBM Plex Mono" text-anchor="middle">out — empty container</text>
+      <line x1="280" y1="84" x2="60" y2="84" stroke="var(--amber)" stroke-width="1.6"/>
+      <polygon points="60,84 69,79 69,89" fill="var(--amber)"/>
+      <text x="170" y="102" fill="var(--dim)" font-size="11" font-family="IBM Plex Mono" text-anchor="middle">back — carrying water</text>
+    </svg><figcaption>A schematic of the round trip only. The distance and speed you need are stated in the problem.</figcaption></figure>`;
+  }
+  if(s.topic === "force"){
+    return `<figure class="sv"><svg viewBox="0 0 340 118" role="img" aria-label="Two blocks of different size pushed by the same force">
+      <g><text x="12" y="36" fill="var(--muted)" font-size="12" font-family="IBM Plex Mono">A</text>
+        <rect x="34" y="14" width="62" height="40" rx="5" fill="var(--phase-glow)" stroke="var(--phase-a)"/>
+        <line x1="108" y1="34" x2="158" y2="34" stroke="var(--teal)" stroke-width="2.4"/>
+        <polygon points="158,34 148,28 148,40" fill="var(--teal)"/>
+        <text x="168" y="38" fill="var(--dim)" font-size="11" font-family="IBM Plex Mono">same push</text></g>
+      <g><text x="12" y="100" fill="var(--muted)" font-size="12" font-family="IBM Plex Mono">B</text>
+        <rect x="34" y="78" width="40" height="40" rx="5" fill="var(--phase-glow)" stroke="var(--phase-a)"/>
+        <line x1="86" y1="98" x2="136" y2="98" stroke="var(--teal)" stroke-width="2.4"/>
+        <polygon points="136,98 126,92 126,104" fill="var(--teal)"/>
+        <text x="146" y="102" fill="var(--dim)" font-size="11" font-family="IBM Plex Mono">same push</text></g>
+    </svg><figcaption>Same force, different mass. The block sizes are a sketch of the set-up — use the stated numbers to compare.</figcaption></figure>`;
+  }
+  return "";
+}
+
+function renderSolver(id){
+  const s = scenarioById(id);
+  if(!s){ location.hash = "#/"; return; }
+  const session = { i:0, attempts:0, hints:0, revealed:false };
+  const view = el(`<div class="section"><div class="wrap stack gap-m">
+    <div class="backbar">
+      <button class="btn btn-quiet" data-nav="#/lesson/${esc(s.topic)}">← Back to ${esc(s.topic)}</button>
+      <span class="badge">${esc(s.subject)}</span>
+      <span class="badge badge-warn">Needs teacher review</span>
+    </div>
+    <h1 style="font-size:clamp(25px,4.6vw,36px)">${esc(s.title)}</h1>
+    <p class="notice"><b>Illustrative computer-model values</b> — not local measurements, GPS data, or student data.
+      ${esc(s.data_provenance.statement)}</p>
+    <div class="block"><h4>The situation</h4><p>${esc(s.introduction)}</p></div>
+    ${scenarioSvg(s)}
+    <div class="block"><h4>Your task</h4><p>${esc(s.problem)}</p></div>
+    <div class="steps" id="steps"></div>
+    <div id="stepbox"></div>
+    <div id="deeper"></div>
+    <p class="notice">Concept source: ${esc(s.content_source.citation)}
+      ${s.content_source.url?`· <a href="${esc(s.content_source.url)}" target="_blank" rel="noopener">reference</a>`:""}</p>
+  </div></div>`);
+  app().replaceChildren(view);
+
+  const stepsEl = view.querySelector("#steps");
+  const box = view.querySelector("#stepbox");
+  const deeper = view.querySelector("#deeper");
+
+  function drawSteps(){
+    stepsEl.replaceChildren(...s.guided_steps.map((st,i) => el(
+      `<span class="stepdot ${i<session.i?"done":i===session.i?"active":""}">${i<session.i?"✓":i+1} · Step ${i+1}</span>`)));
+  }
+  function drawStep(){
+    drawSteps();
+    if(session.i >= s.guided_steps.length){
+      box.replaceChildren(el(`<div class="block stack gap-m">
+        <div class="stage-head"><h4>All steps complete</h4><span class="badge badge-good">Solved</span></div>
+        <p>You worked the whole model through. Now turn it into a question worth investigating.</p>
+        <div><button class="btn btn-primary" id="go-deep">Go Deeper →</button></div></div>`));
+      markSolved(s.id);
+      box.querySelector("#go-deep").addEventListener("click", () => {
+        buildDeeper(); deeper.scrollIntoView({behavior:"smooth", block:"start"});
+      });
+      return;
+    }
+    const st = s.guided_steps[session.i];
+    const card = el(`<div class="block stack gap-m">
+      <div class="stage-head"><h4>Step ${session.i+1} of ${s.guided_steps.length}</h4>
+        <span class="badge">Attempts ${session.attempts} · Hints ${session.hints}</span></div>
+      <p style="font-size:16.5px">${esc(st.prompt)}</p>
+      <div class="answerrow">
+        <input type="text" id="s-in" placeholder="Your answer…" autocomplete="off">
+        <button class="btn btn-primary" id="s-go">Check</button>
+      </div>
+      <div class="stack gap-s" id="s-fb"></div>
+      <div class="answerrow">
+        <button class="btn btn-quiet" id="s-hint">Hint</button>
+        <button class="btn btn-quiet" id="s-sol" ${session.attempts>0||session.hints>=2?"":"disabled"}>Show worked solution</button>
+      </div>
+      <p style="color:var(--dim);font-size:12.5px">The worked solution unlocks after one attempt, or two hints.</p>
+    </div>`);
+    box.replaceChildren(card);
+    const fb = card.querySelector("#s-fb");
+    const input = card.querySelector("#s-in");
+    const solBtn = card.querySelector("#s-sol");
+    const say = (cls,msg) => fb.prepend(el(`<div class="feedback ${cls}">${esc(msg)}</div>`));
+    const go = () => {
+      const v = input.value.trim();
+      if(!v){ say("","Write an attempt before submitting it."); return; }
+      session.attempts++;
+      solBtn.disabled = false;
+      if(stepMatches(st, v)){
+        say("ok", st.success_feedback);
+        setTimeout(() => { session.i++; drawStep(); }, 850);
+      } else {
+        say("no","Not yet. Use a hint, check the quantities and units, then try again.");
+        card.querySelector(".badge").textContent = `Attempts ${session.attempts} · Hints ${session.hints}`;
+      }
+    };
+    card.querySelector("#s-go").addEventListener("click", go);
+    input.addEventListener("keydown", e => { if(e.key === "Enter") go(); });
+    card.querySelector("#s-hint").addEventListener("click", () => {
+      const hs = s.progressive_hints || [];
+      const h = hs[Math.min(session.hints, hs.length-1)];
+      session.hints++;
+      if(session.hints >= 2) solBtn.disabled = false;
+      say("hint","Hint "+Math.min(session.hints,hs.length)+": "+h);
+      card.querySelector(".badge").textContent = `Attempts ${session.attempts} · Hints ${session.hints}`;
+    });
+    solBtn.addEventListener("click", () => {
+      if(session.revealed) return;
+      session.revealed = true;
+      say("ok","Worked solution: "+s.worked_solution);
+    });
+    input.focus({preventScroll:true});
+  }
+
+  function buildDeeper(){
+    const g = s.go_deeper;
+    const stages = [
+      {key:"hypothesis", label:"1 · Hypothesis", prompt:g.hypothesis_prompt},
+      {key:"analysis", label:"2 · Analysis", prompt:g.analysis_prompt},
+      {key:"next", label:"3 · A fair next test", prompt:g.proposed_solution_prompt},
+      {key:"reflect", label:"4 · Reflect", prompt:g.reflection_prompt}
+    ];
+    let unlocked = 0;
+    const wrap = el(`<div class="stack gap-m" style="margin-top:8px">
+      <div class="stack gap-s"><span class="eyebrow">Researcher mode</span>
+        <h2>${esc(g.research_question)}</h2></div>
+      <div class="scroller"><table class="dtable">
+        <thead><tr>${g.data_columns.map(c=>`<th>${esc(c)}</th>`).join("")}</tr></thead>
+        <tbody>${g.data_rows.map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody>
+      </table></div>
+      <p class="notice">${esc(g.data_label)}</p>
+      <div class="stack gap-m" id="stages"></div>
+      <p class="notice">Your writing stays in this browser tab only — it is never uploaded, stored, or scored.
+        This app can't grade scientific reasoning, and doesn't pretend to.</p>
+    </div>`);
+    const host = wrap.querySelector("#stages");
+    function drawStages(){
+      host.replaceChildren(...stages.map((st,i) => {
+        const locked = i > unlocked;
+        const card = el(`<div class="stage ${locked?"locked":""}">
+          <div class="stage-head"><h4>${esc(st.label)}</h4>
+            ${i<unlocked?'<span class="badge badge-good">Recorded</span>':
+              locked?'<span class="badge">Locked</span>':'<span class="badge badge-accent">Now</span>'}</div>
+          <p style="font-size:15.5px">${esc(st.prompt)}</p>
+          ${locked?"":`<textarea placeholder="Write your thinking…" ${i<unlocked?"disabled":""}></textarea>
+            ${i<unlocked?"":'<div><button class="btn btn-ghost">Record this step</button></div>'}
+            <div class="stack gap-s fb"></div>`}
+        </div>`);
+        if(!locked && i === unlocked){
+          const ta = card.querySelector("textarea");
+          const fbx = card.querySelector(".fb");
+          card.querySelector("button").addEventListener("click", () => {
+            if(!ta.value.trim()){
+              fbx.replaceChildren(el(`<div class="feedback no">Write something first — even one sentence of your own reasoning.</div>`));
+              ta.focus();
+              return;
+            }
+            unlocked++;
+            drawStages();
+            const next = host.querySelectorAll(".stage")[Math.min(unlocked, stages.length-1)];
+            if(next) next.scrollIntoView({behavior:"smooth", block:"center"});
+          });
+        }
+        return card;
+      }));
+    }
+    drawStages();
+    deeper.replaceChildren(wrap);
+  }
+  drawStep();
+}
+
+/* ---------- progress ---------- */
+function renderProgress(){
+  const p = state.progress;
+  const acc = p.quizAttempts ? Math.round(p.quizCorrect/p.quizAttempts*100) : 0;
+  const pct = Math.round(p.opened.length / Math.max(1,state.lessons.length) * 100);
+  const view = el(`<div class="section"><div class="wrap stack gap-l">
+    <div class="stack gap-s"><span class="eyebrow">Your activity</span>
+      <h1 style="font-size:clamp(27px,5vw,40px)">Progress</h1>
+      <p class="lede">Saved in this browser only. It's a record of what you did — not a judgement of what you can do.</p></div>
+    <div class="stats">
+      <div class="stat"><b>${p.opened.length}/${state.lessons.length}</b><span>Lessons opened</span></div>
+      <div class="stat"><b>${p.solved.length}/${state.scenarios.length}</b><span>Problems solved</span></div>
+      <div class="stat"><b>${p.quizAttempts}</b><span>Quiz attempts</span></div>
+      <div class="stat"><b>${p.quizAttempts?acc+"%":"—"}</b><span>Accuracy</span></div>
+    </div>
+    <div class="stack gap-s"><div class="bar"><i style="width:${pct}%"></i></div>
+      <p style="color:var(--dim);font-size:13px">${pct}% of the published lessons opened</p></div>
+    <div class="stack gap-m">
+      <h2>Lessons</h2>
+      <div class="plist">${state.lessons.map(l=>`<div class="prow ${p.opened.includes(l.topic)?"done":""}">
+        <span class="tick">${p.opened.includes(l.topic)?"✓":"·"}</span>
+        <span style="flex:1">${esc(l.title)}</span>
+        <span class="eyebrow">${esc(l.subject)}</span></div>`).join("")}</div>
+    </div>
+    <div class="stack gap-m">
+      <h2>Real problems</h2>
+      <div class="plist">${state.scenarios.map(s=>`<div class="prow ${p.solved.includes(s.id)?"done":""}">
+        <span class="tick">${p.solved.includes(s.id)?"✓":"·"}</span>
+        <span style="flex:1">${esc(s.title)}</span></div>`).join("")}</div>
+    </div>
+    <div><button class="btn btn-quiet" id="reset">Clear my progress</button></div>
+  </div></div>`);
+  app().replaceChildren(view);
+  view.querySelector("#reset").addEventListener("click", () => {
+    state.progress = { opened:[], quizAttempts:0, quizCorrect:0, solved:[], challenges:[] };
+    saveProgress(); renderProgress();
+  });
+}
+
+/* ============ router ============ */
+function route(){
+  const h = location.hash || "#/";
+  window.scrollTo({top:0, behavior:"instant"});
+  document.querySelectorAll(".navbtn").forEach(b =>
+    b.setAttribute("aria-current", String(b.dataset.nav === (h.startsWith("#/progress") ? "#/progress" : "#/"))));
+  if(h.startsWith("#/lesson/")) return renderLesson(decodeURIComponent(h.slice(9)));
+  if(h.startsWith("#/solve/")) return renderSolver(decodeURIComponent(h.slice(8)));
+  if(h.startsWith("#/progress")) return renderProgress();
+  renderHome();
+}
+document.addEventListener("click", e => {
+  const nav = e.target.closest("[data-nav]");
+  if(nav){ location.hash = nav.dataset.nav; return; }
+  const sc = e.target.closest("[data-scroll]");
+  if(sc){
+    const t = document.querySelector(sc.dataset.scroll);
+    if(t) t.scrollIntoView({behavior:"smooth", block:"start"});
+    return;
+  }
+  if(e.target.closest("[data-solve-first]")){
+    const first = state.scenarios[0];
+    if(first) location.hash = "#/solve/" + first.id;
+  }
+});
+window.addEventListener("hashchange", route);
+
+tickClock();
+setInterval(tickClock, 20000);
+loadAll().then(route).catch(err => {
+  app().replaceChildren(el(`<div class="section"><div class="wrap panel stack gap-m">
+    <h2>Couldn't load the lesson files</h2>
+    <p class="lede">This page reads the project's real lesson JSON from the same folder, so it needs to be served over
+      http rather than opened directly from disk.</p>
+    <p style="font-family:var(--f-mono);font-size:13px;color:var(--dim)">${esc(err.message)}</p>
+    <p style="font-size:14px;color:var(--muted)">Running locally? From the project folder use
+      <b style="font-family:var(--f-mono)">python -m http.server</b> and open
+      <b style="font-family:var(--f-mono)">http://localhost:8000</b>.</p>
+  </div></div>`));
+});
+</script>
+</body>
+</html>

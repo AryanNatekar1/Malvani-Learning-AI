@@ -1,6 +1,11 @@
 # Malvani Learning AI
 
 [![Tests](https://github.com/AryanNatekar1/Malvani-Learning-AI/actions/workflows/tests.yml/badge.svg)](https://github.com/AryanNatekar1/Malvani-Learning-AI/actions/workflows/tests.yml)
+[![Website](https://github.com/AryanNatekar1/Malvani-Learning-AI/actions/workflows/pages.yml/badge.svg)](https://aryannatekar1.github.io/Malvani-Learning-AI/)
+
+### ▶ [Open the web app — aryannatekar1.github.io/Malvani-Learning-AI](https://aryannatekar1.github.io/Malvani-Learning-AI/)
+
+Works on any phone or computer browser. No install, no account, no API key.
 
 Malvani Learning AI is an offline-first educational application for students
 in Sindhudurg, Maharashtra, and other regional communities. It is designed to
@@ -12,10 +17,13 @@ labelled local draft lesson data, guided questions, quizzes, progress tracking,
 and a small optional AI-routing component. It is not a generic
 ChatGPT clone and it does not require an API key.
 
-**[Try the live demo →](https://claude.ai/code/artifact/58464562-6724-4ebe-b4ff-229003ca03d4)**
-A browser-only version of the Problem Solver — carrying water, comparing carts,
-comparing blocks — using the same guided-step, hint, and Go Deeper content as
-the desktop app. No install required.
+The **web app** (`index.html`, deployed to GitHub Pages) carries all nine
+structured lessons, their quizzes and challenges, and all three Problem Solver
+→ Go Deeper activities. It reads the very same `data/lessons/` and
+`data/scenarios/` JSON files the desktop app reads, so there is one source of
+truth for content — editing a lesson updates both. It also keeps the same
+safety rules: unverified local or cultural context is never shown to a
+student, and every activity is labelled as a draft pending teacher review.
 
 ## What works now
 
