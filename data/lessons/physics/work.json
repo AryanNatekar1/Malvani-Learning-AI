@@ -1,0 +1,68 @@
+{
+  "id": "physics.work",
+  "title": "Work",
+  "subject": "Physics",
+  "topic": "work",
+  "levels": ["Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "In physics, work is done only when a force actually moves an object.",
+      "detailed_explanation": "Work equals the force applied multiplied by the distance the object moves in the direction of that force: W = F x d. Its SI unit is the joule (J), where one joule is one newton acting through one metre. If the object does not move, or if it moves at right angles to the force, then no work is done in the physics sense, however tiring the effort may feel.",
+      "everyday_example": "Lifting a bag of rice onto a shelf does work on the bag. Standing still while holding that same bag above your head does no work in physics, even though your arms soon ache."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "local_example": {
+    "text": "Lifting a filled container onto a raised platform does work on it, because the upward force moves the load upward.",
+    "region": "Konkan / Sindhudurg",
+    "source": null,
+    "verification_status": "NEEDS_REVIEW",
+    "appropriate_usage": "Use as a general local-context draft only until reviewed; do not present it as a claim about any specific household, worker, or place."
+  },
+  "real_world_use": ["lifting machinery", "construction", "engine design", "physiotherapy"],
+  "common_misconceptions": [
+    "Any effort that makes you tired counts as work in physics.",
+    "Holding a heavy object still does work on it."
+  ],
+  "think_question": "You push hard against a wall for a whole minute and it does not move. Your muscles are tired, so how much work have you done on the wall in the physics sense, and why?",
+  "reasoning_guide": {
+    "required_keywords": ["move", "work"],
+    "misconception_keywords": ["tired so work is done"],
+    "correct_feedback": "Good reasoning: you tied work to the object actually moving, not to how tiring the effort felt.",
+    "partial_feedback": "You are close. State clearly what the wall did or did not do, and what that means for the work done on it.",
+    "misconception_feedback": "Feeling tired is not the test. In physics, work needs the force to move the object through a distance."
+  },
+  "challenge": {
+    "question": "A force of 20 N pushes a crate 3 m along the floor in the direction of the force. How much work is done, in joules?",
+    "hint": "Use W = F x d.",
+    "progressive_hints": [
+      "Use W = F x d.",
+      "Substitute 20 for the force and 3 for the distance.",
+      "Multiply the two values, then write the unit as J."
+    ],
+    "solution": "W = F x d = 20 N x 3 m = 60 J.",
+    "accepted_answers": ["60", "60 J", "60 j"]
+  },
+  "career_connections": ["mechanical engineering", "construction", "physiotherapy"],
+  "further_exploration": ["energy", "force", "motion"],
+  "quiz_questions": [
+    {
+      "id": "work-calculation",
+      "question": "A 15 N force moves a box 4 m in the direction of the force. How much work is done, in joules?",
+      "type": "numerical",
+      "options": [],
+      "correct_answers": ["60", "60 J"],
+      "explanation": "W = F x d = 15 N x 4 m = 60 J.",
+      "hint": "Multiply the force by the distance moved.",
+      "progressive_hints": [
+        "Multiply the force by the distance moved.",
+        "Calculate 15 x 4, then give the answer in joules."
+      ],
+      "difficulty": "Class 9"
+    }
+  ],
+  "sources": ["Migrated and expanded from the project's original work.txt lesson. Academic and local-context review is still needed."],
+  "verification_status": "NEEDS_REVIEW"
+}

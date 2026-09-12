@@ -1,6 +1,6 @@
 # Malvani Learning AI — Status
 
-Current Version: **V2.14 local learning application prototype**
+Current Version: **V3.0 local desktop app + deployable web app**
 
 ## Working now
 
@@ -9,8 +9,13 @@ Current Version: **V2.14 local learning application prototype**
   study-oriented cards, quiz progress, local progress metrics, and scrollable
   page views that keep controls reachable at 800×600.
 - Preserved terminal chatbot and original file-based Physics knowledge.
+- A browser web app (`index.html`) deployed to GitHub Pages, carrying every
+  lesson, quiz, challenge and Problem Solver activity. It reads the same
+  `data/` JSON the desktop app reads, so content has one source of truth, and
+  it keeps the same safety rules about unverified context and draft status.
 - Structured **draft** lessons across Physics, Mathematics, Chemistry, Biology,
-  and Computer Science.
+  and Computer Science — 14 in total. All ten original Physics topics are now
+  structured lessons; their `.txt` originals are preserved.
 - Guided teaching actions: simple explanation, example, hint, challenge,
   solution, thinking question, and next-step exploration.
 - Offline quizzes with retry/reveal rules, progressive hints, and local SQLite

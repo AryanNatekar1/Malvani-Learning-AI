@@ -1,0 +1,73 @@
+{
+  "id": "physics.energy",
+  "title": "Energy",
+  "subject": "Physics",
+  "topic": "energy",
+  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "Energy is what makes things happen. Anything that moves, heats up, lights up, or grows is using energy.",
+      "detailed_explanation": "Energy is the capacity to do work. It appears in several forms: kinetic energy in moving objects, potential energy stored by position or height, chemical energy stored in food and fuel, and thermal, light, and electrical energy. Energy is never created or destroyed; it only changes from one form into another. That rule is called the conservation of energy.",
+      "everyday_example": "Food gives your body chemical energy. When you cycle, your body converts it into the kinetic energy of the moving bicycle, and some of it into heat."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "local_example": {
+    "text": "A water pump, a cooking fire, and a person carrying a load are all converting energy from one form into another.",
+    "region": "Konkan / Sindhudurg",
+    "source": null,
+    "verification_status": "NEEDS_REVIEW",
+    "appropriate_usage": "Use as a general local-context draft only until reviewed; do not present it as a claim about any specific household or village."
+  },
+  "real_world_use": ["electricity supply", "cooking and heating", "transport", "farming machinery"],
+  "common_misconceptions": [
+    "Energy gets used up and simply disappears.",
+    "An object that is standing still cannot have any energy."
+  ],
+  "think_question": "When you switch on a torch, the battery slowly runs down. If energy cannot be destroyed, where has the battery's energy gone?",
+  "reasoning_guide": {
+    "required_keywords": ["light", "heat"],
+    "misconception_keywords": ["energy is destroyed"],
+    "correct_feedback": "Good reasoning: you tracked the energy into the forms it became, rather than letting it vanish.",
+    "partial_feedback": "You have started well. Name both forms the chemical energy turns into inside a torch.",
+    "misconception_feedback": "Energy is not destroyed. Follow it instead: what does the torch give out while the battery runs down?"
+  },
+  "challenge": {
+    "question": "Describe the energy changes when a ceiling fan is switched on, starting from the electricity supply.",
+    "hint": "Start with electrical energy and follow it into the moving blades.",
+    "progressive_hints": [
+      "Start with electrical energy and follow it into the moving blades.",
+      "Moving blades and moving air both carry kinetic energy.",
+      "Not all the energy becomes useful movement. Some leaves as heat and sound."
+    ],
+    "solution": "Electrical energy becomes kinetic energy in the spinning blades, which becomes kinetic energy of the moving air. Some energy is also converted into heat in the motor and into sound.",
+    "accepted_answers": []
+  },
+  "career_connections": ["renewable energy", "electrical engineering", "food science"],
+  "further_exploration": ["work", "force", "motion"],
+  "quiz_questions": [
+    {
+      "id": "energy-conservation",
+      "question": "Which statement about energy is correct?",
+      "type": "multiple_choice",
+      "options": [
+        "Energy can be created whenever it is needed",
+        "Energy can be destroyed to save it",
+        "Energy changes from one form into another",
+        "Energy exists only inside moving objects"
+      ],
+      "correct_answers": ["Energy changes from one form into another", "3"],
+      "explanation": "Energy is conserved: it is neither created nor destroyed, it only changes form.",
+      "hint": "Think about what happens to the chemical energy in food after you eat it.",
+      "progressive_hints": [
+        "Think about what happens to the chemical energy in food after you eat it.",
+        "The energy does not vanish and it is not made from nothing. It becomes a different form."
+      ],
+      "difficulty": "Beginner"
+    }
+  ],
+  "sources": ["Migrated and expanded from the project's original energy.txt lesson. Academic and local-context review is still needed."],
+  "verification_status": "NEEDS_REVIEW"
+}

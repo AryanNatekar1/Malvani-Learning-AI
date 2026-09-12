@@ -55,6 +55,11 @@
   verified OpenStax citation and illustrative values. This exercised the
   schema and controller wiring beyond a single installed scenario without
   broadening the engine itself.
+- Migrate every remaining original Physics `.txt` file into a structured
+  lesson: energy, work, acceleration, velocity and friction now join motion,
+  force, gravity, momentum and Newton's laws, so all ten original topics have
+  explanations, misconceptions, think questions, challenges and quizzes. The
+  `.txt` originals are kept, and the legacy renderer is still tested.
 - Migrate Motion from its original `.txt` file into a structured lesson, and
   add a third scenario, "A Real Journey: Carrying Water," that frames
   distance/speed/time using a relatable everyday situation (walking to
@@ -70,8 +75,9 @@
 3. Add reviewed Marathi interface and lesson content.
 4. Add reviewed Malvani vocabulary and lesson content only with appropriate
    linguistic/community verification.
-5. Migrate and enrich the remaining original Physics files (energy, friction,
-   acceleration, velocity, work — Motion is now migrated).
+5. Review the newly migrated Physics lessons (energy, work, acceleration,
+   velocity, friction) with a subject teacher before treating them as
+   published rather than draft content.
 6. Add more actual lessons before creating additional subject folders.
 7. Create the first teacher-reviewed contextual learning record and a matching
    Waves lesson; begin with a manual generic setting before considering device

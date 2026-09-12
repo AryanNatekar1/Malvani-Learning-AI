@@ -33,7 +33,8 @@ student, and every activity is labelled as a draft pending teacher review.
   supported 800×600 laptop size.
 - The original terminal chatbot remains available as a fallback.
 - Structured, guided starter lessons in:
-  - Physics: Gravity, Force, Momentum, Motion, Newton's Laws
+  - Physics: Motion, Force, Gravity, Momentum, Newton's Laws, Energy, Work,
+    Acceleration, Velocity, Friction
   - Mathematics: Fractions
   - Chemistry: Atoms
   - Biology: Photosynthesis

@@ -6,6 +6,7 @@ import tempfile
 import unittest
 from dataclasses import replace
 from pathlib import Path
+from unittest import mock
 
 SRC_DIR = Path(__file__).resolve().parent.parent / "src"
 sys.path.insert(0, str(SRC_DIR))
@@ -93,11 +94,19 @@ class StudentAndControllerTests(unittest.TestCase):
             self.assertIn("Correct submissions: 1", controller.progress_text())
 
     def test_controller_retains_legacy_topic_support(self) -> None:
+        """A topic with only an original .txt file must still reach the student.
+
+        Every shipped topic now has a structured lesson, so the legacy path is
+        no longer reachable through installed content alone. Patching the
+        structured lookup keeps this testing the real fallback behaviour
+        instead of depending on some topic staying unmigrated.
+        """
         with tempfile.TemporaryDirectory() as temporary_directory:
             controller = AppController(
                 profile_store=ProfileStore(Path(temporary_directory) / "profile.json")
             )
-            response = controller.answer_question("Explain acceleration")
+            with mock.patch("app_controller.get_structured_lesson", return_value=None):
+                response = controller.answer_question("Explain acceleration")
             self.assertFalse(response.is_structured)
             self.assertIn("Acceleration", response.text)
 

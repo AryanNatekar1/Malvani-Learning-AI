@@ -1,0 +1,73 @@
+{
+  "id": "physics.friction",
+  "title": "Friction",
+  "subject": "Physics",
+  "topic": "friction",
+  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "Friction is a force that resists sliding between two surfaces that are touching.",
+      "detailed_explanation": "Where two surfaces touch, tiny irregularities and attractions between them resist sliding. Friction always acts opposite to the motion, or opposite to the direction something is being pushed. Rougher surfaces and heavier loads usually mean more friction. Friction is useful, because walking, gripping and braking all depend on it, but it also wears surfaces down and turns useful energy into heat.",
+      "everyday_example": "Your shoes grip the floor because of friction. On a wet, polished floor there is far less grip, so your foot slides."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "local_example": {
+    "text": "Bicycle brakes, the grip of sandals on a muddy path during the monsoon, and the wear on a rope all involve friction.",
+    "region": "Konkan / Sindhudurg",
+    "source": null,
+    "verification_status": "NEEDS_REVIEW",
+    "appropriate_usage": "Use as a general local-context draft only until reviewed; do not present it as a claim about any specific place or practice."
+  },
+  "real_world_use": ["brakes", "footwear design", "machine maintenance", "road surfaces"],
+  "common_misconceptions": [
+    "Friction is always a problem and should always be removed.",
+    "Friction acts only once an object is already moving."
+  ],
+  "think_question": "Why is it harder to walk on a wet, polished floor than on a dry, rough one?",
+  "reasoning_guide": {
+    "required_keywords": ["friction", "slip"],
+    "misconception_keywords": ["friction is always bad"],
+    "correct_feedback": "Good reasoning: you connected the reduced friction to losing grip and slipping.",
+    "partial_feedback": "You are close. Say what happens to the friction on a wet floor, and what that does to your grip.",
+    "misconception_feedback": "Friction is not only a nuisance. Here it is the very thing that lets you walk. What happens when there is less of it?"
+  },
+  "challenge": {
+    "question": "Give one example where friction helps you and one where friction wastes energy or causes damage.",
+    "hint": "Think about how you stop a bicycle, and about why machine parts need oil.",
+    "progressive_hints": [
+      "Think about how you stop a bicycle, and about why machine parts need oil.",
+      "Helpful friction lets something grip. Unhelpful friction wears parts out or heats them up.",
+      "Write one full sentence for each example, naming the surfaces that rub together."
+    ],
+    "solution": "Answers differ. A helpful example: brake pads gripping a wheel to stop a bicycle, or shoes gripping the ground. A costly example: friction inside an engine turning fuel energy into heat and wearing the parts down, which is why oil is used.",
+    "accepted_answers": []
+  },
+  "career_connections": ["mechanical engineering", "road safety design", "sports equipment design"],
+  "further_exploration": ["force", "motion", "energy"],
+  "quiz_questions": [
+    {
+      "id": "friction-direction",
+      "question": "Friction between two surfaces always acts",
+      "type": "multiple_choice",
+      "options": [
+        "in the same direction as the motion",
+        "opposite to the motion",
+        "straight downward towards the Earth",
+        "only when the surfaces are wet"
+      ],
+      "correct_answers": ["opposite to the motion", "2"],
+      "explanation": "Friction opposes sliding, so it acts opposite to the motion or attempted motion.",
+      "hint": "Friction makes things harder to slide, not easier.",
+      "progressive_hints": [
+        "Friction makes things harder to slide, not easier.",
+        "If it pushed the same way as the motion, a sliding box would speed up by itself."
+      ],
+      "difficulty": "Beginner"
+    }
+  ],
+  "sources": ["Migrated and expanded from the project's original friction.txt lesson. Academic and local-context review is still needed."],
+  "verification_status": "NEEDS_REVIEW"
+}

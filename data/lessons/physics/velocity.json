@@ -1,0 +1,73 @@
+{
+  "id": "physics.velocity",
+  "title": "Velocity",
+  "subject": "Physics",
+  "topic": "velocity",
+  "levels": ["Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "Velocity is speed together with the direction of travel.",
+      "detailed_explanation": "Speed tells you only how fast something is moving. Velocity tells you how fast and in which direction, so 20 km/h north and 20 km/h south are the same speed but different velocities. Quantities that carry a direction like this are called vectors, while speed is a scalar. Because direction is part of velocity, an object that only turns, without speeding up or slowing down, has still changed its velocity.",
+      "everyday_example": "Two buses may both travel at 40 km/h, but if one is heading towards the market and the other away from it, their velocities are different."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "local_example": {
+    "text": "Describing a boat as moving at 10 km/h towards the shore states a velocity, because it gives both the speed and the direction.",
+    "region": "Konkan / Sindhudurg",
+    "source": null,
+    "verification_status": "NEEDS_REVIEW",
+    "appropriate_usage": "Use as a general local-context draft only until reviewed; do not present it as a claim about a specific boat, route, or occupation."
+  },
+  "real_world_use": ["navigation", "air and sea travel", "weather forecasting", "sports analysis"],
+  "common_misconceptions": [
+    "Speed and velocity mean exactly the same thing.",
+    "An object moving at a constant speed must also have a constant velocity."
+  ],
+  "think_question": "Two cars both show 50 km/h on the speedometer, but they are driving in opposite directions. Do they have the same speed? Do they have the same velocity?",
+  "reasoning_guide": {
+    "required_keywords": ["direction", "velocity"],
+    "misconception_keywords": ["speed and velocity are the same"],
+    "correct_feedback": "Good reasoning: same speed, different velocity, because velocity carries the direction too.",
+    "partial_feedback": "You have the speed part. Now say what the opposite directions do to the velocity.",
+    "misconception_feedback": "Speed and velocity are not the same. Velocity includes direction, so compare the directions here."
+  },
+  "challenge": {
+    "question": "Write down the velocity of a bus travelling at 45 km/h towards the north, then explain which part of your answer makes it a velocity rather than a speed.",
+    "hint": "A velocity must state a direction as well as a number.",
+    "progressive_hints": [
+      "A velocity must state a direction as well as a number.",
+      "Write the value and unit first, then the direction after it.",
+      "Point out in your explanation which word is the direction."
+    ],
+    "solution": "The velocity is 45 km/h towards the north. It is a velocity rather than a speed because it states the direction, 'towards the north', as well as how fast the bus travels.",
+    "accepted_answers": []
+  },
+  "career_connections": ["navigation and shipping", "aviation", "weather forecasting"],
+  "further_exploration": ["motion", "acceleration", "force"],
+  "quiz_questions": [
+    {
+      "id": "velocity-identify",
+      "question": "Which of these describes a velocity rather than only a speed?",
+      "type": "multiple_choice",
+      "options": [
+        "12 m/s",
+        "60 km/h",
+        "8 m/s towards the east",
+        "95 km/h"
+      ],
+      "correct_answers": ["8 m/s towards the east", "3"],
+      "explanation": "Only this option gives a direction as well as a magnitude, which is what makes it a velocity.",
+      "hint": "Look for the option that tells you which way the object is going.",
+      "progressive_hints": [
+        "Look for the option that tells you which way the object is going.",
+        "Three options give only a number and a unit. One adds a direction."
+      ],
+      "difficulty": "Beginner"
+    }
+  ],
+  "sources": ["Migrated and expanded from the project's original velocity.txt lesson. Academic and local-context review is still needed."],
+  "verification_status": "NEEDS_REVIEW"
+}
