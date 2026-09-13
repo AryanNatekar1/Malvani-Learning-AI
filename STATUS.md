@@ -114,6 +114,9 @@ Current Version: **V3.0 local desktop app + deployable web app**
   observation workflows or semantic free-text scientific assessment yet.
 - A configured external LLM or local language model.
 - Voice input/output.
-- Web/mobile interface, cloud sync, or real-student evaluation.
+- Cloud sync, or real-student evaluation. The browser app is live and works
+  on phones, but no student has used it in a classroom yet.
 
-Status: **Working locally; ready for content review and iterative testing.**
+Status: **Desktop app working locally, web app live at
+[aryannatekar1.github.io/Malvani-Learning-AI](https://aryannatekar1.github.io/Malvani-Learning-AI/);
+ready for content review and iterative testing.**
