@@ -1,0 +1,27 @@
+{
+  "name": "Malvani Learning AI",
+  "short_name": "Malvani AI",
+  "description": "Understand a concept, think it through, solve a real problem, then investigate deeper. Works offline.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#060A12",
+  "theme_color": "#0B1220",
+  "categories": ["education"],
+  "lang": "en",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "maskable"
+    }
+  ]
+}

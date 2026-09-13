@@ -6,6 +6,12 @@
 <title>Malvani Learning AI</title>
 <meta name="description" content="An offline-first learning companion for students in Sindhudurg and the Konkan: understand a concept, think it through, solve a real problem, then investigate deeper.">
 <meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0B1220">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Malvani AI">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
@@ -43,6 +49,9 @@
 :root[data-phase="night"]{ --phase-a:#38BDF8; --phase-b:#6366F1; --phase-glow:rgba(99,102,241,.30); }
 
 *{box-sizing:border-box}
+/* Author display rules (.btn is inline-flex) beat the UA rule for [hidden],
+   so state this explicitly or a hidden button still takes up layout. */
+[hidden]{display:none !important}
 html{-webkit-text-size-adjust:100%}
 body{
   margin:0; background:var(--void); color:var(--text);
@@ -65,7 +74,8 @@ body{
 .topbar{position:sticky; top:0; z-index:40; backdrop-filter:blur(14px);
   background:linear-gradient(180deg,rgba(8,13,23,.92),rgba(8,13,23,.62)); border-bottom:1px solid var(--edge)}
 .topbar .wrap{display:flex; align-items:center; gap:14px; min-height:62px}
-.brand{display:flex; align-items:center; gap:11px; text-decoration:none; color:inherit; margin-right:auto}
+.brand{display:flex; align-items:center; gap:11px; text-decoration:none; color:inherit; margin-right:auto; min-width:0}
+.brand b{overflow:hidden; text-overflow:ellipsis}
 .mark{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex:none;
   background:linear-gradient(140deg,var(--phase-a),var(--phase-b)); color:#04121C;
   font-family:var(--f-display); font-weight:700; font-size:15px; letter-spacing:.02em;
@@ -80,7 +90,13 @@ body{
   border:1px solid transparent; border-radius:999px; padding:8px 14px; cursor:pointer; transition:.18s}
 .navbtn:hover{color:var(--text); background:rgba(120,170,215,.10)}
 .navbtn[aria-current="true"]{color:var(--text); border-color:var(--edge-bright); background:rgba(120,170,215,.12)}
-@media(max-width:720px){ .clock{display:none} .brand span{display:none} }
+@media(max-width:720px){
+  .clock{display:none} .brand span{display:none}
+  .pal-open .s-lbl,.pal-open kbd{display:none}
+  .pal-open{padding:8px 11px}
+  #install-btn{padding:8px 12px !important; font-size:12px !important}
+  .offchip{font-size:9.5px; padding:4px 8px}
+}
 
 /* ---------- shared ---------- */
 .eyebrow{font-family:var(--f-mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim)}
@@ -230,6 +246,90 @@ svg{display:block; max-width:100%; height:auto}
   border:1px solid var(--edge); font-size:12px; color:var(--dim)}
 .prow.done .tick{border-color:rgba(52,211,153,.5); color:var(--good); background:rgba(52,211,153,.12)}
 
+/* ---------- concept visuals & demonstrations ---------- */
+.demo{display:flex; flex-direction:column; gap:15px}
+.rngs{display:grid; gap:13px}
+.rng{display:grid; grid-template-columns:1fr auto; align-items:center; gap:6px 12px; font-size:13.5px; color:var(--muted)}
+.rng output{font-family:var(--f-mono); font-size:13.5px; color:var(--text); font-variant-numeric:tabular-nums}
+.rng input[type=range]{grid-column:1/-1; width:100%; accent-color:var(--phase-a); min-height:26px; cursor:pointer}
+.readout{font-family:var(--f-mono); font-size:14px; color:var(--muted); background:rgba(12,20,34,.55);
+  border:1px solid var(--edge); border-radius:var(--r-md); padding:12px 14px; line-height:1.7}
+.readout b{color:var(--phase-a); font-weight:500}
+.readout em{font-style:normal; color:var(--text)}
+.alt-text{font-size:12.5px; color:var(--dim); line-height:1.6}
+.myths{list-style:none; margin:0; padding:0; display:grid; gap:10px}
+.myths li{position:relative; padding-left:28px; color:var(--muted)}
+.myths li::before{content:"✗"; position:absolute; left:0; top:0; color:var(--warn); font-weight:700;
+  font-family:var(--f-mono); font-size:15px}
+figure.sv .lbl{fill:var(--muted); font-family:var(--f-mono); font-size:11px}
+figure.sv .lbl-s{fill:var(--text); font-family:var(--f-mono); font-size:12px}
+figure.sv .lbl-a{fill:var(--phase-a); font-family:var(--f-mono); font-size:11.5px}
+figure.sv .ax{stroke:var(--edge); stroke-width:1.5; fill:none}
+figure.sv .gl{stroke:var(--edge); stroke-width:1; fill:none; opacity:.55}
+figure.sv .acc{stroke:var(--phase-a); fill:none}
+figure.sv .acc2{stroke:var(--phase-b); fill:none}
+figure.sv .warnl{stroke:var(--warn); fill:none}
+figure.sv .goodl{stroke:var(--good); fill:none}
+figure.sv .f-acc{fill:var(--phase-a)} figure.sv .f-acc2{fill:var(--phase-b)}
+figure.sv .f-warn{fill:var(--warn)} figure.sv .f-good{fill:var(--good)}
+figure.sv .f-panel{fill:rgba(120,170,215,.10); stroke:var(--edge)}
+
+/* ---------- command palette ---------- */
+.pal-open{background:rgba(12,20,34,.6); border:1px solid var(--edge); color:var(--muted); border-radius:999px;
+  padding:8px 13px; font-family:var(--f-body); font-size:13px; cursor:pointer; display:flex; align-items:center;
+  gap:9px; min-height:38px; transition:.18s}
+.pal-open:hover{color:var(--text); border-color:var(--edge-bright)}
+.pal-open kbd{font-family:var(--f-mono); font-size:10.5px; border:1px solid var(--edge); border-radius:5px;
+  padding:2px 6px; color:var(--dim); background:rgba(8,13,23,.7)}
+.pal-wrap{position:fixed; inset:0; z-index:90; display:none; padding:12vh 16px 16px;
+  background:rgba(4,8,15,.72); backdrop-filter:blur(7px)}
+.pal-wrap[data-open="true"]{display:block}
+.pal{max-width:620px; margin:0 auto; background:var(--panel-solid); border:1px solid var(--edge-bright);
+  border-radius:var(--r-lg); overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.pal input{border:0; border-bottom:1px solid var(--edge); border-radius:0; background:transparent;
+  font-size:17px; padding:18px 20px; min-height:60px}
+.pal input:focus-visible{outline:none; border-bottom-color:var(--phase-a)}
+.pal-list{max-height:min(52vh,420px); overflow-y:auto; padding:8px}
+.pal-item{display:flex; align-items:center; gap:12px; width:100%; text-align:left; background:transparent;
+  border:1px solid transparent; border-radius:var(--r-md); padding:11px 13px; cursor:pointer; color:var(--text);
+  font-family:var(--f-body); font-size:14.5px}
+.pal-item:hover,.pal-item[aria-selected="true"]{background:rgba(120,170,215,.13); border-color:var(--edge)}
+.pal-item .k{font-family:var(--f-mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--dim); border:1px solid var(--edge); border-radius:5px; padding:3px 7px; flex:none}
+.pal-item .sub{color:var(--dim); font-size:12.5px; margin-left:auto; flex:none}
+.pal-empty{color:var(--dim); font-size:14px; padding:22px 14px; text-align:center}
+
+/* ---------- mobile bottom nav ---------- */
+.mobnav{display:none}
+@media(max-width:720px){
+  .mobnav{display:grid; grid-template-columns:repeat(3,1fr); position:fixed; left:0; right:0; bottom:0; z-index:45;
+    background:linear-gradient(180deg,rgba(8,13,23,.86),rgba(8,13,23,.98)); border-top:1px solid var(--edge);
+    backdrop-filter:blur(14px); padding-bottom:env(safe-area-inset-bottom)}
+  .mobnav button{background:transparent; border:0; color:var(--dim); font-family:var(--f-body); font-size:11px;
+    padding:9px 4px 8px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:4px;
+    min-height:56px; justify-content:center}
+  .mobnav button svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.7}
+  .mobnav button[aria-current="true"]{color:var(--phase-a)}
+  body{padding-bottom:62px}
+  .topbar .navbtn{display:none}
+}
+
+/* ---------- offline / install chips ---------- */
+.chip-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+.offchip{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+  border:1px solid rgba(52,211,153,.34); color:var(--good); background:rgba(52,211,153,.09);
+  border-radius:999px; padding:5px 10px; display:none; align-items:center; gap:7px}
+.offchip[data-on="true"]{display:inline-flex}
+.offchip.warn{border-color:rgba(251,191,36,.34); color:var(--warn); background:rgba(251,191,36,.09)}
+
+/* ---------- resume card ---------- */
+.resume{display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+  border:1px solid var(--edge-bright); background:linear-gradient(120deg,var(--phase-glow),rgba(17,26,44,.6));
+  border-radius:var(--r-lg); padding:16px 20px}
+.resume .rt{font-family:var(--f-display); font-size:17px; font-weight:600}
+.resume .rs{font-size:13.5px; color:var(--muted)}
+.resume .btn{margin-left:auto}
+
 footer{border-top:1px solid var(--edge); margin-top:50px; padding:30px 0 46px; color:var(--dim); font-size:13.5px}
 footer a{color:var(--muted)}
 .loading{display:flex; align-items:center; gap:12px; color:var(--muted); font-family:var(--f-mono); font-size:13px;
@@ -251,10 +351,47 @@ footer a{color:var(--muted)}
     <span class="mark" aria-hidden="true">ML</span>
     <b>Malvani Learning AI<span>Learn · Think · Solve</span></b>
   </a>
+  <span class="offchip" id="offchip" role="status">Saved for offline use</span>
   <div class="clock"><span class="dot" aria-hidden="true"></span><span id="clock-text">--:--</span></div>
+  <button class="pal-open" id="pal-open" aria-label="Search lessons and problems">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
+    <span class="s-lbl">Search</span><kbd>Ctrl K</kbd>
+  </button>
+  <button class="btn btn-ghost" id="install-btn" hidden style="padding:8px 15px;min-height:38px;font-size:13px">
+    Install app
+  </button>
   <button class="navbtn" data-nav="#/">Learn</button>
   <button class="navbtn" data-nav="#/progress">Progress</button>
 </div></header>
+
+<div class="pal-wrap" id="pal-wrap" role="dialog" aria-modal="true" aria-label="Search lessons and problems">
+  <div class="pal">
+    <input type="text" id="pal-input" autocomplete="off" spellcheck="false"
+           placeholder="Search a concept, or a real problem to solve…" aria-label="Search"
+           role="combobox" aria-expanded="true" aria-controls="pal-list" aria-autocomplete="list">
+    <div class="pal-list" id="pal-list" role="listbox" aria-label="Results"></div>
+  </div>
+</div>
+
+<nav class="mobnav" aria-label="Main">
+  <button data-nav="#/" aria-label="Learn">
+    <svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 5.5A1.5 1.5 0 0 1 4.5 4H10a2 2 0 0 1 2 2v13a2 2 0 0 0-2-2H4.5A1.5 1.5 0 0 1 3 15.5z"/>
+      <path d="M21 5.5A1.5 1.5 0 0 0 19.5 4H14a2 2 0 0 0-2 2v13a2 2 0 0 1 2-2h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>
+    Learn
+  </button>
+  <button id="mob-search" aria-label="Search">
+    <svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round"><circle cx="11" cy="11" r="7"/>
+      <path d="m20 20-3.6-3.6"/></svg>
+    Search
+  </button>
+  <button data-nav="#/progress" aria-label="Progress">
+    <svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 19V10M10 19V5M16 19v-6M22 19H2"/></svg>
+    Progress
+  </button>
+</nav>
 
 <main id="app"><div class="loading"><span class="spin"></span> Loading lessons…</div></main>
 
@@ -425,7 +562,426 @@ const scenarioById = id => state.scenarios.find(s => s.id === id);
 const scenariosForTopic = t => state.scenarios.filter(s => s.topic === t);
 const subjects = () => ["All", ...Array.from(new Set(state.lessons.map(l => l.subject))).sort()];
 
+/* ============ concept visuals & demonstrations ============ */
+/* Each lesson gets a diagram. Where a relationship is worth feeling rather
+ * than reading (p = m x v, W = F x d), the diagram takes sliders so a student
+ * can move one quantity and watch the other respond. Every visual carries a
+ * text alternative, so nothing is available only as a picture. */
+const MK = `<defs>
+  <marker id="mkA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" class="f-acc"/></marker>
+  <marker id="mkB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" class="f-acc2"/></marker>
+  <marker id="mkW" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" class="f-warn"/></marker>
+  <marker id="mkG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="4.5" markerHeight="4.5" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" class="f-good"/></marker>
+</defs>`;
+const svg = (inner, h) => `<svg viewBox="0 0 360 ${h||180}" role="img">${MK}${inner}</svg>`;
+const r1 = n => Math.round(n * 10) / 10;
+
+const CONCEPT_VISUALS = {
+  motion: {
+    title: "Watch speed change the time",
+    caption: "The walk is always 300 m. Only the walking speed changes.",
+    controls: [{id:"m-sp", label:"Walking speed", min:0.6, max:2.4, step:0.1, value:1.2, unit:" m/s"}],
+    draw(v){
+      const t = 300 / v["m-sp"];
+      const barMax = 260, bar = Math.max(8, Math.min(barMax, (t / 500) * barMax));
+      const mins = Math.floor(t / 60), secs = Math.round(t % 60);
+      return {
+        svg: svg(`
+          <text x="20" y="26" class="lbl">THE WALK · 300 m</text>
+          <line x1="20" y1="52" x2="340" y2="52" class="ax"/>
+          <circle cx="20" cy="52" r="7" class="f-acc"/><circle cx="340" cy="52" r="7" class="f-acc2"/>
+          <text x="20" y="76" class="lbl-s">home</text><text x="300" y="76" class="lbl-s">water</text>
+          <text x="20" y="116" class="lbl">TIME TAKEN</text>
+          <rect x="20" y="126" width="${barMax}" height="20" rx="10" class="f-panel"/>
+          <rect x="20" y="126" width="${bar}" height="20" rx="10" class="f-acc" opacity=".85"/>
+          <text x="20" y="166" class="lbl-a">${r1(t)} s</text>`),
+        read: `time = distance ÷ speed = 300 m ÷ <b>${v["m-sp"]} m/s</b> = <em>${r1(t)} s</em> (about ${mins} min ${secs} s)`,
+        alt: `At ${v["m-sp"]} metres per second, a 300 metre walk takes about ${r1(t)} seconds. A slower speed makes the time bar longer.`
+      };
+    }
+  },
+  velocity: {
+    title: "Same speed, different velocity",
+    caption: "Both buses show the same number on the speedometer.",
+    controls: [{id:"v-sp", label:"Speed on both speedometers", min:10, max:60, step:5, value:40, unit:" km/h"}],
+    draw(v){
+      const len = 40 + (v["v-sp"] / 60) * 110;
+      return {
+        svg: svg(`
+          <text x="20" y="26" class="lbl">BUS A</text>
+          <line x1="30" y1="56" x2="${30+len}" y2="56" class="acc" stroke-width="4" marker-end="url(#mkA)"/>
+          <text x="30" y="82" class="lbl-a">+${v["v-sp"]} km/h  →  east</text>
+          <text x="20" y="120" class="lbl">BUS B</text>
+          <line x1="${30+len}" y1="150" x2="30" y2="150" class="acc2" stroke-width="4" marker-end="url(#mkB)"/>
+          <text x="30" y="176" class="lbl-s">−${v["v-sp"]} km/h  ←  west</text>`, 190),
+        read: `speed: <em>both ${v["v-sp"]} km/h</em> — the same.<br>velocity: <b>+${v["v-sp"]}</b> east and <b>−${v["v-sp"]}</b> west — different, because direction is part of it.`,
+        alt: `Two arrows of equal length point in opposite directions. Both buses travel at ${v["v-sp"]} kilometres per hour, so their speeds match, but their velocities are opposite.`
+      };
+    }
+  },
+  acceleration: {
+    title: "Steeper line, bigger acceleration",
+    caption: "A velocity–time graph, starting from rest.",
+    controls: [{id:"a-a", label:"Acceleration", min:0, max:4, step:0.2, value:2, unit:" m/s²"}],
+    draw(v){
+      const a = v["a-a"], T = 5, vmax = 20;
+      const x0 = 46, y0 = 150, x1 = 340, y1 = 26;
+      const vEnd = a * T;
+      const px = x0 + (x1 - x0);
+      const py = y0 - Math.min(vEnd / vmax, 1) * (y0 - y1);
+      return {
+        svg: svg(`
+          <line x1="${x0}" y1="${y1}" x2="${x0}" y2="${y0}" class="ax"/>
+          <line x1="${x0}" y1="${y0}" x2="${x1}" y2="${y0}" class="ax"/>
+          <line x1="${x0}" y1="${(y0+y1)/2}" x2="${x1}" y2="${(y0+y1)/2}" class="gl" stroke-dasharray="3 5"/>
+          <text x="8" y="30" class="lbl">v (m/s)</text><text x="300" y="170" class="lbl">t (s)</text>
+          <text x="16" y="${y0+4}" class="lbl">0</text><text x="14" y="${y1+10}" class="lbl">20</text>
+          <line x1="${x0}" y1="${y0}" x2="${px}" y2="${py}" class="acc" stroke-width="3.5"/>
+          <circle cx="${px}" cy="${py}" r="5" class="f-acc"/>
+          <text x="${px-96}" y="${Math.max(y1+14, py-12)}" class="lbl-a">after 5 s: ${r1(vEnd)} m/s</text>`),
+        read: `a = <b>${a} m/s²</b> means the velocity gains ${a} m/s every second.<br>After 5 s from rest: v = a × t = ${a} × 5 = <em>${r1(vEnd)} m/s</em>`,
+        alt: `A velocity-time graph. With an acceleration of ${a} metres per second squared, the line rises to ${r1(vEnd)} metres per second after 5 seconds. A larger acceleration makes the line steeper.`
+      };
+    }
+  },
+  force: {
+    title: "Push the same mass harder",
+    caption: "Newton's second law: the arrow is the net force.",
+    controls: [
+      {id:"f-m", label:"Mass of the block", min:1, max:10, step:1, value:4, unit:" kg"},
+      {id:"f-a", label:"Acceleration produced", min:0.5, max:5, step:0.5, value:2, unit:" m/s²"}
+    ],
+    draw(v){
+      const F = v["f-m"] * v["f-a"];
+      const len = 20 + (F / 50) * 190;
+      const side = 34 + v["f-m"] * 3.4;
+      return {
+        svg: svg(`
+          <line x1="20" y1="132" x2="340" y2="132" class="ax"/>
+          <rect x="40" y="${132-side}" width="${side}" height="${side}" rx="5" class="f-panel"/>
+          <text x="${40+side/2}" y="${132-side/2+5}" class="lbl-s" text-anchor="middle">${v["f-m"]} kg</text>
+          <line x1="${44+side}" y1="${132-side/2}" x2="${44+side+len}" y2="${132-side/2}" class="acc" stroke-width="5" marker-end="url(#mkA)"/>
+          <text x="${48+side}" y="${132-side/2-14}" class="lbl-a">F = ${r1(F)} N</text>
+          <text x="20" y="164" class="lbl">More mass or more acceleration → more force.</text>`),
+        read: `F = m × a = <b>${v["f-m"]} kg</b> × <b>${v["f-a"]} m/s²</b> = <em>${r1(F)} N</em>`,
+        alt: `A block of ${v["f-m"]} kilograms with a force arrow beside it. To accelerate it at ${v["f-a"]} metres per second squared needs a net force of ${r1(F)} newtons.`
+      };
+    }
+  },
+  momentum: {
+    title: "Mass and speed both matter",
+    caption: "The bar shows how much momentum the object carries.",
+    controls: [
+      {id:"p-m", label:"Mass", min:1, max:10, step:1, value:2, unit:" kg"},
+      {id:"p-v", label:"Velocity", min:1, max:10, step:1, value:3, unit:" m/s"}
+    ],
+    draw(v){
+      const p = v["p-m"] * v["p-v"];
+      const bar = Math.max(10, (p / 100) * 300);
+      const side = 26 + v["p-m"] * 3;
+      return {
+        svg: svg(`
+          <line x1="20" y1="86" x2="340" y2="86" class="ax"/>
+          <rect x="34" y="${86-side}" width="${side*1.3}" height="${side}" rx="5" class="f-panel"/>
+          <text x="${34+side*0.65}" y="${86-side/2+5}" class="lbl-s" text-anchor="middle">${v["p-m"]} kg</text>
+          <line x1="${40+side*1.3}" y1="${86-side/2}" x2="${40+side*1.3+v["p-v"]*11}" y2="${86-side/2}" class="acc2" stroke-width="4" marker-end="url(#mkB)"/>
+          <text x="${44+side*1.3}" y="${86-side/2-12}" class="lbl">${v["p-v"]} m/s</text>
+          <text x="20" y="126" class="lbl">MOMENTUM p = m × v</text>
+          <rect x="20" y="136" width="300" height="18" rx="9" class="f-panel"/>
+          <rect x="20" y="136" width="${bar}" height="18" rx="9" class="f-acc" opacity=".85"/>
+          <text x="${Math.min(324, 26+bar)}" y="170" class="lbl-a">${r1(p)} kg m/s</text>`),
+        read: `p = m × v = <b>${v["p-m"]} kg</b> × <b>${v["p-v"]} m/s</b> = <em>${r1(p)} kg m/s</em><br>Try 2 kg at 3 m/s, then 3 kg at 2 m/s — different objects, same momentum.`,
+        alt: `A block of ${v["p-m"]} kilograms moving at ${v["p-v"]} metres per second has a momentum of ${r1(p)} kilogram metres per second, shown as a bar.`
+      };
+    }
+  },
+  work: {
+    title: "Work is the area of force × distance",
+    caption: "The shaded rectangle is the work done.",
+    controls: [
+      {id:"w-f", label:"Force applied", min:5, max:40, step:5, value:20, unit:" N"},
+      {id:"w-d", label:"Distance moved", min:0, max:6, step:0.5, value:3, unit:" m"}
+    ],
+    draw(v){
+      const W = v["w-f"] * v["w-d"];
+      const wpx = (v["w-d"] / 6) * 280, hpx = (v["w-f"] / 40) * 110;
+      const y = 150 - hpx;
+      return {
+        svg: svg(`
+          <line x1="40" y1="150" x2="340" y2="150" class="ax"/>
+          <line x1="40" y1="20" x2="40" y2="150" class="ax"/>
+          <text x="6" y="30" class="lbl">F (N)</text><text x="300" y="172" class="lbl">d (m)</text>
+          ${wpx > 0 ? `<rect x="40" y="${y}" width="${wpx}" height="${hpx}" class="f-acc" opacity=".30"/>
+          <rect x="40" y="${y}" width="${wpx}" height="${hpx}" class="acc" stroke-width="2" fill="none"/>` : ""}
+          <text x="${40 + Math.max(wpx/2, 34)}" y="${y + hpx/2 + 5}" class="lbl-s" text-anchor="middle">${r1(W)} J</text>
+          ${v["w-d"] === 0 ? `<text x="52" y="${y-10}" class="lbl">no movement → no work</text>` : ""}`),
+        read: `W = F × d = <b>${v["w-f"]} N</b> × <b>${v["w-d"]} m</b> = <em>${r1(W)} J</em>` +
+              (v["w-d"] === 0 ? `<br>Push all you like — with no movement, no work is done.` : ""),
+        alt: `A rectangle whose height is the ${v["w-f"]} newton force and whose width is the ${v["w-d"]} metre distance. Its area, ${r1(W)} joules, is the work done.`
+      };
+    }
+  },
+  friction: {
+    title: "Will it move?",
+    caption: "Friction pushes back against whatever is pushing.",
+    controls: [
+      {id:"fr-p", label:"Your push", min:0, max:50, step:5, value:30, unit:" N"},
+      {id:"fr-s", label:"Surface grip (rough ↔ smooth)", min:5, max:45, step:5, value:20, unit:" N"}
+    ],
+    draw(v){
+      const moves = v["fr-p"] > v["fr-s"];
+      const pl = (v["fr-p"] / 50) * 120, fl = (v["fr-s"] / 50) * 120;
+      return {
+        svg: svg(`
+          <line x1="20" y1="120" x2="340" y2="120" class="ax"/>
+          <path d="M20 126 q8 8 16 0 q8 -8 16 0 q8 8 16 0 q8 -8 16 0 q8 8 16 0 q8 -8 16 0 q8 8 16 0 q8 -8 16 0 q8 8 16 0 q8 -8 16 0 q8 8 16 0 q8 -8 16 0 q8 8 16 0 q8 -8 16 0 q8 8 16 0 q8 -8 16 0 q8 8 16 0 q8 -8 16 0 q8 8 16 0 q8 -8 16 0" class="gl"/>
+          <rect x="148" y="76" width="64" height="44" rx="6" class="f-panel"/>
+          <text x="180" y="103" class="lbl-s" text-anchor="middle">box</text>
+          <line x1="${146-pl}" y1="98" x2="142" y2="98" class="acc" stroke-width="4.5" marker-end="url(#mkA)"/>
+          <text x="${Math.max(4,146-pl)}" y="86" class="lbl-a">push ${v["fr-p"]} N</text>
+          <line x1="${214+fl}" y1="98" x2="218" y2="98" class="warnl" stroke-width="4.5" marker-end="url(#mkW)"/>
+          <text x="222" y="86" class="lbl">friction ${v["fr-s"]} N</text>
+          <text x="20" y="166" class="${moves ? "lbl-a" : "lbl"}">${moves ? "The push wins — the box slides." : "Friction holds it — the box stays put."}</text>`),
+        read: moves
+          ? `push <b>${v["fr-p"]} N</b> is greater than friction <b>${v["fr-s"]} N</b> → <em>it moves</em>`
+          : `push <b>${v["fr-p"]} N</b> does not beat friction <b>${v["fr-s"]} N</b> → <em>it stays still</em>`,
+        alt: `A box on a rough surface. A push of ${v["fr-p"]} newtons acts one way and friction of ${v["fr-s"]} newtons acts the other. ${moves ? "The box slides." : "The box does not move."}`
+      };
+    }
+  },
+  gravity: {
+    title: "Heavy and light fall together",
+    caption: "Ignoring air resistance, both drop at the same rate.",
+    controls: [{id:"g-t", label:"Time since dropping", min:0, max:2, step:0.1, value:1, unit:" s"}],
+    draw(v){
+      const t = v["g-t"], d = 0.5 * 9.8 * t * t;
+      const y = 34 + Math.min(d / 20, 1) * 104;
+      return {
+        svg: svg(`
+          <line x1="20" y1="152" x2="340" y2="152" class="ax"/>
+          <line x1="96" y1="30" x2="96" y2="152" class="gl" stroke-dasharray="3 5"/>
+          <line x1="252" y1="30" x2="252" y2="152" class="gl" stroke-dasharray="3 5"/>
+          <circle cx="96" cy="${y}" r="16" class="f-acc"/>
+          <text x="122" y="${y+4}" class="lbl-s">8 kg</text>
+          <circle cx="252" cy="${y}" r="9" class="f-acc2"/>
+          <text x="268" y="${y+4}" class="lbl-s">2 kg</text>
+          <text x="20" y="22" class="lbl">DROPPED TOGETHER</text>
+          <text x="20" y="172" class="lbl-a">fallen ${r1(d)} m after ${t} s</text>`),
+        read: `distance = ½ × g × t² = ½ × 9.8 × ${t}² = <em>${r1(d)} m</em><br>The mass is nowhere in that formula — which is why <b>both balls stay level</b>.`,
+        alt: `An 8 kilogram ball and a 2 kilogram ball dropped together. After ${t} seconds both have fallen ${r1(d)} metres, staying level with each other.`
+      };
+    }
+  },
+  energy: {
+    title: "Energy changes form, it never vanishes",
+    caption: "A ceiling fan: every joule in has to come out somewhere.",
+    draw(){
+      return {
+        svg: svg(`
+          <rect x="14" y="60" width="86" height="52" rx="8" class="f-panel"/>
+          <text x="57" y="82" class="lbl-s" text-anchor="middle">electrical</text>
+          <text x="57" y="100" class="lbl-a" text-anchor="middle">100 J</text>
+          <line x1="104" y1="86" x2="140" y2="86" class="acc" stroke-width="3" marker-end="url(#mkA)"/>
+          <rect x="144" y="52" width="72" height="68" rx="8" class="f-panel"/>
+          <text x="180" y="90" class="lbl-s" text-anchor="middle">fan</text>
+          <line x1="220" y1="60" x2="256" y2="42" class="goodl" stroke-width="3" marker-end="url(#mkG)"/>
+          <line x1="220" y1="86" x2="256" y2="86" class="warnl" stroke-width="3" marker-end="url(#mkW)"/>
+          <line x1="220" y1="112" x2="256" y2="130" class="warnl" stroke-width="3" marker-end="url(#mkW)"/>
+          <text x="262" y="40" class="lbl-s">moving air · 70 J</text>
+          <text x="262" y="90" class="lbl">heat · 25 J</text>
+          <text x="262" y="136" class="lbl">sound · 5 J</text>
+          <text x="14" y="168" class="lbl">70 + 25 + 5 = 100 J — nothing is lost.</text>`),
+        read: `Useful output is only part of the story: <b>70 J</b> moves air, while <b>25 J</b> becomes heat and <b>5 J</b> becomes sound. Total in = total out.`,
+        alt: "A flow diagram: 100 joules of electrical energy enters a fan and leaves as 70 joules of moving air, 25 joules of heat and 5 joules of sound, totalling 100 joules."
+      };
+    }
+  },
+  newton: {
+    title: "The three laws side by side",
+    caption: "One picture for each law.",
+    draw(){
+      return {
+        svg: svg(`
+          <rect x="8" y="28" width="108" height="100" rx="10" class="f-panel"/>
+          <text x="62" y="48" class="lbl-a" text-anchor="middle">FIRST</text>
+          <circle cx="62" cy="82" r="14" class="f-acc2"/>
+          <text x="62" y="114" class="lbl" text-anchor="middle">stays as it is</text>
+          <rect x="126" y="28" width="108" height="100" rx="10" class="f-panel"/>
+          <text x="180" y="48" class="lbl-a" text-anchor="middle">SECOND</text>
+          <rect x="146" y="70" width="26" height="26" rx="4" class="f-acc2"/>
+          <line x1="176" y1="83" x2="216" y2="83" class="acc" stroke-width="4" marker-end="url(#mkA)"/>
+          <text x="180" y="114" class="lbl" text-anchor="middle">F = m × a</text>
+          <rect x="244" y="28" width="108" height="100" rx="10" class="f-panel"/>
+          <text x="298" y="48" class="lbl-a" text-anchor="middle">THIRD</text>
+          <line x1="296" y1="76" x2="336" y2="76" class="acc" stroke-width="3.5" marker-end="url(#mkA)"/>
+          <line x1="300" y1="94" x2="260" y2="94" class="acc2" stroke-width="3.5" marker-end="url(#mkB)"/>
+          <text x="298" y="114" class="lbl" text-anchor="middle">equal &amp; opposite</text>
+          <text x="8" y="160" class="lbl">Inertia · F = m × a · every push has a push back.</text>`),
+        read: `<b>First:</b> without a net force, motion does not change. <b>Second:</b> a net force accelerates a mass, F = m × a. <b>Third:</b> forces come in equal, opposite pairs.`,
+        alt: "Three panels: the first law shows an object staying as it is, the second shows a force arrow accelerating a block, the third shows two equal arrows pointing opposite ways."
+      };
+    }
+  },
+  fractions: {
+    title: "Build the fraction yourself",
+    caption: "The whole bar is 1. The shaded parts are your fraction.",
+    controls: [
+      {id:"fr-n", label:"Parts chosen (numerator)", min:0, max:8, step:1, value:3, unit:""},
+      {id:"fr-d", label:"Equal parts in the whole (denominator)", min:1, max:8, step:1, value:4, unit:""}
+    ],
+    draw(v){
+      const d = v["fr-d"], n = Math.min(v["fr-n"], d), w = 320 / d;
+      let parts = "";
+      for(let i = 0; i < d; i++){
+        parts += `<rect x="${20 + i*w}" y="50" width="${w-3}" height="56" rx="4"
+          class="${i < n ? "f-acc" : "f-panel"}" opacity="${i < n ? ".85" : "1"}"/>`;
+      }
+      return {
+        svg: svg(`
+          <text x="20" y="36" class="lbl">ONE WHOLE, SPLIT INTO ${d} EQUAL PARTS</text>
+          ${parts}
+          <text x="20" y="146" class="lbl-a" style="font-size:16px">${n}/${d}</text>
+          <text x="90" y="146" class="lbl">= ${r1(n/d*100)}% of the whole = ${(n/d).toFixed(3)}</text>`, 165),
+        read: `<b>${n}/${d}</b> means the whole is split into <em>${d}</em> equal parts and <em>${n}</em> of them are taken.` +
+              (n === d && d > 0 ? `<br>All the parts together make one whole.` : ""),
+        alt: `A bar divided into ${d} equal parts with ${n} of them shaded, showing the fraction ${n} over ${d}.`
+      };
+    }
+  },
+  atoms: {
+    title: "Inside an atom",
+    caption: "A simple shell picture — useful, though not to scale.",
+    draw(){
+      return {
+        svg: svg(`
+          <circle cx="180" cy="90" r="66" class="gl" fill="none"/>
+          <circle cx="180" cy="90" r="40" class="gl" fill="none"/>
+          <circle cx="180" cy="90" r="17" class="f-acc"/>
+          <text x="180" y="95" class="lbl-s" text-anchor="middle" fill="#04121C">+</text>
+          <circle cx="220" cy="90" r="6" class="f-acc2"/><circle cx="140" cy="90" r="6" class="f-acc2"/>
+          <circle cx="180" cy="24" r="6" class="f-acc2"/><circle cx="180" cy="156" r="6" class="f-acc2"/>
+          <circle cx="227" cy="43" r="6" class="f-acc2"/>
+          <text x="8" y="24" class="lbl-a">nucleus: protons + neutrons</text>
+          <line x1="120" y1="30" x2="166" y2="78" class="gl"/>
+          <text x="224" y="170" class="lbl">electrons in shells</text>
+          <line x1="240" y1="160" x2="224" y2="96" class="gl"/>`),
+        read: `The <b>nucleus</b> holds protons (positive) and neutrons (no charge). <b>Electrons</b> (negative) occupy shells around it. An atom is mostly empty space.`,
+        alt: "An atom drawn as a central nucleus labelled protons and neutrons, with electrons shown as small circles on two rings around it."
+      };
+    }
+  },
+  photosynthesis: {
+    title: "What goes in, what comes out",
+    caption: "The leaf is where the change happens.",
+    draw(){
+      return {
+        svg: svg(`
+          <text x="10" y="36" class="lbl">IN</text>
+          <text x="10" y="62" class="lbl-s">sunlight</text>
+          <text x="10" y="88" class="lbl-s">water</text>
+          <text x="10" y="114" class="lbl-s">carbon dioxide</text>
+          <line x1="108" y1="56" x2="140" y2="80" class="acc" stroke-width="2.5" marker-end="url(#mkA)"/>
+          <line x1="108" y1="83" x2="140" y2="86" class="acc" stroke-width="2.5" marker-end="url(#mkA)"/>
+          <line x1="108" y1="109" x2="140" y2="92" class="acc" stroke-width="2.5" marker-end="url(#mkA)"/>
+          <path d="M148 86 q34 -44 68 0 q-34 44 -68 0z" class="f-good" opacity=".85"/>
+          <text x="182" y="132" class="lbl-s" text-anchor="middle">leaf</text>
+          <line x1="220" y1="74" x2="252" y2="58" class="goodl" stroke-width="2.5" marker-end="url(#mkG)"/>
+          <line x1="220" y1="98" x2="252" y2="112" class="goodl" stroke-width="2.5" marker-end="url(#mkG)"/>
+          <text x="258" y="36" class="lbl">OUT</text>
+          <text x="258" y="62" class="lbl-s">glucose</text>
+          <text x="258" y="116" class="lbl-s">oxygen</text>
+          <text x="10" y="168" class="lbl">Light energy is stored in the glucose.</text>`),
+        read: `sunlight + water + carbon dioxide → <b>glucose</b> + <b>oxygen</b><br>The oxygen you breathe is a by-product of this.`,
+        alt: "A flow diagram: sunlight, water and carbon dioxide enter a leaf; glucose and oxygen come out."
+      };
+    }
+  },
+  algorithms: {
+    title: "An algorithm is a path of steps",
+    caption: "A decision sends the path one way or the other.",
+    draw(){
+      return {
+        svg: svg(`
+          <rect x="132" y="10" width="96" height="26" rx="13" class="f-panel"/>
+          <text x="180" y="28" class="lbl-s" text-anchor="middle">start</text>
+          <line x1="180" y1="38" x2="180" y2="52" class="acc" stroke-width="2.5" marker-end="url(#mkA)"/>
+          <rect x="120" y="54" width="120" height="28" rx="5" class="f-panel"/>
+          <text x="180" y="73" class="lbl-s" text-anchor="middle">take a step</text>
+          <line x1="180" y1="84" x2="180" y2="96" class="acc" stroke-width="2.5" marker-end="url(#mkA)"/>
+          <path d="M180 98 L242 124 L180 150 L118 124 z" class="f-panel"/>
+          <text x="180" y="129" class="lbl-s" text-anchor="middle">done?</text>
+          <line x1="244" y1="124" x2="292" y2="124" class="goodl" stroke-width="2.5" marker-end="url(#mkG)"/>
+          <text x="250" y="116" class="lbl">yes</text>
+          <rect x="294" y="111" width="58" height="26" rx="13" class="f-panel"/>
+          <text x="323" y="129" class="lbl-s" text-anchor="middle">stop</text>
+          <path d="M116 124 L60 124 L60 68 L118 68" class="acc2" stroke-width="2.5" fill="none" marker-end="url(#mkB)"/>
+          <text x="64" y="116" class="lbl">no</text>
+          <text x="10" y="172" class="lbl">Repeat until done — that loop is the algorithm.</text>`),
+        read: `Every algorithm is <b>steps in order</b>, with <b>decisions</b> that choose a path and <b>repeats</b> that keep going until it is done.`,
+        alt: "A flowchart: start, take a step, then a decision diamond asking 'done?'. Yes leads to stop; no loops back to take another step."
+      };
+    }
+  }
+};
+
+function rngRow(c){
+  return `<label class="rng"><span>${esc(c.label)}</span><output id="${c.id}-o"></output>
+    <input type="range" id="${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.value}"
+      aria-label="${esc(c.label)}"></label>`;
+}
+
+function visualBlock(topic){
+  const spec = CONCEPT_VISUALS[topic];
+  if(!spec) return null;
+  const ctrls = (spec.controls || []).map(rngRow).join("");
+  const box = el(`<div class="block demo">
+    <h4>${esc(spec.title)}</h4>
+    <figure class="sv"><div data-vz></div>
+      ${spec.caption ? `<figcaption>${esc(spec.caption)}</figcaption>` : ""}</figure>
+    ${ctrls ? `<div class="rngs">${ctrls}</div>` : ""}
+    <div class="readout" data-read></div>
+    <p class="alt-text" data-alt></p>
+  </div>`);
+
+  const paint = () => {
+    const vals = {};
+    (spec.controls || []).forEach(c => {
+      vals[c.id] = parseFloat(box.querySelector("#" + c.id).value);
+    });
+    const out = spec.draw(vals);
+    box.querySelector("[data-vz]").innerHTML = out.svg;
+    box.querySelector("[data-read]").innerHTML = out.read || "";
+    box.querySelector("[data-alt]").textContent = out.alt || "";
+    (spec.controls || []).forEach(c => {
+      box.querySelector("#" + c.id + "-o").textContent = vals[c.id] + (c.unit || "");
+    });
+  };
+  (spec.controls || []).forEach(c =>
+    box.querySelector("#" + c.id).addEventListener("input", paint));
+  paint();
+  return box;
+}
+
 /* ============ views ============ */
+function resumeCard(){
+  // The most recently opened lesson that is still installed. Nothing is shown
+  // on a first visit rather than inventing a "recommended" starting point.
+  const opened = state.progress.opened;
+  for(let i = opened.length - 1; i >= 0; i--){
+    const l = lessonByTopic(opened[i]);
+    if(!l) continue;
+    const done = state.progress.challenges.includes(l.topic);
+    return `<div class="resume" style="margin-top:26px">
+      <div>
+        <div class="rt">Continue: ${esc(l.title)}</div>
+        <div class="rs">${esc(l.subject)} · ${done ? "challenge done" : "you opened this last"}</div>
+      </div>
+      <a class="btn btn-ghost" href="#/lesson/${esc(l.topic)}">Pick up where you left off</a>
+    </div>`;
+  }
+  return "";
+}
+
 function renderHome(){
   const p = state.progress;
   const acc = p.quizAttempts ? Math.round(p.quizCorrect / p.quizAttempts * 100) : 0;
@@ -441,6 +997,7 @@ function renderHome(){
         <button class="btn btn-primary" data-solve-first>Solve a real problem</button>
         <button class="btn btn-ghost" data-scroll="#lessons">Browse ${state.lessons.length} lessons</button>
       </div>
+      ${resumeCard()}
       <div class="stats">
         <div class="stat"><b>${state.lessons.length}</b><span>Lessons</span></div>
         <div class="stat"><b>${state.scenarios.length}</b><span>Real problems</span></div>
@@ -540,11 +1097,12 @@ function renderLesson(topic){
     understand: () => {
       const p = el(`<div class="stack gap-m">
         <div class="block"><h4>In more detail</h4><p>${esc(en.detailed_explanation)}</p></div>
+        <div data-visual-slot></div>
         ${en.everyday_example?`<div class="block"><h4>An everyday example</h4><p>${esc(en.everyday_example)}</p></div>`:""}
         ${localEx?`<div class="block"><h4>Near you</h4><p>${esc(localEx.text)}</p></div>`:""}
         ${culture?`<div class="block"><h4>In daily life here</h4><p>${esc(culture.text)}</p></div>`:""}
-        ${(l.common_misconceptions||[]).length?`<div class="block"><h4>Watch out for this</h4>
-          ${l.common_misconceptions.map(m=>`<p>${esc(m)}</p>`).join("")}</div>`:""}
+        ${(l.common_misconceptions||[]).length?`<div class="block"><h4>Common mistakes — these are <em style="font-style:normal;color:var(--warn)">not</em> true</h4>
+          <ul class="myths">${l.common_misconceptions.map(m=>`<li>${esc(m)}</li>`).join("")}</ul></div>`:""}
         ${(l.real_world_use||[]).length?`<div class="block"><h4>Where it's used</h4>
           <div class="pills">${list(l.real_world_use)}</div></div>`:""}
         ${(l.career_connections||[]).length?`<div class="block"><h4>Jobs that use this</h4>
@@ -553,6 +1111,9 @@ function renderLesson(topic){
           <div class="pills">${list(l.further_exploration)}</div></div>`:""}
         <p class="notice">${esc((l.sources||[])[0]||"Local draft content pending review.")}</p>
       </div>`);
+      const slot = p.querySelector("[data-visual-slot]");
+      const vis = visualBlock(l.topic);
+      if(vis) slot.replaceWith(vis); else slot.remove();
       return p;
     },
     think: () => buildThink(l),
@@ -997,8 +1558,9 @@ function renderProgress(){
 function route(){
   const h = location.hash || "#/";
   window.scrollTo({top:0, behavior:"instant"});
-  document.querySelectorAll(".navbtn").forEach(b =>
-    b.setAttribute("aria-current", String(b.dataset.nav === (h.startsWith("#/progress") ? "#/progress" : "#/"))));
+  const current = h.startsWith("#/progress") ? "#/progress" : "#/";
+  document.querySelectorAll(".navbtn,.mobnav [data-nav]").forEach(b =>
+    b.setAttribute("aria-current", String(b.dataset.nav === current)));
   if(h.startsWith("#/lesson/")) return renderLesson(decodeURIComponent(h.slice(9)));
   if(h.startsWith("#/solve/")) return renderSolver(decodeURIComponent(h.slice(8)));
   if(h.startsWith("#/progress")) return renderProgress();
@@ -1019,6 +1581,146 @@ document.addEventListener("click", e => {
   }
 });
 window.addEventListener("hashchange", route);
+
+/* ============ command palette ============ */
+const palWrap = () => document.getElementById("pal-wrap");
+const palInput = () => document.getElementById("pal-input");
+const palList = () => document.getElementById("pal-list");
+let palItems = [], palIndex = 0, palLastFocus = null;
+
+function palEntries(){
+  const out = [];
+  for(const l of state.lessons){
+    out.push({
+      kind:"Lesson", label:l.title, sub:l.subject, hash:"#/lesson/"+l.topic,
+      hay:(l.title+" "+l.subject+" "+l.topic+" "+(l.content?.English?.simple_explanation||"")).toLowerCase()
+    });
+  }
+  for(const s of state.scenarios){
+    const l = lessonByTopic(s.topic);
+    out.push({
+      kind:"Problem", label:s.title, sub:(l?l.title:s.topic), hash:"#/solve/"+s.id,
+      hay:(s.title+" "+s.topic+" "+(s.introduction||"")).toLowerCase()
+    });
+  }
+  out.push({ kind:"Page", label:"Your progress", sub:"Saved on this device", hash:"#/progress", hay:"progress saved device" });
+  return out;
+}
+
+function palRender(query){
+  const q = query.trim().toLowerCase();
+  const all = palEntries();
+  // Rank whole-word/prefix matches above loose substring matches so typing
+  // "work" surfaces the Work lesson before anything that merely mentions it.
+  palItems = (q ? all.filter(e => e.hay.includes(q)) : all).slice().sort((a,b) => {
+    if(!q) return 0;
+    const ra = a.label.toLowerCase().startsWith(q) ? 0 : (a.label.toLowerCase().includes(q) ? 1 : 2);
+    const rb = b.label.toLowerCase().startsWith(q) ? 0 : (b.label.toLowerCase().includes(q) ? 1 : 2);
+    return ra - rb;
+  }).slice(0, 40);
+  palIndex = 0;
+  if(!palItems.length){
+    palList().replaceChildren(el(`<p class="pal-empty">Nothing matches “${esc(query)}”.</p>`));
+    return;
+  }
+  palList().replaceChildren(...palItems.map((e,i) => el(
+    `<button class="pal-item" role="option" data-i="${i}" aria-selected="${i===0}">
+       <span class="k">${esc(e.kind)}</span><span>${esc(e.label)}</span><span class="sub">${esc(e.sub)}</span>
+     </button>`)));
+  palSync();
+}
+
+function palSync(){
+  [...palList().querySelectorAll(".pal-item")].forEach((n,i) => {
+    n.setAttribute("aria-selected", String(i === palIndex));
+    if(i === palIndex) n.scrollIntoView({block:"nearest"});
+  });
+}
+
+function palOpen(){
+  palLastFocus = document.activeElement;
+  palWrap().dataset.open = "true";
+  palInput().value = "";
+  palRender("");
+  palInput().focus();
+}
+function palClose(){
+  palWrap().dataset.open = "false";
+  if(palLastFocus && palLastFocus.focus) palLastFocus.focus();
+}
+function palGo(i){
+  const item = palItems[i];
+  if(!item) return;
+  palClose();
+  location.hash = item.hash;
+}
+
+document.getElementById("pal-open").addEventListener("click", palOpen);
+document.getElementById("mob-search").addEventListener("click", palOpen);
+palInput().addEventListener("input", e => palRender(e.target.value));
+palWrap().addEventListener("click", e => { if(e.target === palWrap()) palClose(); });
+palList().addEventListener("click", e => {
+  const btn = e.target.closest(".pal-item");
+  if(btn) palGo(Number(btn.dataset.i));
+});
+palInput().addEventListener("keydown", e => {
+  if(e.key === "ArrowDown"){ e.preventDefault(); palIndex = Math.min(palIndex+1, palItems.length-1); palSync(); }
+  else if(e.key === "ArrowUp"){ e.preventDefault(); palIndex = Math.max(palIndex-1, 0); palSync(); }
+  else if(e.key === "Enter"){ e.preventDefault(); palGo(palIndex); }
+  else if(e.key === "Escape"){ e.preventDefault(); palClose(); }
+});
+document.addEventListener("keydown", e => {
+  const typing = /^(INPUT|TEXTAREA)$/.test(document.activeElement?.tagName || "");
+  if((e.key === "k" || e.key === "K") && (e.ctrlKey || e.metaKey)){ e.preventDefault(); palOpen(); }
+  else if(e.key === "/" && !typing && palWrap().dataset.open !== "true"){ e.preventDefault(); palOpen(); }
+  else if(e.key === "Escape" && palWrap().dataset.open === "true"){ palClose(); }
+});
+
+/* ============ offline + install ============ */
+function setOfflineChip(){
+  const chip = document.getElementById("offchip");
+  if(!chip) return;
+  const off = !navigator.onLine;
+  chip.dataset.on = String(off || chip.dataset.ready === "true");
+  chip.classList.toggle("warn", off);
+  chip.textContent = off ? "Offline — still working" : "Saved for offline use";
+}
+window.addEventListener("online", setOfflineChip);
+window.addEventListener("offline", setOfflineChip);
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").then(reg => {
+      const chip = document.getElementById("offchip");
+      if(chip && (reg.active || navigator.serviceWorker.controller)){
+        chip.dataset.ready = "true";
+      }
+      setOfflineChip();
+    }).catch(() => { /* offline support simply stays unavailable */ });
+  });
+}
+
+let installPrompt = null;
+window.addEventListener("beforeinstallprompt", e => {
+  e.preventDefault();
+  installPrompt = e;
+  const btn = document.getElementById("install-btn");
+  if(btn) btn.hidden = false;
+});
+document.getElementById("install-btn").addEventListener("click", async () => {
+  const btn = document.getElementById("install-btn");
+  if(!installPrompt) { btn.hidden = true; return; }
+  btn.disabled = true;
+  installPrompt.prompt();
+  await installPrompt.userChoice.catch(() => null);
+  installPrompt = null;
+  btn.hidden = true;
+  btn.disabled = false;
+});
+window.addEventListener("appinstalled", () => {
+  const btn = document.getElementById("install-btn");
+  if(btn) btn.hidden = true;
+});
 
 tickClock();
 setInterval(tickClock, 20000);

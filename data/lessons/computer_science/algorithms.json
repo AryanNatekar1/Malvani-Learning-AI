@@ -16,7 +16,7 @@
     "English": {"verification_status": "NEEDS_REVIEW", "source": null}
   },
   "real_world_use": ["computer programs", "navigation", "search engines", "robotics"],
-  "common_misconceptions": ["An algorithm is not always computer code; it can be written as clear steps before coding."],
+  "common_misconceptions": ["An algorithm has to be written in computer code to count as an algorithm."],
   "think_question": "What could go wrong if instructions for a task are placed in the wrong order?",
   "reasoning_guide": {
     "required_keywords": ["steps", "order"],

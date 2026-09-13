@@ -29,7 +29,7 @@
     "appropriate_usage": "Show this as a local-context draft until a community or subject reviewer verifies it."
   },
   "real_world_use": ["predicting falling objects", "satellite orbits", "sports", "drone and aircraft design"],
-  "common_misconceptions": ["Gravity does not pull only heavy objects; in the same conditions, objects accelerate similarly."],
+  "common_misconceptions": ["Heavier objects always fall faster than lighter ones."],
   "think_question": "Why does a dropped mango move downward instead of upward?",
   "reasoning_guide": {
     "required_keywords": ["gravity", "earth"],

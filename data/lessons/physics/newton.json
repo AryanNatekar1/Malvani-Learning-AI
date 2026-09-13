@@ -15,7 +15,7 @@
     "English": {"verification_status": "NEEDS_REVIEW", "source": null}
   },
   "real_world_use": ["seat belts", "sports", "vehicle design", "rockets and propulsion"],
-  "common_misconceptions": ["The equal and opposite forces in Newton's third law act on different objects, so they do not cancel each other on one object."],
+  "common_misconceptions": ["The equal and opposite forces of the third law cancel each other out, so nothing could ever move."],
   "think_question": "Why does a passenger move forward when a moving bus stops suddenly?",
   "reasoning_guide": {
     "required_keywords": ["inertia", "moving"],

@@ -22,7 +22,7 @@
     "appropriate_usage": "Present as an engineering illustration; do not treat it as a claim about a specific local route or occupation."
   },
   "real_world_use": ["vehicle safety", "cricket and other sports", "aircraft landing", "robot and drone motion"],
-  "common_misconceptions": ["A fast light object can have more momentum than a slow heavy object."],
+  "common_misconceptions": ["Only heavy objects can have a large momentum; how fast they move hardly matters."],
   "think_question": "Why is it usually harder to stop a moving truck than a moving bicycle?",
   "reasoning_guide": {
     "required_keywords": ["mass", "momentum"],

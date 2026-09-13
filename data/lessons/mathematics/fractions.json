@@ -16,7 +16,7 @@
     "English": {"verification_status": "NEEDS_REVIEW", "source": null}
   },
   "real_world_use": ["sharing quantities fairly", "measuring ingredients", "reading maps and scales"],
-  "common_misconceptions": ["A larger denominator does not always mean a larger fraction; 1/8 is smaller than 1/4."],
+  "common_misconceptions": ["A larger denominator always means a larger fraction, so 1/8 must be bigger than 1/4."],
   "think_question": "Which is larger: 1/2 or 1/4? How can you show it with a drawing?",
   "reasoning_guide": {
     "required_keywords": ["equal", "parts"],

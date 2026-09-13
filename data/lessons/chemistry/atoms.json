@@ -16,7 +16,7 @@
     "English": {"verification_status": "NEEDS_REVIEW", "source": null}
   },
   "real_world_use": ["understanding materials", "medicine", "electronics", "environmental testing"],
-  "common_misconceptions": ["Atoms are extremely small, but they are not simply tiny solid balls."],
+  "common_misconceptions": ["An atom is just a tiny solid ball with nothing inside it."],
   "think_question": "If atoms are so small, how can many atoms together make a solid object?",
   "reasoning_guide": {
     "required_keywords": ["many", "atoms"],

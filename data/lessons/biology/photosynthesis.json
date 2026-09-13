@@ -16,7 +16,7 @@
     "English": {"verification_status": "NEEDS_REVIEW", "source": null}
   },
   "real_world_use": ["food chains", "farming", "oxygen cycles", "understanding plant health"],
-  "common_misconceptions": ["Plants do not get all their food from soil; they make much of it through photosynthesis."],
+  "common_misconceptions": ["Plants get all of their food from the soil through their roots."],
   "think_question": "Why might a green plant grow poorly if it stays in a dark room for a long time?",
   "reasoning_guide": {
     "required_keywords": ["light", "photosynthesis"],
