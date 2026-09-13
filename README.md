@@ -131,10 +131,22 @@ installations). This version has no third-party Python dependencies.
 python src\app.py
 ```
 
+If Windows answers with "Python was not found; run without arguments to
+install from the Microsoft Store", the `python` command is being taken by a
+Store placeholder rather than a real install. Use the launcher instead, which
+finds every installed version:
+
+```powershell
+py src\app.py
+```
+
+To make `python` itself work again, turn off the Store placeholders under
+Settings → Apps → Advanced app settings → App execution aliases.
+
 The original terminal prototype is still available:
 
 ```powershell
-python src\chatbot.py
+py src\chatbot.py
 ```
 
 Try questions such as:
