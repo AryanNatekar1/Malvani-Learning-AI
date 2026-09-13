@@ -244,6 +244,8 @@ svg{display:block; max-width:100%; height:auto}
   border-radius:var(--r-md); background:rgba(12,20,34,.42); font-size:14.5px}
 .prow .tick{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;flex:none;
   border:1px solid var(--edge); font-size:12px; color:var(--dim)}
+a.prow{text-decoration:none; color:var(--text); transition:.16s}
+a.prow:hover{border-color:var(--edge-bright); background:rgba(120,170,215,.10)}
 .prow.done .tick{border-color:rgba(52,211,153,.5); color:var(--good); background:rgba(52,211,153,.12)}
 
 /* ---------- concept visuals & demonstrations ---------- */
@@ -1534,21 +1536,39 @@ function renderProgress(){
       <p style="color:var(--dim);font-size:13px">${pct}% of the published lessons opened</p></div>
     <div class="stack gap-m">
       <h2>Lessons</h2>
-      <div class="plist">${state.lessons.map(l=>`<div class="prow ${p.opened.includes(l.topic)?"done":""}">
-        <span class="tick">${p.opened.includes(l.topic)?"✓":"·"}</span>
+      <div class="plist">${state.lessons.map(l=>{
+        const open = p.opened.includes(l.topic), ch = p.challenges.includes(l.topic);
+        return `<a class="prow ${open?"done":""}" href="#/lesson/${esc(l.topic)}">
+        <span class="tick">${open?"✓":"·"}</span>
         <span style="flex:1">${esc(l.title)}</span>
-        <span class="eyebrow">${esc(l.subject)}</span></div>`).join("")}</div>
+        ${ch?`<span class="badge badge-good">challenge done</span>`:""}
+        <span class="eyebrow">${esc(l.subject)}</span></a>`;}).join("")}</div>
     </div>
     <div class="stack gap-m">
       <h2>Real problems</h2>
-      <div class="plist">${state.scenarios.map(s=>`<div class="prow ${p.solved.includes(s.id)?"done":""}">
+      <div class="plist">${state.scenarios.map(s=>`<a class="prow ${p.solved.includes(s.id)?"done":""}" href="#/solve/${esc(s.id)}">
         <span class="tick">${p.solved.includes(s.id)?"✓":"·"}</span>
-        <span style="flex:1">${esc(s.title)}</span></div>`).join("")}</div>
+        <span style="flex:1">${esc(s.title)}</span></a>`).join("")}</div>
     </div>
-    <div><button class="btn btn-quiet" id="reset">Clear my progress</button></div>
+    <div class="stack gap-s" style="align-items:flex-start">
+      <button class="btn btn-quiet" id="reset">Clear my progress</button>
+      <p id="reset-note" style="color:var(--dim);font-size:13px" hidden>
+        This erases every tick above and cannot be undone. Press again to confirm.</p>
+    </div>
   </div></div>`);
   app().replaceChildren(view);
-  view.querySelector("#reset").addEventListener("click", () => {
+
+  // Clearing progress is not undoable, so ask once rather than wiping on a
+  // single stray tap.
+  let armed = false;
+  const note = view.querySelector("#reset-note");
+  view.querySelector("#reset").addEventListener("click", e => {
+    if(!armed){
+      armed = true;
+      note.hidden = false;
+      e.target.textContent = "Yes, clear everything";
+      return;
+    }
     state.progress = { opened:[], quizAttempts:0, quizCorrect:0, solved:[], challenges:[] };
     saveProgress(); renderProgress();
   });

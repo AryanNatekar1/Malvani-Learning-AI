@@ -13,6 +13,13 @@ Current Version: **V3.0 local desktop app + deployable web app**
   lesson, quiz, challenge and Problem Solver activity. It reads the same
   `data/` JSON the desktop app reads, so content has one source of truth, and
   it keeps the same safety rules about unverified context and draft status.
+- The web app is installable and fully offline: a service worker precaches the
+  page and every lesson file, so it opens with no connection after one visit.
+- A concept diagram for all fourteen lessons, several of them interactive
+  (work as an area, momentum as a bar, friction as opposing arrows, gravity as
+  two balls falling level). Each has a written text alternative.
+- Search across every lesson and problem with `Ctrl`+`K`, a phone bottom-nav,
+  and a "continue where you left off" card.
 - Structured **draft** lessons across Physics, Mathematics, Chemistry, Biology,
   and Computer Science — 14 in total. All ten original Physics topics are now
   structured lessons; their `.txt` originals are preserved.

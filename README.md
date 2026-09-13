@@ -17,13 +17,23 @@ labelled local draft lesson data, guided questions, quizzes, progress tracking,
 and a small optional AI-routing component. It is not a generic
 ChatGPT clone and it does not require an API key.
 
-The **web app** (`index.html`, deployed to GitHub Pages) carries all nine
+The **web app** (`index.html`, deployed to GitHub Pages) carries all fourteen
 structured lessons, their quizzes and challenges, and all three Problem Solver
 → Go Deeper activities. It reads the very same `data/lessons/` and
 `data/scenarios/` JSON files the desktop app reads, so there is one source of
 truth for content — editing a lesson updates both. It also keeps the same
 safety rules: unverified local or cultural context is never shown to a
 student, and every activity is labelled as a draft pending teacher review.
+
+It is built for a weak or metered connection. The page and every lesson file
+are precached by a service worker, so after one visit it opens and runs with
+no internet at all, and it can be installed to a phone's home screen. Each
+lesson opens with a diagram rather than text alone; where a relationship is
+worth feeling rather than reading, the diagram takes sliders — work drawn as
+the area of force × distance, friction as two opposing arrows deciding whether
+the box moves, a heavy and a light ball staying level as they fall. Every
+diagram carries a text alternative, so nothing is available only as a picture.
+`Ctrl`+`K` opens a search palette over every lesson and problem.
 
 ## What works now
 
