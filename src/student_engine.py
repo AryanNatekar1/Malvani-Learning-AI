@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import sqlite3
+from collections.abc import Iterator
+from contextlib import contextmanager
 from dataclasses import asdict, dataclass, field, fields
 from pathlib import Path
 from typing import Protocol
@@ -189,8 +191,24 @@ class SQLiteProfileStore:
         self.database_path.parent.mkdir(parents=True, exist_ok=True)
         return sqlite3.connect(self.database_path)
 
+    @contextmanager
+    def _session(self) -> Iterator[sqlite3.Connection]:
+        """Commit the way `with connection:` does, then close the handle.
+
+        `sqlite3.Connection.__exit__` ends the transaction but leaves the
+        connection open, so the database file stays open until the object is
+        collected. That leaks a handle on every read and write, and on Windows
+        it also keeps a lock on the file.
+        """
+        connection = self._connect()
+        try:
+            with connection:
+                yield connection
+        finally:
+            connection.close()
+
     def _initialize(self) -> None:
-        with self._connect() as connection:
+        with self._session() as connection:
             connection.execute("PRAGMA user_version = 1")
             connection.execute(
                 """
@@ -216,7 +234,7 @@ class SQLiteProfileStore:
     def load(self) -> StudentProfile:
         """Load saved profile data, or return a privacy-preserving default."""
         try:
-            with self._connect() as connection:
+            with self._session() as connection:
                 row = connection.execute(
                     "SELECT profile_json FROM student_profile WHERE profile_id = 1"
                 ).fetchone()
@@ -232,7 +250,7 @@ class SQLiteProfileStore:
     def save(self, profile: StudentProfile) -> None:
         """Store the current aggregate profile in a single SQLite row."""
         profile_json = json.dumps(asdict(profile), ensure_ascii=False, sort_keys=True)
-        with self._connect() as connection:
+        with self._session() as connection:
             connection.execute(
                 """
                 INSERT INTO student_profile (profile_id, profile_json, updated_at)
@@ -249,7 +267,7 @@ class SQLiteProfileStore:
     ) -> None:
         """Store a real aggregate event, never the learner's free-text response."""
         stored_correct = None if correct is None else int(correct)
-        with self._connect() as connection:
+        with self._session() as connection:
             connection.execute(
                 "INSERT INTO learning_events (event_type, topic, correct) VALUES (?, ?, ?)",
                 (event_type, topic, stored_correct),
@@ -257,7 +275,7 @@ class SQLiteProfileStore:
 
     def event_count(self, event_type: str | None = None) -> int:
         """Return persisted event count; used for local diagnostics and tests."""
-        with self._connect() as connection:
+        with self._session() as connection:
             if event_type is None:
                 row = connection.execute("SELECT COUNT(*) FROM learning_events").fetchone()
             else:
