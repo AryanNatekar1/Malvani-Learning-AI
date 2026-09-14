@@ -1,0 +1,39 @@
+{
+  "id": "place.devgad",
+  "name": "Devgad — mangoes, and the wind above them",
+  "also_called": ["Devgad hapus", "Devgad Alphonso"],
+  "where": "The coastal taluka of Devgad, Sindhudurg",
+  "subjects": ["Biology", "Physics"],
+  "known_for": "Alphonso mangoes grown here carry a Geographical Indication, meaning the name is legally tied to fruit actually grown in this area. On the plateau above the orchards stand wind turbines, taking energy from the same coastal wind that blows through the trees.",
+  "how_it_formed": "The growing conditions are a product of the geography already described: laterite soil that drains freely, a long dry season after a very wet one, and sea air. The wind is the sea breeze, driven by land and water warming at different rates.",
+  "the_science": [
+    {
+      "ask": "Where does the sugar in a mango come from?",
+      "answer": "Not from the soil. The tree builds sugar in its leaves out of carbon dioxide from the air and water drawn up from the ground, using sunlight as the energy. The fruit is where some of that sugar is stored. Soil supplies minerals, but the substance of the fruit comes largely from air and light.",
+      "links_to": "photosynthesis"
+    },
+    {
+      "ask": "Why does the wind blow off the sea in the day and off the land at night?",
+      "answer": "Land heats up faster than sea in sunshine and cools faster after dark. Warm air rises and cooler air moves in beneath it, so the flow runs inland by day and reverses at night. A coastal wind is a heat difference made visible.",
+      "links_to": "energy"
+    },
+    {
+      "ask": "How does a turbine take energy out of wind?",
+      "answer": "Moving air carries kinetic energy. The blades are shaped so that passing air pushes them round, which turns a generator. The air leaves slower than it arrived, and the difference is the energy taken. No machine can take all of it, because air that had stopped completely could not get out of the way of the air behind it.",
+      "links_to": "energy"
+    }
+  ],
+  "go_and_look": "Notice which way the wind is blowing in the afternoon, then check again well after dark. If you are near the coast, it should have turned around. Record it for a week before you decide it is a pattern.",
+  "sources": [
+    "Geographical Indication status for Devgad Alphonso: Indian GI registry.",
+    "Photosynthesis building sugars from carbon dioxide and water using light energy: standard biology.",
+    "Sea and land breezes arising from differential heating: standard physical geography.",
+    "Wind turbines extracting kinetic energy from moving air: standard physics."
+  ],
+  "needs_local_check": [
+    "Confirm the current extent and location of the wind farm before describing it to students as something they can see.",
+    "Harvest timing and any claims about the local mango season should come from a grower or a teacher, not from this file.",
+    "The day and night wind reversal is a general coastal pattern; a teacher should confirm students can actually observe it where the school is."
+  ],
+  "verification_status": "NEEDS_REVIEW"
+}

@@ -1,0 +1,38 @@
+{
+  "id": "place.konkan-rivers",
+  "name": "Why the rivers here are short and in a hurry",
+  "also_called": ["the Karli", "the Gad", "the Terekhol", "khadi (the tidal creek stretch)"],
+  "where": "Every west-flowing river in Sindhudurg",
+  "subjects": ["Geography", "Physics"],
+  "known_for": "The rivers of this district are nothing like the Godavari or the Krishna. They begin in the Sahyadri and reach the sea within a short distance, running fast and steep, and near the mouth they widen into tidal creeks where the sea comes back up the channel twice a day.",
+  "how_it_formed": "The Sahyadri runs close to the coastline, so there is only a narrow strip of land between the top of the escarpment and the sea. A river crossing it has a large drop to lose over a short distance, and that is what makes it steep and quick. The rivers east of the ridge have the whole width of the peninsula to cross instead, so they are long, slow and wide.",
+  "the_science": [
+    {
+      "ask": "Why does a steep river carry so much more material?",
+      "answer": "Faster water carries heavier particles. A slow river drops its sand and silt; a fast one keeps it moving and can shift gravel and stones. That is why these rivers run brown and violent in the monsoon and can be clear and shallow later in the year.",
+      "links_to": "velocity"
+    },
+    {
+      "ask": "Why is the water near the mouth salty at some hours and not others?",
+      "answer": "The tide pushes seawater up the channel and then lets it fall back. Where it meets river water flowing down, the two mix. The boundary moves up and down the creek through the day, so the same spot can be fresh or brackish depending on when you sample it.",
+      "links_to": "atoms"
+    },
+    {
+      "ask": "Why do these rivers flood so quickly?",
+      "answer": "A short steep catchment gives rain very little distance to travel before it arrives. Water that falls on the ghat can be in the river within hours, so the level rises fast and falls fast. A long flat river spreads the same rainfall out over days.",
+      "links_to": "motion"
+    }
+  ],
+  "go_and_look": "Tip water down a tilted tray of sand, then repeat at a gentler angle. Watch how much sand each run carries and how far. You have just changed the one variable that separates a Konkan river from a Deccan one.",
+  "sources": [
+    "Short steep west-flowing rivers resulting from the Western Ghats lying close and parallel to the coast: standard physical geography of the Konkan.",
+    "Flow speed determining sediment transport capacity: standard river geography.",
+    "Tidal mixing in an estuary: standard coastal geography."
+  ],
+  "needs_local_check": [
+    "Confirm which rivers are the nearest to the school, and their correct local names and spellings.",
+    "The tray-and-sand demonstration should be checked for a safe place to do it and a sensible water source.",
+    "Whether a particular creek is safe to visit is a judgement only a local teacher can make."
+  ],
+  "verification_status": "NEEDS_REVIEW"
+}

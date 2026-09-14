@@ -1,0 +1,36 @@
+{
+  "id": "place.laterite-plateaus",
+  "name": "The red rock the whole district is built on",
+  "also_called": ["jambha dagad", "laterite", "sada (the flat plateau tops)"],
+  "where": "Across Sindhudurg and the wider Konkan coast",
+  "subjects": ["Chemistry", "Geography"],
+  "known_for": "Almost every old wall, temple, step and fort in Konkan is built from the same soft red stone, cut straight out of the ground nearby. The flat plateau tops it forms are called sada, and in the monsoon many of them turn green and then flower.",
+  "how_it_formed": "Laterite is what is left behind after rain has been washing a rock for a very long time. Konkan is hot, and for three or four months a year it is extremely wet. Water moving through the rock slowly dissolves and carries away the silica and the soluble minerals. What it cannot easily carry away are the oxides of iron and aluminium, so those stay and build up. The iron oxide is what makes it red, for the same chemical reason that iron left in the rain goes rusty.",
+  "the_science": [
+    {
+      "ask": "Why is the soil red here, but black in much of inland Maharashtra?",
+      "answer": "Colour follows chemistry. Konkan's heavy seasonal rain leaches the soluble material out and leaves iron oxide concentrated behind, which is red. The black soil of the Deccan formed from different parent rock under much drier conditions, so it kept different minerals.",
+      "links_to": "atoms"
+    },
+    {
+      "ask": "Why can laterite be cut with hand tools, when most building stone cannot?",
+      "answer": "Freshly quarried laterite is still damp and comparatively soft, so it can be cut into blocks by hand. Once those blocks are left out in the air they dry and harden, and the hardening does not reverse. That single property is why a material this easy to quarry is also strong enough to hold up a fort.",
+      "links_to": "force"
+    },
+    {
+      "ask": "Why is a laterite block full of holes?",
+      "answer": "The holes are the spaces where material was dissolved away and carried off. They are the removal itself, made visible. It also means the rock holds and passes water, which matters for wells and for what will grow on a sada.",
+      "links_to": "atoms"
+    }
+  ],
+  "go_and_look": "Find any old laterite wall and look closely at a single block. You should see the holes, and you may see the parallel grooves left by the tool that cut it. Compare a freshly broken face with a weathered outer face and see how much darker the outside has gone.",
+  "sources": [
+    "Formation of laterite by chemical weathering and leaching in hot, seasonally wet climates: standard physical geography and geology, Class 9-10 level.",
+    "Iron oxide as the source of the red colour: standard chemistry of iron oxidation."
+  ],
+  "needs_local_check": [
+    "Local names: confirm the spelling and usage of jambha dagad and sada with a Malvani or Marathi speaker.",
+    "A teacher should confirm whether the nearest quarry or laterite wall is a suitable and safe place to send students to look."
+  ],
+  "verification_status": "NEEDS_REVIEW"
+}

@@ -1,0 +1,43 @@
+{
+  "id": "place.sindhudurg-fort",
+  "name": "Sindhudurg Fort",
+  "also_called": ["the sea fort at Malvan"],
+  "where": "On Kurte island, just off the coast at Malvan",
+  "subjects": ["Physics", "Geography"],
+  "known_for": "A fort built on a rock island in the sea, begun under Chhatrapati Shivaji Maharaj in 1664. The district is named after it. Its walls are laterite, and its curved outer wall faces the open Arabian Sea.",
+  "how_it_formed": "The island itself is rock that the sea has not managed to wear away, while softer material around it was removed. The fort on top is human work: laterite quarried nearby, cut soft, and set to harden in place.",
+  "the_science": [
+    {
+      "ask": "Why build on an island rather than the shore?",
+      "answer": "An attacker on foot has to cross water first, and a ship cannot simply sail up to a wall it cannot see the base of. The sea is doing defensive work that a wall would otherwise have to do. The cost is that every stone had to be carried across water.",
+      "links_to": "work"
+    },
+    {
+      "ask": "Why are the outer walls curved rather than flat?",
+      "answer": "A wave striking a flat wall delivers its force straight into it. A curved face turns the water aside, so less of the wave's energy goes into the wall and more of it goes past. The same reasoning shapes a boat's hull.",
+      "links_to": "force"
+    },
+    {
+      "ask": "How much work is it to move one block?",
+      "answer": "This is a real calculation a student can do. Estimate a block's mass, estimate how high it had to be lifted, and multiply by gravity to get the energy for one block. Then multiply by the number of blocks in a wall. The number gets large very quickly, and that is the point.",
+      "links_to": "work"
+    },
+    {
+      "ask": "Why has it lasted more than three hundred years in salt water?",
+      "answer": "Laterite hardens on exposure and does not soften again, and it is already an oxide, so unlike iron it has little left to corrode. Salt water destroys many building materials, and this one it largely leaves alone.",
+      "links_to": "atoms"
+    }
+  ],
+  "go_and_look": "If you can get to the fort, put your hand on the wall and find the same holes you would see in any laterite block anywhere in the district. It is the ordinary local rock, used at a large scale.",
+  "sources": [
+    "Construction begun under Chhatrapati Shivaji Maharaj in 1664, on Kurte island off Malvan: standard regional history.",
+    "Laterite as the principal building material: visible in the structure and consistent with regional construction.",
+    "Work done against gravity as force times height: standard mechanics."
+  ],
+  "needs_local_check": [
+    "Exact dates of the start and completion of construction, and the number of years it took, should be confirmed against a history text before a student is taught them as fact.",
+    "The claim that the walls are curved specifically to deflect waves is a reasonable physical reading, but a teacher should confirm it rather than present it as documented intent.",
+    "Any figures for wall height, thickness or block mass must be measured or sourced before use in a calculation."
+  ],
+  "verification_status": "NEEDS_REVIEW"
+}

@@ -1,0 +1,44 @@
+{
+  "id": "place.the-coast",
+  "name": "The beach, and what a wave actually does",
+  "also_called": ["Tarkarli", "Malvan beach", "the Arabian Sea shore"],
+  "where": "The coastline of Sindhudurg",
+  "subjects": ["Physics", "Geography"],
+  "known_for": "A long coast of sandy bays separated by rock headlands, with fishing working out of Malvan and clear shallow water at Tarkarli where the Karli river meets the sea.",
+  "how_it_formed": "Waves attack a coastline unevenly. Softer rock is cut back faster, leaving the harder rock standing out as headlands, and the bays between them collect the sand. The sand itself is broken-down rock and shell, moved along the shore by waves that arrive at an angle.",
+  "the_science": [
+    {
+      "ask": "Does the water travel across the sea to reach the shore?",
+      "answer": "No, and this is the most misunderstood thing about waves. The water mostly moves in circles and returns roughly where it started. What travels is the disturbance, carrying energy. A floating boat rises and falls as a wave passes but is not carried along with it.",
+      "links_to": "energy"
+    },
+    {
+      "ask": "Why do waves get taller and then break near the shore?",
+      "answer": "In shallow water the bottom of the wave drags and slows, while the top keeps its speed. The wave bunches up, steepens, and eventually the top outruns the base and topples forward. Breaking is the moment the wave can no longer hold its shape.",
+      "links_to": "velocity"
+    },
+    {
+      "ask": "Why is the sea calm in a bay and rough on a headland?",
+      "answer": "Waves bend as they enter shallower water, which turns their energy toward the headlands and away from the bays. The headland takes the punishment, which is also why it keeps being worn back.",
+      "links_to": "force"
+    },
+    {
+      "ask": "Why does a boat float at all?",
+      "answer": "A floating object pushes aside a weight of water equal to its own weight. A steel boat floats and a steel bar sinks because the boat encloses air and so displaces far more water for the same mass.",
+      "links_to": "gravity"
+    }
+  ],
+  "go_and_look": "Fill any container with water and drop in a small stone. Watch one ring move outward and watch a leaf or a scrap of paper floating on the surface. The ring travels; the leaf mostly bobs and stays. The energy moved and the water did not.",
+  "sources": [
+    "Waves transporting energy rather than water, with particles moving in near-circular orbits: standard wave physics.",
+    "Shoaling and breaking as the wave base is slowed by the sea bed: standard coastal physics.",
+    "Wave refraction concentrating energy on headlands: standard coastal geography.",
+    "Flotation by displacement, Archimedes' principle: standard physics."
+  ],
+  "needs_local_check": [
+    "There is no waves lesson in the app yet, so these questions currently point at related lessons rather than a dedicated one.",
+    "Any beach visit is a safety judgement for a teacher, not for this file. The container demonstration is the safe default.",
+    "Descriptions of water clarity at Tarkarli vary with season and should not be taught as a constant."
+  ],
+  "verification_status": "NEEDS_REVIEW"
+}

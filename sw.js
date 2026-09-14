@@ -8,7 +8,7 @@
  * Bump CACHE when shipping new content or a new page build, so old caches
  * are replaced rather than shadowing the update.
  */
-const CACHE = "malvani-v3";
+const CACHE = "malvani-v4";
 
 // Relative URLs resolve against this script's location, which keeps the app
 // working both at a GitHub Pages sub-path and at a local server root.
@@ -33,7 +33,13 @@ const PRECACHE = [
   "./data/lessons/computer_science/algorithms.json",
   "./data/scenarios/physics/motion_water_carrying_journey.json",
   "./data/scenarios/physics/momentum_cart_comparison.json",
-  "./data/scenarios/physics/force_model_comparison.json"
+  "./data/scenarios/physics/force_model_comparison.json",
+  "./data/places/laterite_plateaus.json",
+  "./data/places/sindhudurg_fort.json",
+  "./data/places/amboli_ghat.json",
+  "./data/places/konkan_rivers.json",
+  "./data/places/devgad.json",
+  "./data/places/the_coast.json"
 ];
 
 self.addEventListener("install", event => {

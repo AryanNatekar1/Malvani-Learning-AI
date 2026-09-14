@@ -80,7 +80,8 @@ body{
   background:linear-gradient(140deg,var(--phase-a),var(--phase-b)); color:#04121C;
   font-family:var(--f-display); font-weight:700; font-size:15px; letter-spacing:.02em;
   box-shadow:0 0 0 1px rgba(255,255,255,.14),0 6px 22px var(--phase-glow); transition:background 1.2s ease}
-.brand b{font-family:var(--f-display); font-weight:600; font-size:16.5px; letter-spacing:.015em; display:block; line-height:1.15}
+.brand b{font-family:var(--f-display); font-weight:600; font-size:16.5px; letter-spacing:.015em; display:block; line-height:1.15;
+  white-space:nowrap}
 .brand span{display:block; font-family:var(--f-mono); font-size:10.5px; color:var(--dim); letter-spacing:.14em;
   text-transform:uppercase; font-weight:400; margin-top:1px}
 .clock{font-family:var(--f-mono); font-size:12px; color:var(--muted); display:flex; align-items:center; gap:8px;
@@ -90,6 +91,10 @@ body{
   border:1px solid transparent; border-radius:999px; padding:8px 14px; cursor:pointer; transition:.18s}
 .navbtn:hover{color:var(--text); background:rgba(120,170,215,.10)}
 .navbtn[aria-current="true"]{color:var(--text); border-color:var(--edge-bright); background:rgba(120,170,215,.12)}
+/* Three nav buttons and the install button crowd the header well before the
+   mobile nav takes over at 720px, so shed the optional chrome earlier rather
+   than letting the brand wrap onto two lines. */
+@media(max-width:980px){ .brand span{display:none} .clock{display:none} }
 @media(max-width:720px){
   .clock{display:none} .brand span{display:none}
   .pal-open .s-lbl,.pal-open kbd{display:none}
@@ -263,6 +268,37 @@ a.prow:hover{border-color:var(--edge-bright); background:rgba(120,170,215,.10)}
 .myths li{position:relative; padding-left:28px; color:var(--muted)}
 .myths li::before{content:"✗"; position:absolute; left:0; top:0; color:var(--warn); font-weight:700;
   font-family:var(--f-mono); font-size:15px}
+/* Places */
+.pgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:14px}
+/* Column layout so the "Teaches…" line lands on the same baseline in every
+   card, however long the description above it runs. */
+a.pcard{display:flex; flex-direction:column; text-decoration:none; color:inherit;
+  background:var(--panel); border:1px solid var(--edge); border-radius:var(--r-md); padding:20px;
+  transition:border-color .16s ease, transform .16s ease}
+a.pcard:hover{border-color:var(--phase-a); transform:translateY(-2px)}
+a.pcard h3{margin:8px 0 6px; font-size:18px; line-height:1.3}
+.pwhere{margin:0 0 10px; font-size:12.5px; color:var(--dim); font-family:var(--f-mono)}
+.pknown{margin:0; color:var(--muted); font-size:14px; line-height:1.65}
+.plinks{display:block; margin-top:auto; padding-top:16px; font-size:12.5px; color:var(--phase-a)}
+.alsocalled{margin:0; font-size:13.5px; color:var(--dim); font-style:italic}
+.qhead{font-size:15px; text-transform:uppercase; letter-spacing:.14em;
+  font-family:var(--f-mono); color:var(--dim); font-weight:400; margin:0}
+.qa{background:var(--panel); border:1px solid var(--edge); border-radius:var(--r-md);
+  padding:20px 22px}
+.qa h3{margin:0 0 10px; font-size:17px; line-height:1.4; color:var(--phase-a)}
+.qa p{margin:0; color:var(--muted); line-height:1.75}
+.qlink{display:inline-block; margin-top:14px; font-size:13.5px; color:var(--phase-a);
+  text-decoration:none; border-bottom:1px solid var(--edge)}
+.qlink:hover{border-bottom-color:var(--phase-a)}
+.srcbox{border-style:dashed}
+ul.srcs{margin:0; padding-left:20px; display:grid; gap:8px}
+ul.srcs li{color:var(--dim); font-size:13.5px; line-height:1.6}
+ul.srcs.warn li{color:var(--muted)}
+ul.srcs.warn li::marker{color:var(--warn)}
+a.back{font-size:13.5px; color:var(--muted); text-decoration:none}
+a.back:hover{color:var(--phase-a)}
+@media (max-width:520px){ .qa{padding:18px} }
+
 /* Look-around-you activity */
 .obs-intro{border-left:2px solid var(--phase-a); padding:2px 0 2px 16px}
 .obs-intro p{color:var(--muted); margin:6px 0 0}
@@ -321,7 +357,7 @@ figure.sv .f-panel{fill:rgba(120,170,215,.10); stroke:var(--edge)}
 /* ---------- mobile bottom nav ---------- */
 .mobnav{display:none}
 @media(max-width:720px){
-  .mobnav{display:grid; grid-template-columns:repeat(3,1fr); position:fixed; left:0; right:0; bottom:0; z-index:45;
+  .mobnav{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; position:fixed; left:0; right:0; bottom:0; z-index:45;
     background:linear-gradient(180deg,rgba(8,13,23,.86),rgba(8,13,23,.98)); border-top:1px solid var(--edge);
     backdrop-filter:blur(14px); padding-bottom:env(safe-area-inset-bottom)}
   .mobnav button{background:transparent; border:0; color:var(--dim); font-family:var(--f-body); font-size:11px;
@@ -377,10 +413,11 @@ footer a{color:var(--muted)}
          stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.6-3.6"/></svg>
     <span class="s-lbl">Search</span><kbd>Ctrl K</kbd>
   </button>
-  <button class="btn btn-ghost" id="install-btn" hidden style="padding:8px 15px;min-height:38px;font-size:13px">
+  <button class="btn btn-ghost" id="install-btn" hidden style="padding:8px 15px;min-height:38px;font-size:13px;white-space:nowrap">
     Install app
   </button>
   <button class="navbtn" data-nav="#/">Learn</button>
+  <button class="navbtn" data-nav="#/places">Places</button>
   <button class="navbtn" data-nav="#/progress">Progress</button>
 </div></header>
 
@@ -404,6 +441,11 @@ footer a{color:var(--muted)}
     <svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round"><circle cx="11" cy="11" r="7"/>
       <path d="m20 20-3.6-3.6"/></svg>
     Search
+  </button>
+  <button data-nav="#/places" aria-label="Places">
+    <svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+    Places
   </button>
   <button data-nav="#/progress" aria-label="Progress">
     <svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round" stroke-linejoin="round">
@@ -446,8 +488,19 @@ const SCENARIO_FILES = [
   "data/scenarios/physics/momentum_cart_comparison.json",
   "data/scenarios/physics/force_model_comparison.json"
 ];
+/* Documented places. Unlike a "look around you" activity, these name real
+   locations — that is allowed because it is public geography, not a claim
+   about where any particular student is. Each carries its sources. */
+const PLACE_FILES = [
+  "data/places/laterite_plateaus.json",
+  "data/places/sindhudurg_fort.json",
+  "data/places/amboli_ghat.json",
+  "data/places/konkan_rivers.json",
+  "data/places/devgad.json",
+  "data/places/the_coast.json"
+];
 
-const state = { lessons:[], scenarios:[], subject:"All", progress:loadProgress() };
+const state = { lessons:[], scenarios:[], places:[], subject:"All", progress:loadProgress() };
 
 /* ============ progress (per-browser convenience only) ============ */
 function loadProgress(){
@@ -569,16 +622,23 @@ function quizMatches(q, answer){
 /* ============ data ============ */
 async function loadAll(){
   const grab = async f => { const r = await fetch(f); if(!r.ok) throw new Error(f+" "+r.status); return r.json(); };
-  const [lessons, scenarios] = await Promise.all([
+  const [lessons, scenarios, places] = await Promise.all([
     Promise.all(LESSON_FILES.map(grab)),
-    Promise.all(SCENARIO_FILES.map(grab))
+    Promise.all(SCENARIO_FILES.map(grab)),
+    /* Places are an enrichment, not the lesson itself. If one fails to load,
+       the app should still teach rather than refuse to start. */
+    Promise.all(PLACE_FILES.map(f => grab(f).catch(() => null)))
   ]);
   state.lessons = lessons;
   state.scenarios = scenarios;
+  state.places = places.filter(Boolean);
 }
 const lessonByTopic = t => state.lessons.find(l => l.topic === t);
 const scenarioById = id => state.scenarios.find(s => s.id === id);
 const scenariosForTopic = t => state.scenarios.filter(s => s.topic === t);
+const placeById = id => state.places.find(p => p.id === id);
+const placeTopics = p => [...new Set((p.the_science||[]).map(q => q.links_to).filter(Boolean))];
+const placesForTopic = t => state.places.filter(p => placeTopics(p).includes(t));
 const subjects = () => ["All", ...Array.from(new Set(state.lessons.map(l => l.subject))).sort()];
 
 /* ============ concept visuals & demonstrations ============ */
@@ -1129,6 +1189,10 @@ function renderLesson(topic){
           <div class="pills">${list(l.career_connections)}</div></div>`:""}
         ${(l.further_exploration||[]).length?`<div class="block"><h4>Next, look into</h4>
           <div class="pills">${list(l.further_exploration)}</div></div>`:""}
+        ${placesForTopic(l.topic).length?`<div class="block"><h4>Places here that show this</h4>
+          <div class="stack gap-s">${placesForTopic(l.topic).map(p=>
+            `<a class="qlink" style="border:0" href="#/place/${encodeURIComponent(p.id)}">${esc(p.name)} — ${esc(p.where)} →</a>`
+          ).join("")}</div></div>`:""}
         <p class="notice">${esc((l.sources||[])[0]||"Local draft content pending review.")}</p>
       </div>`);
       const slot = p.querySelector("[data-visual-slot]");
@@ -1581,6 +1645,69 @@ function renderSolver(id){
   drawStep();
 }
 
+/* ---------- places ----------
+   Naming a real place is fine here, where naming one in an observation
+   activity was not. The difference is who the claim is about: "Sindhudurg
+   Fort stands off Malvan" is public geography anyone can check, while "there
+   is a pond near your school" is a claim about one student that the app has
+   no way to know. Public and checkable is allowed; personal and unknowable
+   is not. Every record shows its sources, and shows what a local teacher
+   still has to confirm, rather than hiding the soft spots. */
+function renderPlaces(){
+  const cards = state.places.map(p => {
+    const topics = placeTopics(p).map(t => lessonByTopic(t)).filter(Boolean);
+    return `<a class="pcard" href="#/place/${encodeURIComponent(p.id)}">
+      <span class="eyebrow">${esc((p.subjects||[]).join(" · "))}</span>
+      <h3>${esc(p.name)}</h3>
+      <p class="pwhere">${esc(p.where)}</p>
+      <p class="pknown">${esc(p.known_for)}</p>
+      ${topics.length?`<span class="plinks">Teaches ${topics.map(l=>esc(l.title.toLowerCase())).join(", ")}</span>`:""}
+    </a>`;
+  }).join("");
+  app().replaceChildren(el(`<div class="section"><div class="wrap stack gap-l">
+    <div class="stack gap-s"><span class="eyebrow">Sindhudurg &amp; Konkan</span>
+      <h1 style="font-size:clamp(27px,5vw,40px)">Places, and the science in them</h1>
+      <p class="lede">Real places in this district, and what they can teach. Every one
+        explains how it came to be that way — and names what still needs checking
+        with a teacher who knows the area.</p></div>
+    ${state.places.length?`<div class="pgrid">${cards}</div>`
+      :`<p class="notice">Place records could not be loaded. The lessons work without them.</p>`}
+  </div></div>`));
+}
+
+function renderPlace(id){
+  const p = placeById(id);
+  if(!p){ location.hash = "#/places"; return; }
+  const qs = (p.the_science||[]).map(q => {
+    const l = q.links_to ? lessonByTopic(q.links_to) : null;
+    return `<div class="qa">
+      <h3>${esc(q.ask)}</h3>
+      <p>${esc(q.answer)}</p>
+      ${l?`<a class="qlink" href="#/lesson/${encodeURIComponent(l.topic)}">Learn ${esc(l.title.toLowerCase())} →</a>`:""}
+    </div>`;
+  }).join("");
+  app().replaceChildren(el(`<div class="section"><div class="wrap stack gap-l">
+    <a class="back" href="#/places">← All places</a>
+    <div class="stack gap-s">
+      <span class="eyebrow">${esc(p.where)}</span>
+      <h1 style="font-size:clamp(26px,4.6vw,38px)">${esc(p.name)}</h1>
+      ${(p.also_called||[]).length?`<p class="alsocalled">Also called ${p.also_called.map(esc).join(" · ")}</p>`:""}
+      <p class="lede">${esc(p.known_for)}</p>
+    </div>
+    <div class="block"><h4>How it came to be this way</h4><p>${esc(p.how_it_formed)}</p></div>
+    <div class="stack gap-m"><h2 class="qhead">The science in it</h2>${qs}</div>
+    ${p.go_and_look?`<div class="block obs-reveal"><h4>Go and look</h4><p>${esc(p.go_and_look)}</p></div>`:""}
+    <div class="block srcbox">
+      <h4>Where this comes from</h4>
+      <ul class="srcs">${(p.sources||[]).map(s=>`<li>${esc(s)}</li>`).join("")}</ul>
+      ${(p.needs_local_check||[]).length?`<h4 style="margin-top:18px">Still to be checked locally</h4>
+        <ul class="srcs warn">${p.needs_local_check.map(s=>`<li>${esc(s)}</li>`).join("")}</ul>
+        <p class="notice" style="margin-top:14px">This page is a draft. A teacher who knows
+          the area should confirm the points above before any of them is taught as settled fact.</p>`:""}
+    </div>
+  </div></div>`));
+}
+
 /* ---------- progress ---------- */
 function renderProgress(){
   const p = state.progress;
@@ -1642,11 +1769,14 @@ function renderProgress(){
 function route(){
   const h = location.hash || "#/";
   window.scrollTo({top:0, behavior:"instant"});
-  const current = h.startsWith("#/progress") ? "#/progress" : "#/";
+  const current = h.startsWith("#/progress") ? "#/progress"
+                : h.startsWith("#/places") || h.startsWith("#/place/") ? "#/places" : "#/";
   document.querySelectorAll(".navbtn,.mobnav [data-nav]").forEach(b =>
     b.setAttribute("aria-current", String(b.dataset.nav === current)));
   if(h.startsWith("#/lesson/")) return renderLesson(decodeURIComponent(h.slice(9)));
   if(h.startsWith("#/solve/")) return renderSolver(decodeURIComponent(h.slice(8)));
+  if(h.startsWith("#/place/")) return renderPlace(decodeURIComponent(h.slice(8)));
+  if(h.startsWith("#/places")) return renderPlaces();
   if(h.startsWith("#/progress")) return renderProgress();
   renderHome();
 }
@@ -1680,6 +1810,12 @@ function palEntries(){
       hay:(l.title+" "+l.subject+" "+l.topic+" "+(l.content?.English?.simple_explanation||"")).toLowerCase()
     });
   }
+  for(const p of state.places){
+    out.push({
+      kind:"Place", label:p.name, sub:p.where, hash:"#/place/"+encodeURIComponent(p.id),
+      hay:(p.name+" "+p.where+" "+(p.also_called||[]).join(" ")+" "+p.known_for).toLowerCase()
+    });
+  }
   for(const s of state.scenarios){
     const l = lessonByTopic(s.topic);
     out.push({
@@ -1687,6 +1823,7 @@ function palEntries(){
       hay:(s.title+" "+s.topic+" "+(s.introduction||"")).toLowerCase()
     });
   }
+  out.push({ kind:"Page", label:"Places and the science in them", sub:"Sindhudurg & Konkan", hash:"#/places", hay:"places sindhudurg konkan geography science" });
   out.push({ kind:"Page", label:"Your progress", sub:"Saved on this device", hash:"#/progress", hay:"progress saved device" });
   return out;
 }

@@ -1,0 +1,37 @@
+{
+  "id": "place.amboli-ghat",
+  "name": "Amboli, and why the rain stops at the ridge",
+  "also_called": ["Amboli Ghat", "the Sahyadri escarpment"],
+  "where": "The eastern edge of Sindhudurg, where the land climbs to the Western Ghats",
+  "subjects": ["Geography", "Physics"],
+  "known_for": "One of the wettest places in Maharashtra. In the monsoon the ghat road runs through continuous cloud and waterfalls appear on the rock faces. Drive east over the ridge and within a short distance the country is visibly drier.",
+  "how_it_formed": "The Sahyadri is an escarpment, a long steep step in the land rather than a folded mountain range. It runs close to the coast and roughly parallel to it, so the Konkan is a narrow strip of low ground between a steep wall and the sea.",
+  "the_science": [
+    {
+      "ask": "Why does so much rain fall on this one strip of land?",
+      "answer": "The south-west monsoon blows in off the Arabian Sea carrying a great deal of water vapour. When that air meets the escarpment it has nowhere to go but up. Rising air expands and cools, cool air cannot hold as much water vapour as warm air, so the vapour condenses and falls. The slope is doing nothing but forcing the air upward, and that is enough.",
+      "links_to": "energy"
+    },
+    {
+      "ask": "Why is it so much drier on the other side of the ridge?",
+      "answer": "By the time the air has crossed the top, it has already dropped most of its water. Descending the far side it warms again, and warm air holds moisture rather than releasing it. This is a rain shadow, and it is why the Deccan immediately east is a different landscape.",
+      "links_to": "energy"
+    },
+    {
+      "ask": "Where does a waterfall's energy go?",
+      "answer": "Water at the top has energy by virtue of its height. Falling converts that into motion, and at the bottom it becomes sound, spray, turbulence and a very slight warming of the water. It is also the energy that has been cutting the rock away for a very long time.",
+      "links_to": "energy"
+    }
+  ],
+  "go_and_look": "You do not need to travel to see the mechanism. Breathe onto a cool window and watch mist appear: the air near the glass cooled and could no longer hold its water vapour. That is the same process that makes the ghat rain, at a scale you can do indoors.",
+  "sources": [
+    "Orographic rainfall - moist air forced to rise over high ground, cooling and condensing, with a rain shadow beyond: standard physical geography.",
+    "Warm air holds more water vapour than cold air: standard physics of humidity.",
+    "Gravitational potential energy converting to kinetic energy in a waterfall: standard mechanics."
+  ],
+  "needs_local_check": [
+    "Amboli's annual rainfall figure is often quoted but varies by source and by year. Do not teach a specific number without checking it against India Meteorological Department data.",
+    "A teacher should confirm the description of how sharply the landscape changes east of the ridge, from their own knowledge of the route."
+  ],
+  "verification_status": "NEEDS_REVIEW"
+}
