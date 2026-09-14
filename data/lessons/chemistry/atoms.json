@@ -3,8 +3,14 @@
   "title": "Atoms",
   "subject": "Chemistry",
   "topic": "atoms",
-  "aliases": ["atom"],
-  "levels": ["Class 8", "Class 9", "Class 10"],
+  "aliases": [
+    "atom"
+  ],
+  "levels": [
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
   "content": {
     "English": {
       "simple_explanation": "Atoms are tiny building blocks that make up matter such as air, water, rocks, and our bodies.",
@@ -13,14 +19,40 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
-  "real_world_use": ["understanding materials", "medicine", "electronics", "environmental testing"],
-  "common_misconceptions": ["An atom is just a tiny solid ball with nothing inside it."],
+  "real_world_use": [
+    "understanding materials",
+    "medicine",
+    "electronics",
+    "environmental testing"
+  ],
+  "common_misconceptions": [
+    "An atom is just a tiny solid ball with nothing inside it."
+  ],
+  "observe_around_you": {
+    "invitation": "You need a clear glass of water and a spoon of salt or sugar.",
+    "what_to_do": "Stir the salt in until the water looks completely clear again. Then taste a drop.",
+    "what_to_notice": "You cannot see the salt. The water looks exactly as it did before. But it tastes of salt everywhere you sample it, not just at the bottom.",
+    "concept_link": "The salt did not vanish; it separated into pieces far too small to see, and spread evenly through the water. That everything is built from particles too small to see is the whole idea, and you just tasted the evidence.",
+    "needs": [
+      "a clear glass of water",
+      "salt or sugar"
+    ],
+    "safety_note": "Use clean drinking water, and taste only a small drop."
+  },
   "think_question": "If atoms are so small, how can many atoms together make a solid object?",
   "reasoning_guide": {
-    "required_keywords": ["many", "atoms"],
-    "misconception_keywords": ["atoms are not real"],
+    "required_keywords": [
+      "many",
+      "atoms"
+    ],
+    "misconception_keywords": [
+      "atoms are not real"
+    ],
     "correct_feedback": "Good reasoning: you explained that many tiny atoms together make larger materials.",
     "partial_feedback": "Connect the small size of one atom to the huge number of atoms in an object.",
     "misconception_feedback": "Atoms are real parts of matter. Focus on how a very large number of them combine to make an object."
@@ -34,17 +66,36 @@
       "Name the positive particle first, then the neutral one, then the negative one."
     ],
     "solution": "The particles are protons, neutrons, and electrons.",
-    "accepted_answers": ["protons neutrons electrons", "proton neutron electron"]
+    "accepted_answers": [
+      "protons neutrons electrons",
+      "proton neutron electron"
+    ]
   },
-  "career_connections": ["chemistry", "medicine", "materials science"],
-  "further_exploration": ["elements", "molecules", "periodic table"],
+  "career_connections": [
+    "chemistry",
+    "medicine",
+    "materials science"
+  ],
+  "further_exploration": [
+    "elements",
+    "molecules",
+    "periodic table"
+  ],
   "quiz_questions": [
     {
       "id": "atoms-positive-particle",
       "question": "Which particle in an atom has a positive charge?",
       "type": "multiple_choice",
-      "options": ["Electron", "Proton", "Neutron", "Molecule"],
-      "correct_answers": ["Proton", "2"],
+      "options": [
+        "Electron",
+        "Proton",
+        "Neutron",
+        "Molecule"
+      ],
+      "correct_answers": [
+        "Proton",
+        "2"
+      ],
       "explanation": "Protons have a positive electric charge.",
       "hint": "The negatively charged particle is the electron.",
       "progressive_hints": [
@@ -54,6 +105,8 @@
       "difficulty": "Class 9"
     }
   ],
-  "sources": ["Original introductory project lesson. Academic review is pending."],
+  "sources": [
+    "Original introductory project lesson. Academic review is pending."
+  ],
   "verification_status": "NEEDS_REVIEW"
 }

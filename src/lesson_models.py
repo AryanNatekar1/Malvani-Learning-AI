@@ -52,6 +52,48 @@ class ContextEntry:
 
 
 @dataclass(frozen=True)
+class ObservationActivity:
+    """Something a learner can go and watch happen, in their own surroundings.
+
+    This is the honest half of region-based learning. The app cannot see where
+    a learner is and must never assert what is near them — claiming there is a
+    pond by their school would be the same invention the project refuses
+    elsewhere. So an observation is written conditionally ("if you can find
+    still water") and the learner supplies the place. The physics is the same
+    in a pond, a bucket, or a puddle, which is also why this travels beyond
+    Sindhudurg without pretending to be about anywhere in particular.
+
+    Unlike a ContextEntry, this needs no verification status: it asserts no
+    local fact. It only asks the learner to look, and states what the concept
+    predicts they will see.
+    """
+
+    invitation: str
+    what_to_do: str
+    what_to_notice: str
+    concept_link: str
+    needs: tuple[str, ...] = ()
+    safety_note: str | None = None
+
+    @classmethod
+    def from_mapping(cls, value: dict[str, Any]) -> "ObservationActivity":
+        try:
+            safety_note = value.get("safety_note")
+            return cls(
+                invitation=str(value["invitation"]),
+                what_to_do=str(value["what_to_do"]),
+                what_to_notice=str(value["what_to_notice"]),
+                concept_link=str(value["concept_link"]),
+                needs=tuple(str(item) for item in value.get("needs", ())),
+                safety_note=str(safety_note) if safety_note else None,
+            )
+        except KeyError as error:
+            raise LessonFormatError(
+                f"Observation activity is missing the required field: {error.args[0]}"
+            ) from error
+
+
+@dataclass(frozen=True)
 class TranslationMetadata:
     """Review metadata for a specific lesson-language variant."""
 
@@ -203,6 +245,7 @@ class Lesson:
     further_exploration: tuple[str, ...] = ()
     local_example: ContextEntry | None = None
     culture_connection: ContextEntry | None = None
+    observe_around_you: ObservationActivity | None = None
     quiz_questions: tuple[QuizQuestion, ...] = ()
     sources: tuple[str, ...] = ()
     verification_status: str = "NEEDS_REVIEW"
@@ -257,6 +300,7 @@ class Lesson:
 
         local_example = value.get("local_example")
         culture_connection = value.get("culture_connection")
+        observe_around_you = value.get("observe_around_you")
         reasoning_guide = value.get("reasoning_guide")
         challenge = value.get("challenge")
 
@@ -283,6 +327,11 @@ class Lesson:
             local_example=ContextEntry.from_mapping(local_example) if local_example else None,
             culture_connection=(
                 ContextEntry.from_mapping(culture_connection) if culture_connection else None
+            ),
+            observe_around_you=(
+                ObservationActivity.from_mapping(observe_around_you)
+                if observe_around_you
+                else None
             ),
             quiz_questions=tuple(
                 QuizQuestion.from_mapping(question) for question in value.get("quiz_questions", [])

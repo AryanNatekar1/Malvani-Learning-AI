@@ -3,7 +3,12 @@
   "title": "Force",
   "subject": "Physics",
   "topic": "force",
-  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "levels": [
+    "Beginner",
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
   "content": {
     "English": {
       "simple_explanation": "A force is a push or pull on an object.",
@@ -12,7 +17,10 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
   "local_example": {
     "text": "Pulling a fishing net is an everyday example of applying a force.",
@@ -21,12 +29,35 @@
     "verification_status": "NEEDS_REVIEW",
     "appropriate_usage": "Use as a local-context draft only until reviewed by a community or content reviewer."
   },
-  "real_world_use": ["machines", "vehicles", "sports", "robotics"],
-  "common_misconceptions": ["A moving object always needs a continuing push to keep moving."],
+  "real_world_use": [
+    "machines",
+    "vehicles",
+    "sports",
+    "robotics"
+  ],
+  "common_misconceptions": [
+    "A moving object always needs a continuing push to keep moving."
+  ],
+  "observe_around_you": {
+    "invitation": "Find something heavy you can push on the floor — a full bucket, a sack, a wooden box.",
+    "what_to_do": "Push it gently until it just starts to move. Then push it much harder and watch how quickly it picks up speed.",
+    "what_to_notice": "There is a push small enough that nothing happens at all. Find that point. Then notice that a harder push does not just move it — it moves it sooner.",
+    "concept_link": "A force is a push or a pull that can change motion. Below a certain push, friction cancels you out entirely. Above it, more force gives more acceleration, not more speed by itself.",
+    "needs": [
+      "something heavy that slides",
+      "a flat floor"
+    ],
+    "safety_note": "Push, do not pull towards yourself, and keep your feet clear of the load."
+  },
   "think_question": "Can an object move without a force continuously pushing it? What forces might slow it down?",
   "reasoning_guide": {
-    "required_keywords": ["friction", "force"],
-    "misconception_keywords": ["force is needed to keep moving"],
+    "required_keywords": [
+      "friction",
+      "force"
+    ],
+    "misconception_keywords": [
+      "force is needed to keep moving"
+    ],
     "correct_feedback": "Good reasoning: you connected forces such as friction to changes in motion.",
     "partial_feedback": "Explain which force can slow the object and how it affects motion.",
     "misconception_feedback": "A continuing push is not always needed to keep an object moving. Think about friction and other forces that change motion."
@@ -42,15 +73,31 @@
     "solution": "Answers differ. Examples include pushing a door, pulling a bag, or kicking a ball.",
     "accepted_answers": []
   },
-  "career_connections": ["robotics", "civil engineering", "sports science"],
-  "further_exploration": ["friction", "Newton's laws", "balanced forces"],
+  "career_connections": [
+    "robotics",
+    "civil engineering",
+    "sports science"
+  ],
+  "further_exploration": [
+    "friction",
+    "Newton's laws",
+    "balanced forces"
+  ],
   "quiz_questions": [
     {
       "id": "force-definition",
       "question": "Which statement best describes a force?",
       "type": "multiple_choice",
-      "options": ["A type of colour", "A push or pull", "Only a fast movement", "A kind of energy only"],
-      "correct_answers": ["A push or pull", "2"],
+      "options": [
+        "A type of colour",
+        "A push or pull",
+        "Only a fast movement",
+        "A kind of energy only"
+      ],
+      "correct_answers": [
+        "A push or pull",
+        "2"
+      ],
       "explanation": "A force is a push or pull acting on an object.",
       "hint": "Think about opening a door.",
       "progressive_hints": [
@@ -60,6 +107,8 @@
       "difficulty": "Beginner"
     }
   ],
-  "sources": ["Migrated and expanded from the project's original force.txt lesson. Academic and local-context review is still needed."],
+  "sources": [
+    "Migrated and expanded from the project's original force.txt lesson. Academic and local-context review is still needed."
+  ],
   "verification_status": "NEEDS_REVIEW"
 }

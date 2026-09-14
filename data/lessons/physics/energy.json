@@ -3,7 +3,12 @@
   "title": "Energy",
   "subject": "Physics",
   "topic": "energy",
-  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "levels": [
+    "Beginner",
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
   "content": {
     "English": {
       "simple_explanation": "Energy is what makes things happen. Anything that moves, heats up, lights up, or grows is using energy.",
@@ -12,7 +17,10 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
   "local_example": {
     "text": "A water pump, a cooking fire, and a person carrying a load are all converting energy from one form into another.",
@@ -21,15 +29,36 @@
     "verification_status": "NEEDS_REVIEW",
     "appropriate_usage": "Use as a general local-context draft only until reviewed; do not present it as a claim about any specific household or village."
   },
-  "real_world_use": ["electricity supply", "cooking and heating", "transport", "farming machinery"],
+  "real_world_use": [
+    "electricity supply",
+    "cooking and heating",
+    "transport",
+    "farming machinery"
+  ],
   "common_misconceptions": [
     "Energy gets used up and simply disappears.",
     "An object that is standing still cannot have any energy."
   ],
+  "observe_around_you": {
+    "invitation": "Find a ball that bounces, and a hard floor.",
+    "what_to_do": "Drop it from about your shoulder height. Mark roughly how high it comes back. Let it bounce until it stops.",
+    "what_to_notice": "It never returns to the height you dropped it from. Each bounce is lower than the one before. Count how many bounces it takes to die out.",
+    "concept_link": "Energy is not destroyed, but it does move somewhere less useful — into sound you can hear, and into warming the ball and floor very slightly. The height you lose each bounce is energy that left the bouncing.",
+    "needs": [
+      "a ball that bounces",
+      "a hard floor"
+    ],
+    "safety_note": null
+  },
   "think_question": "When you switch on a torch, the battery slowly runs down. If energy cannot be destroyed, where has the battery's energy gone?",
   "reasoning_guide": {
-    "required_keywords": ["light", "heat"],
-    "misconception_keywords": ["energy is destroyed"],
+    "required_keywords": [
+      "light",
+      "heat"
+    ],
+    "misconception_keywords": [
+      "energy is destroyed"
+    ],
     "correct_feedback": "Good reasoning: you tracked the energy into the forms it became, rather than letting it vanish.",
     "partial_feedback": "You have started well. Name both forms the chemical energy turns into inside a torch.",
     "misconception_feedback": "Energy is not destroyed. Follow it instead: what does the torch give out while the battery runs down?"
@@ -45,8 +74,16 @@
     "solution": "Electrical energy becomes kinetic energy in the spinning blades, which becomes kinetic energy of the moving air. Some energy is also converted into heat in the motor and into sound.",
     "accepted_answers": []
   },
-  "career_connections": ["renewable energy", "electrical engineering", "food science"],
-  "further_exploration": ["work", "force", "motion"],
+  "career_connections": [
+    "renewable energy",
+    "electrical engineering",
+    "food science"
+  ],
+  "further_exploration": [
+    "work",
+    "force",
+    "motion"
+  ],
   "quiz_questions": [
     {
       "id": "energy-conservation",
@@ -58,7 +95,10 @@
         "Energy changes from one form into another",
         "Energy exists only inside moving objects"
       ],
-      "correct_answers": ["Energy changes from one form into another", "3"],
+      "correct_answers": [
+        "Energy changes from one form into another",
+        "3"
+      ],
       "explanation": "Energy is conserved: it is neither created nor destroyed, it only changes form.",
       "hint": "Think about what happens to the chemical energy in food after you eat it.",
       "progressive_hints": [
@@ -68,6 +108,8 @@
       "difficulty": "Beginner"
     }
   ],
-  "sources": ["Migrated and expanded from the project's original energy.txt lesson. Academic and local-context review is still needed."],
+  "sources": [
+    "Migrated and expanded from the project's original energy.txt lesson. Academic and local-context review is still needed."
+  ],
   "verification_status": "NEEDS_REVIEW"
 }

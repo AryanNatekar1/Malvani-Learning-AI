@@ -3,7 +3,11 @@
   "title": "Velocity",
   "subject": "Physics",
   "topic": "velocity",
-  "levels": ["Class 8", "Class 9", "Class 10"],
+  "levels": [
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
   "content": {
     "English": {
       "simple_explanation": "Velocity is speed together with the direction of travel.",
@@ -12,7 +16,10 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
   "local_example": {
     "text": "Describing a boat as moving at 10 km/h towards the shore states a velocity, because it gives both the speed and the direction.",
@@ -21,15 +28,35 @@
     "verification_status": "NEEDS_REVIEW",
     "appropriate_usage": "Use as a general local-context draft only until reviewed; do not present it as a claim about a specific boat, route, or occupation."
   },
-  "real_world_use": ["navigation", "air and sea travel", "weather forecasting", "sports analysis"],
+  "real_world_use": [
+    "navigation",
+    "air and sea travel",
+    "weather forecasting",
+    "sports analysis"
+  ],
   "common_misconceptions": [
     "Speed and velocity mean exactly the same thing.",
     "An object moving at a constant speed must also have a constant velocity."
   ],
+  "observe_around_you": {
+    "invitation": "You need an open space where you can walk in a loop — a yard, a field, a courtyard.",
+    "what_to_do": "Walk all the way around the edge and return to exactly where you started. Count your steps as you go.",
+    "what_to_notice": "You walked a long way. But your distance from the starting point is now zero. Both of those are true at once.",
+    "concept_link": "Speed uses the path you covered; velocity uses displacement, which is the straight line from start to finish and includes direction. A closed loop has zero displacement, so your average velocity was zero no matter how far you walked.",
+    "needs": [
+      "an open space to walk a loop"
+    ],
+    "safety_note": null
+  },
   "think_question": "Two cars both show 50 km/h on the speedometer, but they are driving in opposite directions. Do they have the same speed? Do they have the same velocity?",
   "reasoning_guide": {
-    "required_keywords": ["direction", "velocity"],
-    "misconception_keywords": ["speed and velocity are the same"],
+    "required_keywords": [
+      "direction",
+      "velocity"
+    ],
+    "misconception_keywords": [
+      "speed and velocity are the same"
+    ],
     "correct_feedback": "Good reasoning: same speed, different velocity, because velocity carries the direction too.",
     "partial_feedback": "You have the speed part. Now say what the opposite directions do to the velocity.",
     "misconception_feedback": "Speed and velocity are not the same. Velocity includes direction, so compare the directions here."
@@ -45,8 +72,16 @@
     "solution": "The velocity is 45 km/h towards the north. It is a velocity rather than a speed because it states the direction, 'towards the north', as well as how fast the bus travels.",
     "accepted_answers": []
   },
-  "career_connections": ["navigation and shipping", "aviation", "weather forecasting"],
-  "further_exploration": ["motion", "acceleration", "force"],
+  "career_connections": [
+    "navigation and shipping",
+    "aviation",
+    "weather forecasting"
+  ],
+  "further_exploration": [
+    "motion",
+    "acceleration",
+    "force"
+  ],
   "quiz_questions": [
     {
       "id": "velocity-identify",
@@ -58,7 +93,10 @@
         "8 m/s towards the east",
         "95 km/h"
       ],
-      "correct_answers": ["8 m/s towards the east", "3"],
+      "correct_answers": [
+        "8 m/s towards the east",
+        "3"
+      ],
       "explanation": "Only this option gives a direction as well as a magnitude, which is what makes it a velocity.",
       "hint": "Look for the option that tells you which way the object is going.",
       "progressive_hints": [
@@ -68,6 +106,8 @@
       "difficulty": "Beginner"
     }
   ],
-  "sources": ["Migrated and expanded from the project's original velocity.txt lesson. Academic and local-context review is still needed."],
+  "sources": [
+    "Migrated and expanded from the project's original velocity.txt lesson. Academic and local-context review is still needed."
+  ],
   "verification_status": "NEEDS_REVIEW"
 }

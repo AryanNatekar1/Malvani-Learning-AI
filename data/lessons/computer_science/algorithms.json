@@ -3,8 +3,15 @@
   "title": "Algorithms",
   "subject": "Computer Science",
   "topic": "algorithms",
-  "aliases": ["algorithm"],
-  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "aliases": [
+    "algorithm"
+  ],
+  "levels": [
+    "Beginner",
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
   "content": {
     "English": {
       "simple_explanation": "An algorithm is a clear sequence of steps for solving a problem or completing a task.",
@@ -13,14 +20,40 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
-  "real_world_use": ["computer programs", "navigation", "search engines", "robotics"],
-  "common_misconceptions": ["An algorithm has to be written in computer code to count as an algorithm."],
+  "real_world_use": [
+    "computer programs",
+    "navigation",
+    "search engines",
+    "robotics"
+  ],
+  "common_misconceptions": [
+    "An algorithm has to be written in computer code to count as an algorithm."
+  ],
+  "observe_around_you": {
+    "invitation": "You need one other person, and somewhere you both know well.",
+    "what_to_do": "Without naming the destination, give them step-by-step directions from where you are to somewhere nearby. They must follow exactly what you say, not what they think you mean.",
+    "what_to_notice": "Where did they stop, hesitate, or go wrong? That is where your instructions were ambiguous or out of order — not where they were careless.",
+    "concept_link": "An algorithm is a clear sequence of steps, and this is the fastest way to feel why 'clear' is the hard part. A computer follows instructions exactly the way your partner just did, with no guessing at what you meant.",
+    "needs": [
+      "one other person",
+      "a familiar place"
+    ],
+    "safety_note": "Keep the route short and somewhere you both already know."
+  },
   "think_question": "What could go wrong if instructions for a task are placed in the wrong order?",
   "reasoning_guide": {
-    "required_keywords": ["steps", "order"],
-    "misconception_keywords": ["any order works"],
+    "required_keywords": [
+      "steps",
+      "order"
+    ],
+    "misconception_keywords": [
+      "any order works"
+    ],
     "correct_feedback": "Good reasoning: you explained why an algorithm needs ordered steps.",
     "partial_feedback": "Use both steps and order to explain what could go wrong.",
     "misconception_feedback": "Algorithms need a sensible order. Changing it can change or prevent the intended result."
@@ -36,15 +69,31 @@
     "solution": "One approach: divide the number by 2; check the remainder; if the remainder is 0, report that the number is even.",
     "accepted_answers": []
   },
-  "career_connections": ["software development", "data science", "robotics"],
-  "further_exploration": ["flowcharts", "programming", "debugging"],
+  "career_connections": [
+    "software development",
+    "data science",
+    "robotics"
+  ],
+  "further_exploration": [
+    "flowcharts",
+    "programming",
+    "debugging"
+  ],
   "quiz_questions": [
     {
       "id": "algorithms-definition",
       "question": "What is an algorithm?",
       "type": "multiple_choice",
-      "options": ["A random guess", "A clear sequence of steps", "Only a computer screen", "A type of keyboard"],
-      "correct_answers": ["A clear sequence of steps", "2"],
+      "options": [
+        "A random guess",
+        "A clear sequence of steps",
+        "Only a computer screen",
+        "A type of keyboard"
+      ],
+      "correct_answers": [
+        "A clear sequence of steps",
+        "2"
+      ],
       "explanation": "An algorithm gives ordered steps for solving a problem.",
       "hint": "Think about a recipe or set of directions.",
       "progressive_hints": [
@@ -54,6 +103,8 @@
       "difficulty": "Beginner"
     }
   ],
-  "sources": ["Original introductory project lesson. Academic review is pending."],
+  "sources": [
+    "Original introductory project lesson. Academic review is pending."
+  ],
   "verification_status": "NEEDS_REVIEW"
 }

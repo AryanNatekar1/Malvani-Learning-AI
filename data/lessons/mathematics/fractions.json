@@ -3,8 +3,14 @@
   "title": "Fractions",
   "subject": "Mathematics",
   "topic": "fractions",
-  "aliases": ["fraction"],
-  "levels": ["Beginner", "Class 8", "Class 9"],
+  "aliases": [
+    "fraction"
+  ],
+  "levels": [
+    "Beginner",
+    "Class 8",
+    "Class 9"
+  ],
   "content": {
     "English": {
       "simple_explanation": "A fraction shows equal parts of a whole. In 3/4, the whole is divided into four equal parts and three parts are chosen.",
@@ -13,14 +19,38 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
-  "real_world_use": ["sharing quantities fairly", "measuring ingredients", "reading maps and scales"],
-  "common_misconceptions": ["A larger denominator always means a larger fraction, so 1/8 must be bigger than 1/4."],
+  "real_world_use": [
+    "sharing quantities fairly",
+    "measuring ingredients",
+    "reading maps and scales"
+  ],
+  "common_misconceptions": [
+    "A larger denominator always means a larger fraction, so 1/8 must be bigger than 1/4."
+  ],
+  "observe_around_you": {
+    "invitation": "You need something you can actually divide — a chapati, a length of rope, or a cup of water.",
+    "what_to_do": "Split it into two equal parts. Then split one of those halves in two again.",
+    "what_to_notice": "You now hold pieces of two different sizes. Name each one as a fraction of the whole thing you started with, not of the piece you cut it from.",
+    "concept_link": "Half of a half is a quarter. A fraction only means something once you say what the whole is — which is exactly where the confusion usually starts.",
+    "needs": [
+      "something you can divide evenly"
+    ],
+    "safety_note": null
+  },
   "think_question": "Which is larger: 1/2 or 1/4? How can you show it with a drawing?",
   "reasoning_guide": {
-    "required_keywords": ["equal", "parts"],
-    "misconception_keywords": ["4 is bigger than 2"],
+    "required_keywords": [
+      "equal",
+      "parts"
+    ],
+    "misconception_keywords": [
+      "4 is bigger than 2"
+    ],
     "correct_feedback": "Good reasoning: you used equal parts to compare the fractions.",
     "partial_feedback": "Use the phrase equal parts and explain how many parts are chosen.",
     "misconception_feedback": "Compare the size of equal parts, not only the digits in the denominator."
@@ -34,17 +64,37 @@
       "Ask whether 4/4 represents a whole."
     ],
     "solution": "3/4 + 1/4 = 4/4 = 1 whole.",
-    "accepted_answers": ["1", "4/4", "one"]
+    "accepted_answers": [
+      "1",
+      "4/4",
+      "one"
+    ]
   },
-  "career_connections": ["cooking and food science", "engineering", "accounting"],
-  "further_exploration": ["equivalent fractions", "decimals", "percentages"],
+  "career_connections": [
+    "cooking and food science",
+    "engineering",
+    "accounting"
+  ],
+  "further_exploration": [
+    "equivalent fractions",
+    "decimals",
+    "percentages"
+  ],
   "quiz_questions": [
     {
       "id": "fractions-half",
       "question": "Which fraction is equal to one half?",
       "type": "multiple_choice",
-      "options": ["1/4", "2/4", "3/4", "4/4"],
-      "correct_answers": ["2/4", "2"],
+      "options": [
+        "1/4",
+        "2/4",
+        "3/4",
+        "4/4"
+      ],
+      "correct_answers": [
+        "2/4",
+        "2"
+      ],
       "explanation": "Two of four equal parts is the same amount as one of two equal parts.",
       "hint": "Imagine folding a shape into four equal parts.",
       "progressive_hints": [
@@ -54,6 +104,8 @@
       "difficulty": "Beginner"
     }
   ],
-  "sources": ["Original introductory project lesson. Academic review is pending."],
+  "sources": [
+    "Original introductory project lesson. Academic review is pending."
+  ],
   "verification_status": "NEEDS_REVIEW"
 }

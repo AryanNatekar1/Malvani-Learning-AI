@@ -3,7 +3,12 @@
   "title": "Momentum",
   "subject": "Physics",
   "topic": "momentum",
-  "levels": ["Class 8", "Class 9", "Class 10", "Class 11/12"],
+  "levels": [
+    "Class 8",
+    "Class 9",
+    "Class 10",
+    "Class 11/12"
+  ],
   "content": {
     "English": {
       "simple_explanation": "Momentum tells us how much motion an object has. A heavier object or a faster object has more momentum.",
@@ -12,7 +17,10 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
   "local_example": {
     "text": "Comparing a loaded transport vehicle with a bicycle is a useful way to reason about why a larger moving mass can be harder to stop.",
@@ -21,12 +29,35 @@
     "verification_status": "NEEDS_REVIEW",
     "appropriate_usage": "Present as an engineering illustration; do not treat it as a claim about a specific local route or occupation."
   },
-  "real_world_use": ["vehicle safety", "cricket and other sports", "aircraft landing", "robot and drone motion"],
-  "common_misconceptions": ["Only heavy objects can have a large momentum; how fast they move hardly matters."],
+  "real_world_use": [
+    "vehicle safety",
+    "cricket and other sports",
+    "aircraft landing",
+    "robot and drone motion"
+  ],
+  "common_misconceptions": [
+    "Only heavy objects can have a large momentum; how fast they move hardly matters."
+  ],
+  "observe_around_you": {
+    "invitation": "You need two stones or marbles of different size, and a smooth flat surface.",
+    "what_to_do": "Roll the small one into a stationary stone and watch what happens. Then roll the big one in at about the same speed.",
+    "what_to_notice": "Same speed, different result. Now roll the small one much faster and see whether you can make it do what the big one did.",
+    "concept_link": "Momentum is mass times velocity, so a small mass moving fast can carry the same momentum as a large mass moving slowly. You just found the trade between them by hand.",
+    "needs": [
+      "two stones or marbles of different size",
+      "a smooth flat surface"
+    ],
+    "safety_note": "Roll along the ground, never towards anyone, and not near glass."
+  },
   "think_question": "Why is it usually harder to stop a moving truck than a moving bicycle?",
   "reasoning_guide": {
-    "required_keywords": ["mass", "momentum"],
-    "misconception_keywords": ["only speed matters"],
+    "required_keywords": [
+      "mass",
+      "momentum"
+    ],
+    "misconception_keywords": [
+      "only speed matters"
+    ],
     "correct_feedback": "Good reasoning: you connected the larger mass to greater momentum.",
     "partial_feedback": "You are close. Explain how mass changes momentum, not only how fast something moves.",
     "misconception_feedback": "Speed matters, but mass matters too. Compare both when reasoning about momentum."
@@ -40,17 +71,33 @@
       "Write the unit as kg m/s after you calculate the number."
     ],
     "solution": "Momentum = 2 kg x 5 m/s = 10 kg m/s.",
-    "accepted_answers": ["10", "10 kg m/s", "10 kg m s"]
+    "accepted_answers": [
+      "10",
+      "10 kg m/s",
+      "10 kg m s"
+    ]
   },
-  "career_connections": ["mechanical engineering", "transport safety", "robotics"],
-  "further_exploration": ["force", "impulse", "conservation of momentum"],
+  "career_connections": [
+    "mechanical engineering",
+    "transport safety",
+    "robotics"
+  ],
+  "further_exploration": [
+    "force",
+    "impulse",
+    "conservation of momentum"
+  ],
   "quiz_questions": [
     {
       "id": "momentum-calculation",
       "question": "A 3 kg cart moves at 4 m/s. What is its momentum?",
       "type": "numerical",
       "options": [],
-      "correct_answers": ["12", "12 kg m/s", "12 kg m s"],
+      "correct_answers": [
+        "12",
+        "12 kg m/s",
+        "12 kg m s"
+      ],
       "explanation": "Momentum = mass x velocity = 3 x 4 = 12 kg m/s.",
       "hint": "Multiply the mass by the velocity.",
       "progressive_hints": [
@@ -60,6 +107,8 @@
       "difficulty": "Class 9"
     }
   ],
-  "sources": ["Migrated and expanded from the project's original momentum.txt lesson. Academic and local-context review is still needed."],
+  "sources": [
+    "Migrated and expanded from the project's original momentum.txt lesson. Academic and local-context review is still needed."
+  ],
   "verification_status": "NEEDS_REVIEW"
 }

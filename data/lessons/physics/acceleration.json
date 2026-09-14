@@ -3,7 +3,11 @@
   "title": "Acceleration",
   "subject": "Physics",
   "topic": "acceleration",
-  "levels": ["Class 8", "Class 9", "Class 10"],
+  "levels": [
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
   "content": {
     "English": {
       "simple_explanation": "Acceleration tells you how quickly an object's velocity is changing.",
@@ -12,7 +16,10 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
   "local_example": {
     "text": "A bus pulling away from a stop, a bicycle freewheeling down a slope, and a boat changing direction are all examples of changing velocity.",
@@ -21,15 +28,35 @@
     "verification_status": "NEEDS_REVIEW",
     "appropriate_usage": "Use as a general local-context draft only until reviewed; do not present it as a claim about a specific route, vehicle, or person."
   },
-  "real_world_use": ["vehicle design", "road safety", "sports training", "rockets and aircraft"],
+  "real_world_use": [
+    "vehicle design",
+    "road safety",
+    "sports training",
+    "rockets and aircraft"
+  ],
   "common_misconceptions": [
     "An object that is slowing down is not accelerating.",
     "An object moving at a steady speed around a bend is not accelerating."
   ],
+  "observe_around_you": {
+    "invitation": "You need a bicycle, or any slope you can roll something down.",
+    "what_to_do": "Start from rest and pedal steadily. Count seconds and notice how your speed changes in the first second, then the third, then the fifth.",
+    "what_to_notice": "Your speed is still climbing even when your effort stays the same. Now stop pedalling and coast. Your speed is now falling while you do nothing at all.",
+    "concept_link": "Acceleration is the rate at which velocity changes, not the velocity itself. Coasting shows it clearly: you are still moving forward, but accelerating backwards, because friction and air are slowing you.",
+    "needs": [
+      "a bicycle or a slope"
+    ],
+    "safety_note": "Choose an empty, flat, familiar place. Do not test braking near traffic."
+  },
   "think_question": "A bus holds a steady speed of 30 km/h but drives around a bend. Is it accelerating? Why?",
   "reasoning_guide": {
-    "required_keywords": ["direction", "velocity"],
-    "misconception_keywords": ["speed is constant so there is no acceleration"],
+    "required_keywords": [
+      "direction",
+      "velocity"
+    ],
+    "misconception_keywords": [
+      "speed is constant so there is no acceleration"
+    ],
     "correct_feedback": "Good reasoning: you used the fact that velocity includes direction, so changing direction changes velocity.",
     "partial_feedback": "You are close. Say what velocity includes besides how fast the bus is going.",
     "misconception_feedback": "Steady speed is not the whole story. Velocity also carries a direction, so ask what the bend changes."
@@ -43,17 +70,31 @@
       "Now divide that change by the 3 seconds it took."
     ],
     "solution": "a = (8 - 2) / 3 = 6 / 3 = 2 m/s2.",
-    "accepted_answers": ["2", "2 m/s2"]
+    "accepted_answers": [
+      "2",
+      "2 m/s2"
+    ]
   },
-  "career_connections": ["automotive engineering", "aerospace", "sports science"],
-  "further_exploration": ["velocity", "motion", "force"],
+  "career_connections": [
+    "automotive engineering",
+    "aerospace",
+    "sports science"
+  ],
+  "further_exploration": [
+    "velocity",
+    "motion",
+    "force"
+  ],
   "quiz_questions": [
     {
       "id": "acceleration-calculation",
       "question": "A car goes from rest to 20 m/s in 5 s. What is its acceleration in m/s2?",
       "type": "numerical",
       "options": [],
-      "correct_answers": ["4", "4 m/s2"],
+      "correct_answers": [
+        "4",
+        "4 m/s2"
+      ],
       "explanation": "a = (20 - 0) / 5 = 4 m/s2.",
       "hint": "Divide the change in velocity by the time taken.",
       "progressive_hints": [
@@ -63,6 +104,8 @@
       "difficulty": "Class 9"
     }
   ],
-  "sources": ["Migrated and expanded from the project's original acceleration.txt lesson. Academic and local-context review is still needed."],
+  "sources": [
+    "Migrated and expanded from the project's original acceleration.txt lesson. Academic and local-context review is still needed."
+  ],
   "verification_status": "NEEDS_REVIEW"
 }

@@ -3,7 +3,11 @@
   "title": "Work",
   "subject": "Physics",
   "topic": "work",
-  "levels": ["Class 8", "Class 9", "Class 10"],
+  "levels": [
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
   "content": {
     "English": {
       "simple_explanation": "In physics, work is done only when a force actually moves an object.",
@@ -12,7 +16,10 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
   "local_example": {
     "text": "Lifting a filled container onto a raised platform does work on it, because the upward force moves the load upward.",
@@ -21,15 +28,35 @@
     "verification_status": "NEEDS_REVIEW",
     "appropriate_usage": "Use as a general local-context draft only until reviewed; do not present it as a claim about any specific household, worker, or place."
   },
-  "real_world_use": ["lifting machinery", "construction", "engine design", "physiotherapy"],
+  "real_world_use": [
+    "lifting machinery",
+    "construction",
+    "engine design",
+    "physiotherapy"
+  ],
   "common_misconceptions": [
     "Any effort that makes you tired counts as work in physics.",
     "Holding a heavy object still does work on it."
   ],
+  "observe_around_you": {
+    "invitation": "Find something heavy enough to be a real effort to hold — a full bucket of water works well.",
+    "what_to_do": "Hold it still, at arm's length, for as long as you can. Then lift it from the ground up to your chest a few times.",
+    "what_to_notice": "Holding it still burns and aches. But the bucket did not move at all. Lifting moves it, and that feels like effort too.",
+    "concept_link": "In physics, work is force times the distance moved along that force. Holding still moves nothing, so it is zero work — even though your muscles are clearly labouring. This is the sharpest case where the everyday word and the physics word part ways.",
+    "needs": [
+      "a heavy bucket or bag"
+    ],
+    "safety_note": "Keep your back straight, lift with your legs, and stop as soon as it hurts."
+  },
   "think_question": "You push hard against a wall for a whole minute and it does not move. Your muscles are tired, so how much work have you done on the wall in the physics sense, and why?",
   "reasoning_guide": {
-    "required_keywords": ["move", "work"],
-    "misconception_keywords": ["tired so work is done"],
+    "required_keywords": [
+      "move",
+      "work"
+    ],
+    "misconception_keywords": [
+      "tired so work is done"
+    ],
     "correct_feedback": "Good reasoning: you tied work to the object actually moving, not to how tiring the effort felt.",
     "partial_feedback": "You are close. State clearly what the wall did or did not do, and what that means for the work done on it.",
     "misconception_feedback": "Feeling tired is not the test. In physics, work needs the force to move the object through a distance."
@@ -43,17 +70,32 @@
       "Multiply the two values, then write the unit as J."
     ],
     "solution": "W = F x d = 20 N x 3 m = 60 J.",
-    "accepted_answers": ["60", "60 J", "60 j"]
+    "accepted_answers": [
+      "60",
+      "60 J",
+      "60 j"
+    ]
   },
-  "career_connections": ["mechanical engineering", "construction", "physiotherapy"],
-  "further_exploration": ["energy", "force", "motion"],
+  "career_connections": [
+    "mechanical engineering",
+    "construction",
+    "physiotherapy"
+  ],
+  "further_exploration": [
+    "energy",
+    "force",
+    "motion"
+  ],
   "quiz_questions": [
     {
       "id": "work-calculation",
       "question": "A 15 N force moves a box 4 m in the direction of the force. How much work is done, in joules?",
       "type": "numerical",
       "options": [],
-      "correct_answers": ["60", "60 J"],
+      "correct_answers": [
+        "60",
+        "60 J"
+      ],
       "explanation": "W = F x d = 15 N x 4 m = 60 J.",
       "hint": "Multiply the force by the distance moved.",
       "progressive_hints": [
@@ -63,6 +105,8 @@
       "difficulty": "Class 9"
     }
   ],
-  "sources": ["Migrated and expanded from the project's original work.txt lesson. Academic and local-context review is still needed."],
+  "sources": [
+    "Migrated and expanded from the project's original work.txt lesson. Academic and local-context review is still needed."
+  ],
   "verification_status": "NEEDS_REVIEW"
 }

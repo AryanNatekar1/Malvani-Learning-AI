@@ -3,7 +3,12 @@
   "title": "Gravity",
   "subject": "Physics",
   "topic": "gravity",
-  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "levels": [
+    "Beginner",
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
   "content": {
     "English": {
       "simple_explanation": "Gravity is the force that pulls objects toward Earth.",
@@ -12,7 +17,10 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
   "local_example": {
     "text": "A mango falling from a tree is a useful everyday illustration of gravity.",
@@ -28,12 +36,35 @@
     "verification_status": "NEEDS_REVIEW",
     "appropriate_usage": "Show this as a local-context draft until a community or subject reviewer verifies it."
   },
-  "real_world_use": ["predicting falling objects", "satellite orbits", "sports", "drone and aircraft design"],
-  "common_misconceptions": ["Heavier objects always fall faster than lighter ones."],
+  "real_world_use": [
+    "predicting falling objects",
+    "satellite orbits",
+    "sports",
+    "drone and aircraft design"
+  ],
+  "common_misconceptions": [
+    "Heavier objects always fall faster than lighter ones."
+  ],
+  "observe_around_you": {
+    "invitation": "Find two objects of clearly different weight that are not fragile — a stone and a small pebble, or a full bottle and an empty one.",
+    "what_to_do": "Hold one in each hand at exactly the same height, well above the ground. Let go of both at the same instant. Listen.",
+    "what_to_notice": "Do you hear two separate sounds, or one? Try it a few times. Most people expect the heavy one to land first and are surprised.",
+    "concept_link": "Gravity gives every object the same acceleration regardless of mass, so they land together. The heavy one is pulled harder, but it is also harder to speed up, and the two effects cancel exactly.",
+    "needs": [
+      "two objects of different weight",
+      "a hard floor so you can hear them land"
+    ],
+    "safety_note": "Drop them onto bare ground, not onto your feet, and use nothing that can shatter."
+  },
   "think_question": "Why does a dropped mango move downward instead of upward?",
   "reasoning_guide": {
-    "required_keywords": ["gravity", "earth"],
-    "misconception_keywords": ["heavier objects fall faster"],
+    "required_keywords": [
+      "gravity",
+      "earth"
+    ],
+    "misconception_keywords": [
+      "heavier objects fall faster"
+    ],
     "correct_feedback": "Good reasoning: you identified Earth's gravity as the cause of the downward motion.",
     "partial_feedback": "You named part of the idea. Connect gravity specifically to Earth pulling the object.",
     "misconception_feedback": "In the same conditions, gravity acts on both light and heavy objects. Focus on Earth's pull rather than only an object's weight."
@@ -49,15 +80,31 @@
     "solution": "Many answers are possible. For example, you could jump higher because Earth would pull you downward less strongly.",
     "accepted_answers": []
   },
-  "career_connections": ["aerospace engineering", "drone development", "sports science"],
-  "further_exploration": ["mass and weight", "free fall", "orbits"],
+  "career_connections": [
+    "aerospace engineering",
+    "drone development",
+    "sports science"
+  ],
+  "further_exploration": [
+    "mass and weight",
+    "free fall",
+    "orbits"
+  ],
   "quiz_questions": [
     {
       "id": "gravity-direction",
       "question": "Which force pulls a dropped object toward Earth?",
       "type": "multiple_choice",
-      "options": ["Friction", "Gravity", "Magnetism", "Sound"],
-      "correct_answers": ["Gravity", "2"],
+      "options": [
+        "Friction",
+        "Gravity",
+        "Magnetism",
+        "Sound"
+      ],
+      "correct_answers": [
+        "Gravity",
+        "2"
+      ],
       "explanation": "Gravity pulls objects toward Earth.",
       "hint": "Think of the force that makes a dropped ball fall.",
       "progressive_hints": [
@@ -67,6 +114,8 @@
       "difficulty": "Beginner"
     }
   ],
-  "sources": ["Migrated from the project's original gravity.txt lesson. Academic and local-context review is still needed."],
+  "sources": [
+    "Migrated from the project's original gravity.txt lesson. Academic and local-context review is still needed."
+  ],
   "verification_status": "NEEDS_REVIEW"
 }

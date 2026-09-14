@@ -1,0 +1,17 @@
+{
+  "language": "Konkani",
+  "verification_status": "NEEDS_REVIEW",
+  "reviewed_by": "",
+  "source": "",
+  "notes": "Template only. Copy to Konkani.json, fill in the words, and have a Konkani speaker check them. The app ignores this file while verification_status is NEEDS_REVIEW or reviewed_by is empty, so nothing here can reach a student.",
+  "interface_text": {
+    "start_learning": "",
+    "language": "",
+    "level": "",
+    "subject": "",
+    "ask_question": "",
+    "submit_answer": "",
+    "progress": "",
+    "settings": ""
+  }
+}
