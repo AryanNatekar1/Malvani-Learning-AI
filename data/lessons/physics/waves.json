@@ -1,0 +1,172 @@
+{
+  "id": "physics.waves",
+  "title": "Waves",
+  "subject": "Physics",
+  "topic": "waves",
+  "aliases": ["wave", "wavelength", "frequency"],
+  "levels": [
+    "Beginner",
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
+  "content": {
+    "English": {
+      "simple_explanation": "A wave carries energy from one place to another without carrying the material along with it.",
+      "detailed_explanation": "Drop a stone into still water and rings spread outward. It looks as though the water is travelling to the edge, but it is not. Each piece of water rises and falls roughly in place, and what moves outward is the disturbance. That is what a wave is: a pattern that travels, carrying energy, through a material that stays behind. A wave is described by three quantities. Its wavelength is the distance from one crest to the next. Its frequency is how many crests pass a fixed point each second, measured in hertz. Its speed is how fast a crest travels, and the three are tied together by speed equals frequency multiplied by wavelength. In a given material the speed is fixed by the material itself, so raising the frequency shortens the wavelength and lowering it stretches the wavelength out. Sound is a wave in air, light is a wave too, and both obey the same relationship.",
+      "everyday_example": "When someone calls to you across a field, the air between you does not travel into your ear. It is squeezed and released over and over, and that pattern travels as sound."
+    }
+  },
+  "language_metadata": {
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
+  },
+  "local_example": {
+    "text": "Waves arriving on a coast, the sound of a boat engine carrying across water, and ripples in a bucket are all the same phenomenon at different scales.",
+    "region": "Konkan / Sindhudurg",
+    "source": null,
+    "verification_status": "NEEDS_REVIEW",
+    "appropriate_usage": "Use as a general local-context draft only until reviewed; do not present it as a claim about any specific beach, boat, or village."
+  },
+  "real_world_use": [
+    "sound and hearing",
+    "radio and mobile signals",
+    "medical ultrasound",
+    "earthquake measurement",
+    "musical instruments"
+  ],
+  "common_misconceptions": [
+    "The water in a wave travels all the way from where it started to the shore.",
+    "A louder sound travels faster than a quiet one.",
+    "A wave needs something solid to move along."
+  ],
+  "observe_around_you": {
+    "invitation": "You need any container of still water — a bucket, a wide bowl, a puddle — a small stone, and something light that floats, such as a leaf or a scrap of paper.",
+    "what_to_do": "Let the water go completely still and rest the leaf on the surface a little away from the middle. Drop the stone in the centre and watch the leaf, not the rings.",
+    "what_to_notice": "The rings race outward past the leaf. The leaf bobs up and down and stays roughly where it was. Do it again and try to see the moment the ring reaches the leaf and lifts it.",
+    "concept_link": "The rings carried energy outward — enough to lift the leaf — while the water itself stayed put. That is exactly what makes it a wave rather than a flow. A boat at sea rises and falls the same way as waves pass beneath it.",
+    "needs": [
+      "a container of still water",
+      "a small stone",
+      "a leaf or scrap of paper"
+    ],
+    "safety_note": "A bucket or bowl is enough. There is no reason to do this at a river or the sea."
+  },
+  "think_question": "If you shout louder, the sound is stronger but it does not arrive any sooner. What did shouting louder actually change about the wave, and what did it leave alone?",
+  "reasoning_guide": {
+    "required_keywords": [
+      "energy",
+      "speed"
+    ],
+    "misconception_keywords": [
+      "louder travels faster"
+    ],
+    "correct_feedback": "Good reasoning: you separated how much energy a wave carries from how fast it travels.",
+    "partial_feedback": "You have started well. Say what shouting changes about the wave, and then say what sets its speed instead.",
+    "misconception_feedback": "A louder sound does not arrive sooner. The speed of sound is set by the air it travels through, not by how hard you shout."
+  },
+  "challenge": {
+    "question": "A wave on water has a frequency of 2 Hz and a wavelength of 0.5 m. How fast is it travelling?",
+    "hint": "Speed is frequency multiplied by wavelength.",
+    "progressive_hints": [
+      "Speed is frequency multiplied by wavelength.",
+      "Frequency is 2 per second and wavelength is 0.5 metres. Multiply them.",
+      "2 × 0.5 = 1, and the units work out as metres per second."
+    ],
+    "solution": "Speed = frequency × wavelength = 2 Hz × 0.5 m = 1 m/s. Two crests pass each second and each is half a metre apart, so a crest covers one metre every second.",
+    "accepted_answers": [
+      "1",
+      "1 m/s",
+      "1 metre per second",
+      "1m/s",
+      "1.0",
+      "1.0 m/s"
+    ]
+  },
+  "career_connections": [
+    "telecommunications",
+    "audio engineering",
+    "medical imaging",
+    "seismology",
+    "marine science"
+  ],
+  "further_exploration": [
+    "energy",
+    "velocity",
+    "motion"
+  ],
+  "quiz_questions": [
+    {
+      "id": "waves-what-travels",
+      "question": "When a wave crosses a pond, what actually travels from one side to the other?",
+      "type": "multiple_choice",
+      "options": [
+        "The water itself",
+        "Energy, carried by the disturbance",
+        "Nothing at all moves",
+        "The container holding the water"
+      ],
+      "correct_answers": [
+        "Energy, carried by the disturbance",
+        "2"
+      ],
+      "explanation": "The water mostly moves up and down in place. What travels across the pond is the disturbance, and the energy it carries.",
+      "hint": "Think about a leaf floating on the surface as a wave passes under it.",
+      "progressive_hints": [
+        "Think about a leaf floating on the surface as a wave passes under it.",
+        "The leaf bobs and stays put, so whatever is travelling is not the water."
+      ],
+      "difficulty": "Beginner"
+    },
+    {
+      "id": "waves-speed-formula",
+      "question": "A wave has a frequency of 4 Hz and a wavelength of 3 m. What is its speed?",
+      "type": "multiple_choice",
+      "options": [
+        "0.75 m/s",
+        "7 m/s",
+        "12 m/s",
+        "1.33 m/s"
+      ],
+      "correct_answers": [
+        "12 m/s",
+        "3"
+      ],
+      "explanation": "Speed = frequency × wavelength = 4 × 3 = 12 m/s.",
+      "hint": "Multiply the two quantities you were given.",
+      "progressive_hints": [
+        "Multiply the two quantities you were given.",
+        "4 crests per second, each 3 metres apart."
+      ],
+      "difficulty": "Class 9"
+    },
+    {
+      "id": "waves-frequency-wavelength",
+      "question": "In the same material, if the frequency of a wave is increased, what happens to its wavelength?",
+      "type": "multiple_choice",
+      "options": [
+        "It gets longer",
+        "It gets shorter",
+        "It stays exactly the same",
+        "It becomes zero"
+      ],
+      "correct_answers": [
+        "It gets shorter",
+        "2"
+      ],
+      "explanation": "The material fixes the speed. Since speed = frequency × wavelength, raising one must lower the other.",
+      "hint": "The speed cannot change, so what must give?",
+      "progressive_hints": [
+        "The speed cannot change, so what must give?",
+        "If the product stays the same and one factor grows, the other must shrink."
+      ],
+      "difficulty": "Class 10"
+    }
+  ],
+  "sources": [
+    "Standard wave physics at Class 8-10 level: waves transporting energy rather than material, and the relationship speed = frequency × wavelength. Academic and local-context review is still needed."
+  ],
+  "verification_status": "NEEDS_REVIEW"
+}

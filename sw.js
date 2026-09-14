@@ -27,6 +27,7 @@ const PRECACHE = [
   "./data/lessons/physics/acceleration.json",
   "./data/lessons/physics/velocity.json",
   "./data/lessons/physics/friction.json",
+  "./data/lessons/physics/waves.json",
   "./data/lessons/mathematics/fractions.json",
   "./data/lessons/chemistry/atoms.json",
   "./data/lessons/biology/photosynthesis.json",

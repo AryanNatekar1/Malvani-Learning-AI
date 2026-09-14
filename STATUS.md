@@ -15,21 +15,38 @@ Current Version: **V3.0 local desktop app + deployable web app**
   it keeps the same safety rules about unverified context and draft status.
 - The web app is installable and fully offline: a service worker precaches the
   page and every lesson file, so it opens with no connection after one visit.
-- A concept diagram for all fourteen lessons, several of them interactive
+- A concept diagram for all fifteen lessons, several of them interactive
   (work as an area, momentum as a bar, friction as opposing arrows, gravity as
   two balls falling level). Each has a written text alternative.
 - Search across every lesson and problem with `Ctrl`+`K`, a phone bottom-nav,
   and a "continue where you left off" card.
 - Structured **draft** lessons across Physics, Mathematics, Chemistry, Biology,
-  and Computer Science — 14 in total. All ten original Physics topics are now
-  structured lessons; their `.txt` originals are preserved.
+  and Computer Science — 15 in total. All ten original Physics topics are now
+  structured lessons; their `.txt` originals are preserved, and Waves has been
+  added as the first topic written directly for the structured schema.
+- A "Look around you" observation on every lesson: something to go and watch
+  happen, using only what a student already has. It never asserts what is near
+  the learner, because the app cannot know that — it invites, and the learner
+  supplies the place.
+- Documented **places** in Sindhudurg and the Konkan, each explaining how it
+  came to be that way and what it can teach: laterite and why the soil is red,
+  the sea fort, Amboli and the rain shadow, why Konkan rivers run fast, Devgad,
+  and the coast. Naming a real place is allowed here because it is public
+  geography rather than a claim about an individual. Every record names its
+  sources and lists what a local teacher still has to confirm.
 - Guided teaching actions: simple explanation, example, hint, challenge,
   solution, thinking question, and next-step exploration.
 - Offline quizzes with retry/reveal rules, progressive hints, and local SQLite
   progress/event tracking.
 - Safe local persistence fallback: malformed/unavailable profile storage does
   not stop learning; the app shows an honest storage notice instead.
-- English lesson content with honest Marathi/Malvani fallback behavior.
+- Five declared languages: English, Marathi, Hindi, Konkani, Malvani. Interface
+  labels exist for the first three. Konkani and Malvani are deliberately blank
+  rather than guessed at — Malvani is largely spoken and has no settled
+  spelling — and fall back to English with an honest notice. `data/languages/`
+  lets a speaker contribute reviewed labels as data, ignored until a named
+  reviewer signs the file off. No lesson text exists in any language but
+  English yet, and the app never pretends otherwise.
 - Safety gate for cultural content: only source-backed `VERIFIED` entries may
   appear in student output.
 - Privacy-safe Contextual Learning Engine foundation: a student can select a
@@ -100,8 +117,9 @@ Current Version: **V3.0 local desktop app + deployable web app**
   model, not a measurement of any real household, family, or place, and its
   Go Deeper stage lets a learner investigate how a slower, load-carrying
   return speed would change the total round-trip time.
-- 126 automated tests, including GUI flow, compact-layout reachability,
-  question-trail, state-reset, privacy-boundary, and resize smoke tests.
+- 151 automated tests, including GUI flow, compact-layout reachability,
+  question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
+  checks that observations name no place and that every place cites a source.
 
 ## Not yet claimed as complete
 

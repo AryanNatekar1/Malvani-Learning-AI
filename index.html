@@ -478,6 +478,7 @@ const LESSON_FILES = [
   "data/lessons/physics/acceleration.json",
   "data/lessons/physics/velocity.json",
   "data/lessons/physics/friction.json",
+  "data/lessons/physics/waves.json",
   "data/lessons/mathematics/fractions.json",
   "data/lessons/chemistry/atoms.json",
   "data/lessons/biology/photosynthesis.json",
@@ -797,6 +798,51 @@ const CONCEPT_VISUALS = {
         read: `W = F × d = <b>${v["w-f"]} N</b> × <b>${v["w-d"]} m</b> = <em>${r1(W)} J</em>` +
               (v["w-d"] === 0 ? `<br>Push all you like — with no movement, no work is done.` : ""),
         alt: `A rectangle whose height is the ${v["w-f"]} newton force and whose width is the ${v["w-d"]} metre distance. Its area, ${r1(W)} joules, is the work done.`
+      };
+    }
+  },
+  waves: {
+    title: "Wavelength, frequency, and the speed they make",
+    caption: "Crest to crest is the wavelength. Frequency is how many pass the marked line each second.",
+    controls: [
+      {id:"wv-l", label:"Wavelength (crest to crest)", min:0.5, max:4, step:0.5, value:2, unit:" m"},
+      {id:"wv-f", label:"Frequency (crests per second)", min:0.5, max:4, step:0.5, value:2, unit:" Hz"}
+    ],
+    draw(v){
+      const lam = v["wv-l"], f = v["wv-f"], speed = lam * f;
+      // 40 px on screen stands for 1 m, so the drawn wavelength is to scale
+      // against the axis ticks and the student can count metres off it.
+      const PX = 40, wpx = lam * PX, x0 = 30, x1 = 340;
+      let d = `M${x0} 88`;
+      for(let x = x0; x <= x1; x += 2){
+        d += ` L${x} ${(88 - 34 * Math.sin((x - x0) / wpx * 2 * Math.PI)).toFixed(1)}`;
+      }
+      // First crest sits a quarter-wavelength in; the next is one full one along.
+      const c1 = x0 + wpx * 0.25, c2 = c1 + wpx;
+      const showSpan = c2 <= x1 - 4;
+      // Label every second metre. Ticking the whole axis but numbering only
+      // part of it would make the last number read as the end of the scale.
+      const ticks = [];
+      for(let m = 0; x0 + m*PX <= x1; m++){
+        const x = x0 + m*PX, major = m % 2 === 0;
+        ticks.push(`<line x1="${x}" y1="138" x2="${x}" y2="${major?146:142}" class="ax"/>` +
+          (major ? `<text x="${x}" y="160" class="lbl" text-anchor="middle">${m}</text>` : ""));
+      }
+      return {
+        svg: svg(`
+          <line x1="${x0}" y1="138" x2="${x1}" y2="138" class="ax"/>
+          ${ticks.join("")}
+          <text x="${x1 + 4}" y="142" class="lbl">m</text>
+          <path d="${d}" class="acc" stroke-width="2.4"/>
+          ${showSpan ? `<line x1="${c1}" y1="40" x2="${c2}" y2="40" class="acc" stroke-width="1.6"
+              marker-start="url(#mkA)" marker-end="url(#mkA)"/>
+            <text x="${(c1+c2)/2}" y="30" class="lbl-a" text-anchor="middle">${lam} m</text>`
+            : `<text x="${x0}" y="30" class="lbl-a">wavelength ${lam} m</text>`}
+          <line x1="300" y1="18" x2="300" y2="132" class="gl" stroke-dasharray="3 4"/>
+          <text x="296" y="176" class="lbl" text-anchor="end">${f} crest${f===1?"":"s"} past this line each second</text>`, 190),
+        read: `v = f × λ = <b>${f} Hz</b> × <b>${lam} m</b> = <em>${r1(speed)} m/s</em>` +
+              `<br>Hold the speed still and the two must trade: a shorter wavelength needs a higher frequency.`,
+        alt: `A wave drawn to scale against a metre axis. One wavelength measures ${lam} metres, and ${f} crests pass a marked line every second, giving a speed of ${r1(speed)} metres per second.`
       };
     }
   },

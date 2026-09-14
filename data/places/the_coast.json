@@ -10,12 +10,12 @@
     {
       "ask": "Does the water travel across the sea to reach the shore?",
       "answer": "No, and this is the most misunderstood thing about waves. The water mostly moves in circles and returns roughly where it started. What travels is the disturbance, carrying energy. A floating boat rises and falls as a wave passes but is not carried along with it.",
-      "links_to": "energy"
+      "links_to": "waves"
     },
     {
       "ask": "Why do waves get taller and then break near the shore?",
       "answer": "In shallow water the bottom of the wave drags and slows, while the top keeps its speed. The wave bunches up, steepens, and eventually the top outruns the base and topples forward. Breaking is the moment the wave can no longer hold its shape.",
-      "links_to": "velocity"
+      "links_to": "waves"
     },
     {
       "ask": "Why is the sea calm in a bay and rough on a headland?",
@@ -36,7 +36,6 @@
     "Flotation by displacement, Archimedes' principle: standard physics."
   ],
   "needs_local_check": [
-    "There is no waves lesson in the app yet, so these questions currently point at related lessons rather than a dedicated one.",
     "Any beach visit is a safety judgement for a teacher, not for this file. The container demonstration is the safe default.",
     "Descriptions of water clarity at Tarkarli vary with season and should not be taught as a constant."
   ],
