@@ -197,6 +197,7 @@ input::placeholder,textarea::placeholder{color:var(--dim)}
 .block{border:1px solid var(--edge); border-radius:var(--r-md); padding:18px 20px; background:rgba(12,20,34,.42)}
 .block h4{font-size:12px; font-family:var(--f-mono); font-weight:500; letter-spacing:.15em; text-transform:uppercase;
   color:var(--dim); margin-bottom:9px}
+.block p + p{margin-top:13px}
 .pills{display:flex; flex-wrap:wrap; gap:8px}
 .pill{font-size:13px; padding:7px 13px; border-radius:999px; border:1px solid var(--edge);
   background:rgba(120,170,215,.07); color:var(--muted)}
@@ -268,6 +269,19 @@ a.prow:hover{border-color:var(--edge-bright); background:rgba(120,170,215,.10)}
 .myths li{position:relative; padding-left:28px; color:var(--muted)}
 .myths li::before{content:"✗"; position:absolute; left:0; top:0; color:var(--warn); font-weight:700;
   font-family:var(--f-mono); font-size:15px}
+/* Language picker */
+.langpick{display:flex; align-items:center; gap:6px; border:1px solid var(--edge); border-radius:999px;
+  padding:5px 10px 5px 11px; background:rgba(12,20,34,.6); cursor:pointer}
+.langpick svg{width:14px; height:14px; stroke:var(--dim); fill:none; stroke-width:1.5; flex:none}
+.langpick select{background:transparent; border:0; color:var(--muted); font-family:var(--f-body);
+  font-size:12.5px; cursor:pointer; padding:1px 2px; max-width:96px}
+.langpick select:focus-visible{outline:2px solid var(--phase-a); outline-offset:3px; border-radius:4px}
+.langpick option{background:#0d1626; color:#dbe6f2}
+.langnote{margin:12px 0 0; font-size:13px; color:var(--warn); background:rgba(245,176,84,.08);
+  border:1px solid rgba(245,176,84,.26); border-radius:var(--r-md); padding:10px 13px}
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden;
+  clip:rect(0 0 0 0); white-space:nowrap; border:0}
+
 /* Places */
 .pgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:14px}
 /* Column layout so the "Teaches…" line lands on the same baseline in every
@@ -416,6 +430,12 @@ footer a{color:var(--muted)}
   <button class="btn btn-ghost" id="install-btn" hidden style="padding:8px 15px;min-height:38px;font-size:13px;white-space:nowrap">
     Install app
   </button>
+  <label class="langpick" title="Lesson language">
+    <span class="sr-only">Lesson language</span>
+    <svg viewBox="0 0 24 24" aria-hidden="true" stroke-linecap="round"><circle cx="12" cy="12" r="9"/>
+      <path d="M3 12h18M12 3a15 15 0 0 1 0 18a15 15 0 0 1 0-18"/></svg>
+    <select id="lang-select"></select>
+  </label>
   <button class="navbtn" data-nav="#/">Learn</button>
   <button class="navbtn" data-nav="#/places">Places</button>
   <button class="navbtn" data-nav="#/progress">Progress</button>
@@ -557,6 +577,14 @@ function tickClock(){
 const $ = s => document.querySelector(s);
 const app = () => document.getElementById("app");
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+/* Escape, then honour blank-line paragraph breaks in lesson prose. Longer
+   explanations are written in paragraphs, and collapsing them into one block
+   makes a wall of text — which hurts most in a language the reader is
+   working harder to read. */
+function escPara(s){
+  return String(s==null?"":s).split(/\n\s*\n/).map(p => p.trim()).filter(Boolean)
+    .map(p => `<p>${esc(p)}</p>`).join("");
+}
 function el(html){ const t=document.createElement("template"); t.innerHTML=html.trim(); return t.content.firstElementChild; }
 function list(arr){ return (arr||[]).map(x=>`<span class="pill">${esc(x)}</span>`).join(""); }
 
@@ -634,6 +662,38 @@ async function loadAll(){
   state.scenarios = scenarios;
   state.places = places.filter(Boolean);
 }
+/* ============ language ============
+ * A deliberate mirror of resolve_lesson_language() in src/language_engine.py.
+ * English is the baseline; any other language must be explicitly VERIFIED and
+ * carry a source before a student sees it. A machine-assisted draft sitting in
+ * a lesson file therefore cannot reach anyone until a named person has checked
+ * it — which is the whole point, and why the two implementations have to agree.
+ */
+const LANGUAGES = ["English", "Marathi", "Hindi", "Konkani", "Malvani"];
+
+function currentLang(){
+  try{
+    const saved = localStorage.getItem("mla.lang");
+    if(LANGUAGES.includes(saved)) return saved;
+  }catch(e){}
+  return "English";
+}
+function setLang(value){
+  try{ localStorage.setItem("mla.lang", value); }catch(e){}
+}
+function resolveLessonLanguage(lesson, requested){
+  const meta = (lesson.language_metadata || {})[requested];
+  const usable = requested === "English" || !!(
+    (lesson.content || {})[requested] &&
+    meta && meta.verification_status === "VERIFIED" && meta.source
+  );
+  if(usable) return { lang: requested, notice: null };
+  return {
+    lang: "English",
+    notice: `Reviewed ${requested} lesson text is not available for this topic yet. Showing English instead.`
+  };
+}
+
 const lessonByTopic = t => state.lessons.find(l => l.topic === t);
 const scenarioById = id => state.scenarios.find(s => s.id === id);
 const scenariosForTopic = t => state.scenarios.filter(s => s.topic === t);
@@ -1193,7 +1253,8 @@ function renderLesson(topic){
   const l = lessonByTopic(topic);
   if(!l){ location.hash = "#/"; return; }
   markOpened(topic);
-  const en = l.content.English;
+  const res = resolveLessonLanguage(l, currentLang());
+  const en = l.content[res.lang];
   const localEx = verifiedOnly(l.local_example);
   const culture = verifiedOnly(l.culture_connection);
   const scen = scenariosForTopic(topic);
@@ -1205,6 +1266,7 @@ function renderLesson(topic){
       <span class="badge badge-warn">Draft · needs teacher review</span>
     </div>
     <h1 style="font-size:clamp(27px,5vw,40px)">${esc(l.title)}</h1>
+    ${res.notice?`<p class="langnote">${esc(res.notice)}</p>`:""}
     <p class="lede" style="margin-top:14px">${esc(en.simple_explanation)}</p>
 
     <div class="tabs" role="tablist">
@@ -1222,7 +1284,7 @@ function renderLesson(topic){
   const panels = {
     understand: () => {
       const p = el(`<div class="stack gap-m">
-        <div class="block"><h4>In more detail</h4><p>${esc(en.detailed_explanation)}</p></div>
+        <div class="block"><h4>In more detail</h4>${escPara(en.detailed_explanation)}</div>
         <div data-visual-slot></div>
         ${en.everyday_example?`<div class="block"><h4>An everyday example</h4><p>${esc(en.everyday_example)}</p></div>`:""}
         ${localEx?`<div class="block"><h4>Near you</h4><p>${esc(localEx.text)}</p></div>`:""}
@@ -1988,6 +2050,19 @@ window.addEventListener("appinstalled", () => {
   const btn = document.getElementById("install-btn");
   if(btn) btn.hidden = true;
 });
+
+/* The picker offers every declared language, and the resolver decides whether
+   the choice can actually be honoured. Marking a language here that has no
+   reviewed text is not a bug: the lesson says plainly that it fell back to
+   English, which is more honest than hiding the option and implying the
+   language is unsupported. */
+(function initLanguagePicker(){
+  const sel = document.getElementById("lang-select");
+  if(!sel) return;
+  sel.innerHTML = LANGUAGES.map(v => `<option value="${v}">${v}</option>`).join("");
+  sel.value = currentLang();
+  sel.addEventListener("change", () => { setLang(sel.value); route(); });
+})();
 
 tickClock();
 setInterval(tickClock, 20000);

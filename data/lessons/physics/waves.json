@@ -3,7 +3,11 @@
   "title": "Waves",
   "subject": "Physics",
   "topic": "waves",
-  "aliases": ["wave", "wavelength", "frequency"],
+  "aliases": [
+    "wave",
+    "wavelength",
+    "frequency"
+  ],
   "levels": [
     "Beginner",
     "Class 8",
@@ -15,12 +19,22 @@
       "simple_explanation": "A wave carries energy from one place to another without carrying the material along with it.",
       "detailed_explanation": "Drop a stone into still water and rings spread outward. It looks as though the water is travelling to the edge, but it is not. Each piece of water rises and falls roughly in place, and what moves outward is the disturbance. That is what a wave is: a pattern that travels, carrying energy, through a material that stays behind. A wave is described by three quantities. Its wavelength is the distance from one crest to the next. Its frequency is how many crests pass a fixed point each second, measured in hertz. Its speed is how fast a crest travels, and the three are tied together by speed equals frequency multiplied by wavelength. In a given material the speed is fixed by the material itself, so raising the frequency shortens the wavelength and lowering it stretches the wavelength out. Sound is a wave in air, light is a wave too, and both obey the same relationship.",
       "everyday_example": "When someone calls to you across a field, the air between you does not travel into your ear. It is squeezed and released over and over, and that pattern travels as sound."
+    },
+    "Marathi": {
+      "simple_explanation": "तरंग ऊर्जा एका ठिकाणाहून दुसऱ्या ठिकाणी नेतो, पण ज्या पदार्थातून तो जातो तो पदार्थ मात्र बरोबर नेत नाही.",
+      "detailed_explanation": "स्थिर पाण्यात दगड टाकला की गोल गोल तरंग बाहेरच्या दिशेने पसरत जातात. पाणी काठापर्यंत वाहत चालले आहे असे वाटते, पण तसे नसते. पाण्याचा प्रत्येक भाग जवळपास जागच्या जागी वर-खाली होतो, आणि बाहेर सरकत जाते ती फक्त खळबळ. तरंग म्हणजे हेच — पदार्थ जागीच राहतो आणि त्यातून ऊर्जा घेऊन जाणारा आकृतिबंध पुढे सरकतो.\n\nतरंगाचे वर्णन तीन राशींनी करतात. एका शिखरापासून पुढच्या शिखरापर्यंतचे अंतर म्हणजे तरंगलांबी. एका ठराविक बिंदूवरून दर सेकंदाला किती शिखरे जातात ती वारंवारता, जिचे एकक हर्ट्झ आहे. आणि शिखर किती वेगाने पुढे जाते तो तरंगाचा वेग. या तिन्हींचा संबंध असा: वेग = वारंवारता × तरंगलांबी.\n\nएका ठराविक माध्यमात वेग त्या माध्यमानेच ठरतो. त्यामुळे वारंवारता वाढवली की तरंगलांबी कमी होते, आणि वारंवारता कमी केली की तरंगलांबी वाढते. ध्वनी हा हवेतील तरंग आहे, प्रकाशही तरंगच आहे, आणि दोघेही हाच नियम पाळतात.",
+      "everyday_example": "मैदानाच्या पलीकडून कोणी हाक मारली, तर मधली हवा तुमच्या कानात येत नाही. ती पुन्हा पुन्हा दाबली जाते आणि सैल सोडली जाते, आणि तोच आकृतिबंध ध्वनी म्हणून प्रवास करतो."
     }
   },
   "language_metadata": {
     "English": {
       "verification_status": "NEEDS_REVIEW",
       "source": null
+    },
+    "Marathi": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null,
+      "translator_note": "Machine-assisted Marathi draft, not yet checked by a Marathi speaker. The app will not show it to a student while this says NEEDS_REVIEW. One choice worth a second opinion: this uses तरंग as the technical term throughout, since that is what the state-board textbooks use, rather than लाट, which a student is more likely to say for a sea wave. If लाट reads better for beginners, change it."
     }
   },
   "local_example": {

@@ -40,13 +40,18 @@ Current Version: **V3.0 local desktop app + deployable web app**
   progress/event tracking.
 - Safe local persistence fallback: malformed/unavailable profile storage does
   not stop learning; the app shows an honest storage notice instead.
-- Five declared languages: English, Marathi, Hindi, Konkani, Malvani. Interface
-  labels exist for the first three. Konkani and Malvani are deliberately blank
-  rather than guessed at — Malvani is largely spoken and has no settled
-  spelling — and fall back to English with an honest notice. `data/languages/`
-  lets a speaker contribute reviewed labels as data, ignored until a named
-  reviewer signs the file off. No lesson text exists in any language but
-  English yet, and the app never pretends otherwise.
+- Five declared languages: English, Marathi, Hindi, Konkani, Malvani, with a
+  picker in the web app. Interface labels exist for the first three. Konkani
+  and Malvani are deliberately blank rather than guessed at — Malvani is
+  largely spoken and has no settled spelling — and fall back to English with an
+  honest notice. `data/languages/` lets a speaker contribute reviewed labels as
+  data, ignored until a named reviewer signs the file off.
+- The same language gate now runs in both apps: a non-English lesson variant
+  must be `VERIFIED` **and** name a source before a student sees it. A test
+  compares the JavaScript gate against the Python one so the two cannot drift.
+- Waves carries the first Marathi lesson draft. It is machine-assisted and
+  unreviewed, so it stays hidden; it is in the repository for a Marathi speaker
+  to correct, and becomes visible only when they set it `VERIFIED` and sign it.
 - Safety gate for cultural content: only source-backed `VERIFIED` entries may
   appear in student output.
 - Privacy-safe Contextual Learning Engine foundation: a student can select a
@@ -117,7 +122,7 @@ Current Version: **V3.0 local desktop app + deployable web app**
   model, not a measurement of any real household, family, or place, and its
   Go Deeper stage lets a learner investigate how a slower, load-carrying
   return speed would change the total round-trip time.
-- 151 automated tests, including GUI flow, compact-layout reachability,
+- 156 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place and that every place cites a source.
 
