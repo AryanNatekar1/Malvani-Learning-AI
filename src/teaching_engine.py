@@ -6,7 +6,8 @@ from dataclasses import dataclass
 
 from culture_engine import context_availability_notice, student_context_text
 from language_engine import LanguageResolution, resolve_lesson_language
-from lesson_models import Lesson
+from lesson_models import Lesson, ObservationActivity
+from place_engine import Place, places_for_topic
 
 
 BEGINNER_LEVELS = {"Beginner", "Class 8"}
@@ -88,6 +89,10 @@ class TeachingEngine:
             return self._challenge_section(lesson, "SOLUTION", "solution")
         if action == "think":
             return self._single_if_present("THINK", lesson.think_question)
+        if action == "observe":
+            return self._observation_sections(lesson.observe_around_you)
+        if action == "places":
+            return self._place_sections(lesson.topic)
         if action == "continue":
             return self._list_section("EXPLORE NEXT", lesson.further_exploration)
 
@@ -95,10 +100,70 @@ class TeachingEngine:
         sections = [LessonSection("CONCEPT", explanation)]
         sections.extend(self._example_sections(lesson, everyday_example, culture_mode))
         sections.extend(self._list_section("REAL-WORLD USE", lesson.real_world_use))
+        sections.extend(self._observation_sections(lesson.observe_around_you))
         sections.extend(self._single_if_present("THINK", lesson.think_question))
         sections.extend(self._challenge_section(lesson, "TRY IT", "question"))
         sections.extend(self._list_section("CAREER CONNECTIONS", lesson.career_connections))
         return sections
+
+    @staticmethod
+    def _observation_sections(
+        activity: ObservationActivity | None,
+    ) -> list[LessonSection]:
+        """Render the go-and-watch activity the browser app also shows.
+
+        The explanation is deliberately last. On screen the browser hides it
+        behind a button; in plain text the best equivalent is to put it after
+        the instructions and label it, so a learner who wants to look first
+        can stop reading at the right point.
+        """
+        if activity is None:
+            return []
+        lines = [
+            f"Find this: {activity.invitation}",
+            f"Do this: {activity.what_to_do}",
+            f"Watch for this: {activity.what_to_notice}",
+        ]
+        if activity.needs:
+            lines.insert(0, "You need: " + ", ".join(activity.needs))
+        if activity.safety_note:
+            lines.append(f"Stay safe: {activity.safety_note}")
+        lines.append(f"Why it happens (read after watching): {activity.concept_link}")
+        return [LessonSection("LOOK AROUND YOU", "\n".join(lines))]
+
+    @staticmethod
+    def _place_sections(topic: str) -> list[LessonSection]:
+        """Name documented places whose science connects to this lesson.
+
+        A place record states public geography rather than a claim about the
+        learner, so unlike local context it needs no verification gate to be
+        shown. It still carries its draft status, which the body states.
+        """
+        places: tuple[Place, ...] = places_for_topic(topic)
+        if not places:
+            return [
+                LessonSection(
+                    "PLACES",
+                    "No place record connects to this lesson yet.",
+                )
+            ]
+        blocks = []
+        for place in places:
+            questions = [
+                f"  - {question.ask}\n    {question.answer}"
+                for question in place.questions
+                if question.links_to == topic
+            ]
+            blocks.append(
+                f"{place.name} ({place.where})\n"
+                f"{place.known_for}\n"
+                + "\n".join(questions)
+            )
+        blocks.append(
+            "These are draft records. Each one lists what a local teacher "
+            "still needs to confirm; see data/places/."
+        )
+        return [LessonSection("PLACES NEAR YOU", "\n\n".join(blocks))]
 
     @staticmethod
     def _single_if_present(title: str, text: str) -> list[LessonSection]:

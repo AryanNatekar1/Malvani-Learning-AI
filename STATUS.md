@@ -27,13 +27,17 @@ Current Version: **V3.0 local desktop app + deployable web app**
 - A "Look around you" observation on every lesson: something to go and watch
   happen, using only what a student already has. It never asserts what is near
   the learner, because the app cannot know that — it invites, and the learner
-  supplies the place.
+  supplies the place. Both apps show it, on its own tab in the browser and as
+  a lesson action on the desktop, with the explanation placed after the
+  instructions so a learner can stop reading and go and look.
 - Documented **places** in Sindhudurg and the Konkan, each explaining how it
   came to be that way and what it can teach: laterite and why the soil is red,
   the sea fort, Amboli and the rain shadow, why Konkan rivers run fast, Devgad,
   and the coast. Naming a real place is allowed here because it is public
   geography rather than a claim about an individual. Every record names its
-  sources and lists what a local teacher still has to confirm.
+  sources and lists what a local teacher still has to confirm. Reachable in
+  both apps: a Places section in the browser, a "Places near you" lesson
+  action on the desktop.
 - Guided teaching actions: simple explanation, example, hint, challenge,
   solution, thinking question, and next-step exploration.
 - Offline quizzes with retry/reveal rules, progressive hints, and local SQLite
@@ -122,9 +126,10 @@ Current Version: **V3.0 local desktop app + deployable web app**
   model, not a measurement of any real household, family, or place, and its
   Go Deeper stage lets a learner investigate how a slower, load-carrying
   return speed would change the total round-trip time.
-- 156 automated tests, including GUI flow, compact-layout reachability,
+- 164 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
-  checks that observations name no place and that every place cites a source.
+  checks that observations name no place, that every place cites a source, and
+  that the desktop app teaches the same content the website does.
 
 ## Not yet claimed as complete
 

@@ -1426,6 +1426,8 @@ class LearningScreen(Screen):
             ("Open challenge", "challenge"),
             ("Challenge solution", "solution"),
             ("Ask me a question", "think"),
+            ("Look around you", "observe"),
+            ("Places near you", "places"),
             ("Continue", "continue"),
         )
         for index, (label, action) in enumerate(action_buttons):
