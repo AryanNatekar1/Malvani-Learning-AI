@@ -91,9 +91,10 @@ body{
   border:1px solid transparent; border-radius:999px; padding:8px 14px; cursor:pointer; transition:.18s}
 .navbtn:hover{color:var(--text); background:rgba(120,170,215,.10)}
 .navbtn[aria-current="true"]{color:var(--text); border-color:var(--edge-bright); background:rgba(120,170,215,.12)}
-/* Three nav buttons and the install button crowd the header well before the
-   mobile nav takes over at 720px, so shed the optional chrome earlier rather
-   than letting the brand wrap onto two lines. */
+/* The header carries brand, search, install, language and three nav buttons,
+   which is more than fits below roughly 980px. Shed the optional chrome first,
+   then hand navigation to the bottom bar at 900px, rather than letting the
+   brand truncate to "Malvani Learnin…". */
 @media(max-width:980px){ .brand span{display:none} .clock{display:none} }
 @media(max-width:720px){
   .clock{display:none} .brand span{display:none}
@@ -370,7 +371,7 @@ figure.sv .f-panel{fill:rgba(120,170,215,.10); stroke:var(--edge)}
 
 /* ---------- mobile bottom nav ---------- */
 .mobnav{display:none}
-@media(max-width:720px){
+@media(max-width:900px){
   .mobnav{display:grid; grid-auto-flow:column; grid-auto-columns:1fr; position:fixed; left:0; right:0; bottom:0; z-index:45;
     background:linear-gradient(180deg,rgba(8,13,23,.86),rgba(8,13,23,.98)); border-top:1px solid var(--edge);
     backdrop-filter:blur(14px); padding-bottom:env(safe-area-inset-bottom)}
@@ -1249,9 +1250,10 @@ function renderGrid(){
 }
 
 /* ---------- lesson detail ---------- */
-function renderLesson(topic){
+function renderLesson(topic, tab){
   const l = lessonByTopic(topic);
   if(!l){ location.hash = "#/"; return; }
+  tab = tab || "understand";
   markOpened(topic);
   const res = resolveLessonLanguage(l, currentLang());
   const en = l.content[res.lang];
@@ -1313,12 +1315,21 @@ function renderLesson(topic){
     quiz: () => buildQuiz(l),
     solve: () => buildSolvePicker(scen)
   };
-  function show(name){
+  /* Tabs live in the URL, so a teacher can send a class straight to the
+     experiment rather than to the top of the lesson. Changing tab replaces the
+     history entry instead of pushing one, so Back leaves the lesson rather
+     than walking the student through every tab they opened. */
+  function show(name, updateHash){
+    if(!panels[name]) name = "understand";
     view.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", String(t.dataset.tab === name)));
     panel.replaceChildren(panels[name]());
+    if(updateHash){
+      const want = `#/lesson/${encodeURIComponent(topic)}` + (name === "understand" ? "" : `/${name}`);
+      if(location.hash !== want) history.replaceState(null, "", want);
+    }
   }
-  view.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => show(t.dataset.tab)));
-  show("understand");
+  view.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => show(t.dataset.tab, true)));
+  show(tab, false);
 }
 
 /* "Look around you" — the honest half of region-based learning.
@@ -1881,7 +1892,10 @@ function route(){
                 : h.startsWith("#/places") || h.startsWith("#/place/") ? "#/places" : "#/";
   document.querySelectorAll(".navbtn,.mobnav [data-nav]").forEach(b =>
     b.setAttribute("aria-current", String(b.dataset.nav === current)));
-  if(h.startsWith("#/lesson/")) return renderLesson(decodeURIComponent(h.slice(9)));
+  if(h.startsWith("#/lesson/")){
+    const parts = h.slice(9).split("/");
+    return renderLesson(decodeURIComponent(parts[0]), parts[1]);
+  }
   if(h.startsWith("#/solve/")) return renderSolver(decodeURIComponent(h.slice(8)));
   if(h.startsWith("#/place/")) return renderPlace(decodeURIComponent(h.slice(8)));
   if(h.startsWith("#/places")) return renderPlaces();

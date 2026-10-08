@@ -81,6 +81,16 @@ class WebAppLanguageParityTests(unittest.TestCase):
         self.assertIn("function escPara(", self.html)
         self.assertIn("escPara(en.detailed_explanation)", self.html)
 
+    def test_lesson_tabs_are_addressable_and_fall_back_safely(self) -> None:
+        """A teacher can link straight to a tab; a bad one must not blank the page."""
+        self.assertIn("function renderLesson(topic, tab)", self.html)
+        self.assertIn('tab = tab || "understand"', self.html)
+        self.assertIn('if(!panels[name]) name = "understand"', self.html)
+        # replaceState, not pushState: Back should leave the lesson rather than
+        # walking the student back through every tab they opened.
+        self.assertIn("history.replaceState", self.html)
+        self.assertNotIn("history.pushState", self.html)
+
 
 if __name__ == "__main__":
     unittest.main()
