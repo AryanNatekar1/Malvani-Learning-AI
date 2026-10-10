@@ -135,7 +135,16 @@ Current Version: **V3.0 local desktop app + deployable web app**
   model, not a measurement of any real household, family, or place, and its
   Go Deeper stage lets a learner investigate how a slower, load-carrying
   return speed would change the total round-trip time.
-- 180 automated tests, including GUI flow, compact-layout reachability,
+- Lesson drafting from a searched topic, for subjects the app has no lesson
+  for. It assembles a draft in the same schema a hand-written lesson uses:
+  explanation from cited sources, suggested places, reviewer notes, and the
+  claims the generator tried to assert without evidence. It writes to
+  `data/lesson_drafts/`, never `data/lessons/`, is always `NEEDS_REVIEW`, and
+  invents no quiz or challenge — a plausible machine attempt at those would
+  look finished when it is not. The regional connection is matched against
+  already-documented places rather than written, because a fluent invented
+  link to Sindhudurg is exactly the failure this project exists to refuse.
+- 194 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that
