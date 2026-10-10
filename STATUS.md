@@ -65,6 +65,13 @@ Current Version: **V3.0 local desktop app + deployable web app**
   session-only, and never GPS/location data. No reviewed context records are
   installed yet, so the normal lesson path remains the default.
 - Small offline neural intent classifier and provider-neutral AI interface.
+- The gate for generated answers, built before any generator: a retrieved
+  passage must carry its source URL, every claim must name the passage it came
+  from, and anything a passage does not support is stripped and reported
+  instead of shown. With no search configured the result is an honest "I could
+  not find this in a source I can show you" rather than a guess. The support
+  check is lexical, which catches wholesale invention and nothing subtler, and
+  the student-facing text says the answer was assembled rather than taught.
 - Built-in concept diagrams for selected Physics lessons and an interactive,
   local Momentum explorer with mass/velocity controls, a prediction-before-
   reveal comparison, a directional diagram, and a text alternative. It has no
@@ -128,7 +135,7 @@ Current Version: **V3.0 local desktop app + deployable web app**
   model, not a measurement of any real household, family, or place, and its
   Go Deeper stage lets a learner investigate how a slower, load-carrying
   return speed would change the total round-trip time.
-- 165 automated tests, including GUI flow, compact-layout reachability,
+- 180 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that
