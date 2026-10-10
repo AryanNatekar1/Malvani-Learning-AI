@@ -1,0 +1,106 @@
+{
+  "id": "mathematics.percentages",
+  "title": "Percentages",
+  "subject": "Mathematics",
+  "topic": "percentages",
+  "aliases": ["percentage", "percent", "per cent"],
+  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "A percentage says how many parts you have out of every hundred, which lets you compare things that started from different totals.",
+      "detailed_explanation": "Per cent means per hundred. Writing 45% is the same as writing the fraction 45/100, or the decimal 0.45. To turn any score into a percentage, divide the part by the whole and multiply by 100.\n\nThe reason this matters is comparison. Eighteen marks out of twenty and twenty-seven out of thirty are hard to rank by eye, because the totals differ. Convert them and the question answers itself: 18/20 is 90% and 27/30 is 90%, so the two performances are identical even though neither the marks nor the totals match.\n\nA percentage is always a percentage of something, and forgetting what that something is causes most of the mistakes. A 50% increase followed by a 50% decrease does not return you to where you began, because the second 50% is taken from a larger number than the first was added to."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "real_world_use": [
+    "exam marks and grades",
+    "shop discounts",
+    "bank interest",
+    "battery and signal indicators",
+    "reading survey results"
+  ],
+  "common_misconceptions": [
+    "A percentage is just another word for the number of marks you scored.",
+    "Adding 50% and then taking away 50% brings you back to the number you started with.",
+    "You can add two percentages together even when they are percentages of different totals."
+  ],
+  "observe_around_you": {
+    "invitation": "Find two of your own marked papers where the totals are different — say one out of 20 and one out of 50.",
+    "what_to_do": "Write down both scores. Decide which one you think was your better performance. Then convert both to percentages: divide the marks by the total and multiply by 100.",
+    "what_to_notice": "Did the percentages agree with your guess? Look especially at whether the paper with the higher mark was really the better result.",
+    "concept_link": "Raw marks cannot be compared across different totals, which is exactly the job a percentage does. It puts both scores on the same scale of a hundred so the comparison becomes fair.",
+    "needs": ["two of your own marked papers with different totals"],
+    "safety_note": null
+  },
+  "think_question": "A shop raises a price by 20%, then later reduces it by 20%. Is the final price the same as the original? Explain your reasoning before calculating.",
+  "reasoning_guide": {
+    "required_keywords": ["different", "larger"],
+    "misconception_keywords": ["same price", "back to original"],
+    "correct_feedback": "Good reasoning: you noticed the second percentage is taken from a different, larger amount.",
+    "partial_feedback": "You have started well. Say what number each percentage is calculated from, and whether those two numbers are the same.",
+    "misconception_feedback": "The price does not return to where it began. The 20% rise is taken from the original price, but the 20% fall is taken from the raised price, which is larger."
+  },
+  "challenge": {
+    "question": "A student scored 36 out of 45 in a test. What is the score as a percentage?",
+    "hint": "Divide the marks by the total, then multiply by 100.",
+    "progressive_hints": [
+      "Divide the marks by the total, then multiply by 100.",
+      "36 ÷ 45 = 0.8",
+      "0.8 × 100 gives the percentage."
+    ],
+    "solution": "36 ÷ 45 = 0.8, and 0.8 × 100 = 80%. The student scored 80%.",
+    "accepted_answers": ["80", "80%", "80 percent", "80 per cent"]
+  },
+  "career_connections": ["accounting", "banking", "data analysis", "retail", "public health statistics"],
+  "further_exploration": ["fractions", "algorithms"],
+  "quiz_questions": [
+    {
+      "id": "percentages-meaning",
+      "question": "What does 65% mean?",
+      "type": "multiple_choice",
+      "options": ["65 parts out of 100", "65 parts out of 65", "65 added to 100", "65 times 100"],
+      "correct_answers": ["65 parts out of 100", "1"],
+      "explanation": "Per cent means per hundred, so 65% is 65 out of every 100.",
+      "hint": "Break the word apart: per and cent.",
+      "progressive_hints": [
+        "Break the word apart: per and cent.",
+        "Cent means hundred, as in a century."
+      ],
+      "difficulty": "Beginner"
+    },
+    {
+      "id": "percentages-compare",
+      "question": "Which is the better score: 21 out of 25, or 32 out of 40?",
+      "type": "multiple_choice",
+      "options": ["21 out of 25", "32 out of 40", "They are equal", "You cannot compare them"],
+      "correct_answers": ["21 out of 25", "1"],
+      "explanation": "21/25 is 84% and 32/40 is 80%, so 21 out of 25 is the stronger result even though it is fewer marks.",
+      "hint": "Convert both to percentages before comparing.",
+      "progressive_hints": [
+        "Convert both to percentages before comparing.",
+        "21 ÷ 25 = 0.84, and 32 ÷ 40 = 0.80."
+      ],
+      "difficulty": "Class 8"
+    },
+    {
+      "id": "percentages-of-amount",
+      "question": "A shirt costs 800 rupees and is reduced by 25%. What is the new price?",
+      "type": "multiple_choice",
+      "options": ["775 rupees", "600 rupees", "200 rupees", "775 rupees off"],
+      "correct_answers": ["600 rupees", "2"],
+      "explanation": "25% of 800 is 200, and 800 − 200 = 600 rupees.",
+      "hint": "Work out the discount first, then subtract it.",
+      "progressive_hints": [
+        "Work out the discount first, then subtract it.",
+        "25% is one quarter, and a quarter of 800 is 200."
+      ],
+      "difficulty": "Class 9"
+    }
+  ],
+  "sources": [
+    "Standard Class 8-10 mathematics: percentage as parts per hundred, conversion between fraction, decimal and percentage, and percentage change. Academic review is still needed."
+  ],
+  "verification_status": "NEEDS_REVIEW"
+}

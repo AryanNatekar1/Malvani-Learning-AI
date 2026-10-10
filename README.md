@@ -17,7 +17,7 @@ labelled local draft lesson data, guided questions, quizzes, progress tracking,
 and a small optional AI-routing component. It is not a generic
 ChatGPT clone and it does not require an API key.
 
-The **web app** (`index.html`, deployed to GitHub Pages) carries all fifteen
+The **web app** (`index.html`, deployed to GitHub Pages) carries all nineteen
 structured lessons, their quizzes and challenges, and all three Problem Solver
 → Go Deeper activities. It reads the very same `data/lessons/` and
 `data/scenarios/` JSON files the desktop app reads, so there is one source of
@@ -45,10 +45,10 @@ diagram carries a text alternative, so nothing is available only as a picture.
 - Structured, guided starter lessons in:
   - Physics: Motion, Force, Gravity, Momentum, Newton's Laws, Energy, Work,
     Acceleration, Velocity, Friction, Waves
-  - Mathematics: Fractions
-  - Chemistry: Atoms
-  - Biology: Photosynthesis
-  - Computer Science: Algorithms
+  - Mathematics: Fractions, Percentages
+  - Chemistry: Atoms, Acids and Bases
+  - Biology: Photosynthesis, Food Chains
+  - Computer Science: Algorithms, Loops
 - The original ten flat Physics files remain untouched and still work through
   the terminal chatbot; the student renderer hides their unverified
   local/cultural draft sections until they are reviewed.

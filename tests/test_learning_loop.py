@@ -137,7 +137,12 @@ class LearningLoopTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary_directory:
             controller = self._controller(temporary_directory)
             mathematics_lessons = controller.available_lessons("Mathematics")
-            self.assertEqual([lesson.topic for lesson in mathematics_lessons], ["fractions"])
+            # Assert the filtering behaviour, not the current catalogue: this
+            # test should not need editing every time a lesson is added.
+            self.assertTrue(mathematics_lessons)
+            self.assertIn("fractions", [lesson.topic for lesson in mathematics_lessons])
+            for lesson in mathematics_lessons:
+                self.assertEqual(lesson.subject, "Mathematics")
             response = controller.open_library_lesson("fractions")
             self.assertTrue(response.is_structured)
             self.assertEqual(controller.preferences().subject, "Mathematics")

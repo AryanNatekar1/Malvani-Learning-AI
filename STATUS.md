@@ -15,15 +15,17 @@ Current Version: **V3.0 local desktop app + deployable web app**
   it keeps the same safety rules about unverified context and draft status.
 - The web app is installable and fully offline: a service worker precaches the
   page and every lesson file, so it opens with no connection after one visit.
-- A concept diagram for all fifteen lessons, several of them interactive
+- A concept diagram for all nineteen lessons, several of them interactive
   (work as an area, momentum as a bar, friction as opposing arrows, gravity as
   two balls falling level). Each has a written text alternative.
 - Search across every lesson and problem with `Ctrl`+`K`, a phone bottom-nav,
   and a "continue where you left off" card.
 - Structured **draft** lessons across Physics, Mathematics, Chemistry, Biology,
-  and Computer Science — 15 in total. All ten original Physics topics are now
-  structured lessons; their `.txt` originals are preserved, and Waves has been
-  added as the first topic written directly for the structured schema.
+  and Computer Science — 19 in total. All ten original Physics topics are now
+  structured lessons and their `.txt` originals are preserved. Waves,
+  Percentages, Acids and Bases, Food Chains and Loops were written directly
+  for the structured schema, which brings every non-Physics subject to two
+  lessons rather than one.
 - A "Look around you" observation on every lesson: something to go and watch
   happen, using only what a student already has. It never asserts what is near
   the learner, because the app cannot know that — it invites, and the learner
@@ -126,10 +128,12 @@ Current Version: **V3.0 local desktop app + deployable web app**
   model, not a measurement of any real household, family, or place, and its
   Go Deeper stage lets a learner investigate how a slower, load-carrying
   return speed would change the total round-trip time.
-- 164 automated tests, including GUI flow, compact-layout reachability,
+- 165 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
-  checks that observations name no place, that every place cites a source, and
-  that the desktop app teaches the same content the website does.
+  checks that observations name no place, that every place cites a source,
+  that the desktop app teaches the same content the website does, and that
+  every lesson on disk is registered in both the web manifest and the
+  offline precache.
 
 ## Not yet claimed as complete
 

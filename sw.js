@@ -8,7 +8,7 @@
  * Bump CACHE when shipping new content or a new page build, so old caches
  * are replaced rather than shadowing the update.
  */
-const CACHE = "malvani-v4";
+const CACHE = "malvani-v5";
 
 // Relative URLs resolve against this script's location, which keeps the app
 // working both at a GitHub Pages sub-path and at a local server root.
@@ -29,9 +29,13 @@ const PRECACHE = [
   "./data/lessons/physics/friction.json",
   "./data/lessons/physics/waves.json",
   "./data/lessons/mathematics/fractions.json",
+  "./data/lessons/mathematics/percentages.json",
   "./data/lessons/chemistry/atoms.json",
+  "./data/lessons/chemistry/acids_and_bases.json",
   "./data/lessons/biology/photosynthesis.json",
+  "./data/lessons/biology/food_chains.json",
   "./data/lessons/computer_science/algorithms.json",
+  "./data/lessons/computer_science/loops.json",
   "./data/scenarios/physics/motion_water_carrying_journey.json",
   "./data/scenarios/physics/momentum_cart_comparison.json",
   "./data/scenarios/physics/force_model_comparison.json",

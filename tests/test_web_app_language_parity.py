@@ -81,6 +81,41 @@ class WebAppLanguageParityTests(unittest.TestCase):
         self.assertIn("function escPara(", self.html)
         self.assertIn("escPara(en.detailed_explanation)", self.html)
 
+    def test_every_lesson_on_disk_is_registered_in_both_manifests(self) -> None:
+        """A lesson the website never lists is a lesson nobody can open.
+
+        The web app fetches an explicit list rather than scanning a directory,
+        and the service worker precaches another, so adding a file is three
+        edits. Forgetting one fails silently: the lesson simply never appears,
+        or appears but is missing offline.
+        """
+        on_disk = {
+            path.relative_to(ROOT).as_posix() for path in LESSON_DIR.rglob("*.json")
+        }
+        self.assertTrue(on_disk, "no lesson files found")
+
+        listed = set(
+            re.findall(
+                r'"(data/lessons/[^"]+)"',
+                re.search(r"const LESSON_FILES = \[(.*?)\];", self.html, re.S).group(1),
+            )
+        )
+        self.assertEqual(
+            on_disk - listed, set(), "lesson files missing from LESSON_FILES"
+        )
+        self.assertEqual(
+            listed - on_disk, set(), "LESSON_FILES names a file that does not exist"
+        )
+
+        service_worker = (ROOT / "sw.js").read_text(encoding="utf-8")
+        precached = {
+            url.lstrip("./")
+            for url in re.findall(r'"(\./data/lessons/[^"]+)"', service_worker)
+        }
+        self.assertEqual(
+            on_disk - precached, set(), "lesson files missing from the sw.js precache"
+        )
+
     def test_lesson_tabs_are_addressable_and_fall_back_safely(self) -> None:
         """A teacher can link straight to a tab; a bad one must not blank the page."""
         self.assertIn("function renderLesson(topic, tab)", self.html)

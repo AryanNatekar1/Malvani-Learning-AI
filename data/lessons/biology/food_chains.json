@@ -1,0 +1,116 @@
+{
+  "id": "biology.food-chains",
+  "title": "Food Chains",
+  "subject": "Biology",
+  "topic": "food chains",
+  "aliases": ["food chain", "food web", "ecosystem", "energy flow"],
+  "levels": ["Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "A food chain traces who eats whom, and with it the path that energy takes from the Sun through living things.",
+      "detailed_explanation": "Almost every food chain begins with a plant, because plants capture sunlight and build food from it. Plants are called producers for that reason. Animals that eat plants are primary consumers, animals that eat those are secondary consumers, and so on. Decomposers — fungi and bacteria — break down the dead at every level and return the material to the soil.\n\nThe important part is what happens to the energy. At each step most of it is lost: it is spent on moving, breathing and keeping warm, and leaves as heat. Only a small fraction, very roughly a tenth, is stored in the body of the animal and available to whatever eats it next.\n\nThat loss explains the shape of the living world. A given area supports a great deal of plant life, rather less of the animals that eat plants, and very few top predators, because each level is built on the thin remainder of the one below. It is also why food chains are short: after four or five steps there is almost nothing left to pass on.\n\nReal ecosystems are rarely single chains. Most animals eat several things and are eaten by several others, so the chains cross into a food web."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "real_world_use": [
+    "understanding fishing limits",
+    "pest control in farming",
+    "conservation planning",
+    "tracing pollution through wildlife",
+    "managing grazing land"
+  ],
+  "common_misconceptions": [
+    "Energy is passed along a food chain without any being lost.",
+    "A food chain can be as long as you like.",
+    "Removing one species only affects the species that ate it."
+  ],
+  "observe_around_you": {
+    "invitation": "You need somewhere outdoors with plants growing — a garden, a field edge, a verge, a plant pot.",
+    "what_to_do": "Pick one plant and look closely for a few minutes. Find something eating it, or the holes and chewed edges showing something has. Then look for anything that might eat whatever did that — a bird, a spider, a lizard.",
+    "what_to_notice": "Count how many links you can actually see evidence for. Then count how many of each you find: are there more plants, or more of the things eating them?",
+    "concept_link": "You almost certainly found more plants than plant-eaters, and more plant-eaters than predators. That is the energy loss made visible — each level can only support a fraction of the one beneath it, which is why the numbers shrink as you climb.",
+    "needs": ["somewhere outdoors with plants", "a few minutes of patience"],
+    "safety_note": "Look, do not touch. Leave insects and animals alone, and do not handle anything you cannot identify."
+  },
+  "think_question": "A food chain rarely has more than four or five links. Using what you know about energy, explain why a chain of ten links could not work.",
+  "reasoning_guide": {
+    "required_keywords": ["energy", "lost"],
+    "misconception_keywords": ["energy stays the same"],
+    "correct_feedback": "Good reasoning: you followed the energy and saw that it runs out.",
+    "partial_feedback": "You have started well. Say what happens to most of the energy at each step, and what that leaves for the next one.",
+    "misconception_feedback": "Energy is not passed on intact. Most of it is spent and lost as heat at every step, so after a few links there is too little left to support another animal."
+  },
+  "challenge": {
+    "question": "Write a food chain with at least three links that could exist near a pond, and mark which one is the producer.",
+    "hint": "Start with something that makes its own food.",
+    "progressive_hints": [
+      "Start with something that makes its own food.",
+      "Water plants or algae are producers. What eats them?",
+      "A small fish might eat an insect, and a bird might eat the fish."
+    ],
+    "solution": "One example: water plant → insect → small fish → bird. The water plant is the producer, because it makes its own food from sunlight. Every other link is a consumer.",
+    "accepted_answers": []
+  },
+  "career_connections": ["marine biology", "fisheries management", "ecology", "agriculture", "wildlife conservation"],
+  "further_exploration": ["photosynthesis", "energy"],
+  "quiz_questions": [
+    {
+      "id": "food-chains-producer",
+      "question": "What is a producer in a food chain?",
+      "type": "multiple_choice",
+      "options": [
+        "An organism that makes its own food from sunlight",
+        "The largest animal in the chain",
+        "An animal that eats other animals",
+        "Any organism at the end of the chain"
+      ],
+      "correct_answers": ["An organism that makes its own food from sunlight", "1"],
+      "explanation": "Producers, almost always plants, capture sunlight and build food from it. Every other link depends on them.",
+      "hint": "Think about where the energy enters the chain.",
+      "progressive_hints": [
+        "Think about where the energy enters the chain.",
+        "Which organism does not need to eat anything else?"
+      ],
+      "difficulty": "Class 8"
+    },
+    {
+      "id": "food-chains-energy-loss",
+      "question": "Roughly how much of the energy at one level is available to the next?",
+      "type": "multiple_choice",
+      "options": ["About all of it", "About three quarters", "About a tenth", "None of it"],
+      "correct_answers": ["About a tenth", "3"],
+      "explanation": "Most energy is spent on living and lost as heat. Only roughly a tenth is stored and passed on.",
+      "hint": "Think about what an animal spends energy on besides growing.",
+      "progressive_hints": [
+        "Think about what an animal spends energy on besides growing.",
+        "Moving, breathing and staying warm all use energy that never reaches the next level."
+      ],
+      "difficulty": "Class 9"
+    },
+    {
+      "id": "food-chains-web",
+      "question": "Why do scientists often talk about a food web rather than a food chain?",
+      "type": "multiple_choice",
+      "options": [
+        "Because webs are stronger than chains",
+        "Because most animals eat more than one kind of food",
+        "Because chains only exist in water",
+        "Because a web has no producers"
+      ],
+      "correct_answers": ["Because most animals eat more than one kind of food", "2"],
+      "explanation": "Real feeding relationships cross and overlap, so a web describes them better than a single line.",
+      "hint": "Think about whether any animal eats only one thing.",
+      "progressive_hints": [
+        "Think about whether any animal eats only one thing.",
+        "If chains cross each other, what shape do they make?"
+      ],
+      "difficulty": "Class 9"
+    }
+  ],
+  "sources": [
+    "Standard Class 8-10 biology: producers and consumers, trophic levels, the approximate ten per cent rule for energy transfer, and food webs. Academic review is still needed."
+  ],
+  "verification_status": "NEEDS_REVIEW"
+}

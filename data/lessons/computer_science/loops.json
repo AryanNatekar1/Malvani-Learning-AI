@@ -1,0 +1,121 @@
+{
+  "id": "computer-science.loops",
+  "title": "Loops",
+  "subject": "Computer Science",
+  "topic": "loops",
+  "aliases": ["loop", "repetition", "iteration", "for loop", "while loop"],
+  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "content": {
+    "English": {
+      "simple_explanation": "A loop tells a computer to repeat a set of steps, instead of you writing those steps out again and again.",
+      "detailed_explanation": "Repetition is where computers are genuinely better than people, and a loop is how you ask for it. Rather than writing an instruction a thousand times, you write it once and say how many times to run it.\n\nThere are two shapes. A counting loop runs a known number of times: repeat this ten times. A conditional loop runs until something becomes true: keep going while there is still water in the bucket. Use the first when you know the count in advance and the second when you do not.\n\nEvery loop needs a way to stop. A counting loop stops when it reaches its number. A conditional loop stops when its condition changes — which means something inside the loop must eventually change it. If nothing does, the loop runs forever. That is an infinite loop, and it is the classic beginner's bug: not a mistake in any single step, but a missing change.\n\nLoops matter beyond saving typing. A loop written once works for ten items or ten million, so the same short piece of code handles a problem of any size."
+    }
+  },
+  "language_metadata": {
+    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+  },
+  "real_world_use": [
+    "processing every row of data",
+    "animation and games",
+    "checking every file in a folder",
+    "sending many messages",
+    "robotics and automation"
+  ],
+  "common_misconceptions": [
+    "A loop makes the computer run faster.",
+    "A loop always repeats a fixed number of times.",
+    "An infinite loop happens because one of the steps inside it is wrong."
+  ],
+  "observe_around_you": {
+    "invitation": "You need paper, a pen, and one other person.",
+    "what_to_do": "Pick a repetitive everyday task — filling a bucket mug by mug, or laying out plates for a meal. First write the instructions with every single repetition spelled out. Then rewrite them using the word repeat and a number or a condition. Give the second version to the other person and see if they can follow it.",
+    "what_to_notice": "Compare how long the two versions are. Then ask what has to change if the bucket is twice as big: how much of each version do you have to rewrite?",
+    "concept_link": "The spelled-out version has to be rewritten for every new size. The loop version does not change at all — only the number or the condition does. That is the real power of a loop: it separates the instruction from how many times it runs.",
+    "needs": ["paper and a pen", "one other person"],
+    "safety_note": null
+  },
+  "think_question": "A program says: while the bucket is not full, pour in one mug of water. Someone writes it but forgets to actually pour. What happens, and why is this not a mistake in any single instruction?",
+  "reasoning_guide": {
+    "required_keywords": ["never", "condition"],
+    "misconception_keywords": ["instruction is wrong"],
+    "correct_feedback": "Good reasoning: you saw that the condition never changes, so the loop never ends.",
+    "partial_feedback": "You have started well. Say what has to change for the loop to stop, and whether anything in the loop changes it.",
+    "misconception_feedback": "Each instruction may be perfectly correct on its own. The bug is that nothing inside the loop changes the thing the condition is testing, so it stays true forever."
+  },
+  "challenge": {
+    "question": "Write instructions using a loop to print the numbers 1 to 5. Say clearly what starts the loop, what stops it, and what changes each time round.",
+    "hint": "You need a number that begins somewhere and increases.",
+    "progressive_hints": [
+      "You need a number that begins somewhere and increases.",
+      "Start at 1, and stop once you pass 5.",
+      "Each time round: print the number, then add 1 to it."
+    ],
+    "solution": "Set a number to 1. While the number is 5 or less: print the number, then add 1 to it. It starts at 1, it stops when the number becomes 6, and the number increases by 1 each time round — that increase is what eventually stops it.",
+    "accepted_answers": []
+  },
+  "career_connections": ["software development", "data science", "robotics", "game development", "automation engineering"],
+  "further_exploration": ["algorithms", "percentages"],
+  "quiz_questions": [
+    {
+      "id": "loops-purpose",
+      "question": "What is the main purpose of a loop?",
+      "type": "multiple_choice",
+      "options": [
+        "To repeat steps without writing them out each time",
+        "To make the computer run faster",
+        "To store information",
+        "To fix mistakes in a program"
+      ],
+      "correct_answers": ["To repeat steps without writing them out each time", "1"],
+      "explanation": "A loop expresses repetition once, instead of the same instruction being written over and over.",
+      "hint": "Think about what you avoid having to write.",
+      "progressive_hints": [
+        "Think about what you avoid having to write.",
+        "It is about expressing repetition, not about speed."
+      ],
+      "difficulty": "Beginner"
+    },
+    {
+      "id": "loops-infinite",
+      "question": "A loop runs forever and never stops. What is the most likely reason?",
+      "type": "multiple_choice",
+      "options": [
+        "The computer is too slow",
+        "Nothing inside the loop changes what the condition is testing",
+        "The loop has too many steps in it",
+        "Loops always have to be stopped by hand"
+      ],
+      "correct_answers": ["Nothing inside the loop changes what the condition is testing", "2"],
+      "explanation": "A conditional loop ends when its condition becomes false. If nothing inside ever changes that, it cannot end.",
+      "hint": "Ask what would have to change for the loop to stop.",
+      "progressive_hints": [
+        "Ask what would have to change for the loop to stop.",
+        "Then ask whether anything inside the loop actually changes it."
+      ],
+      "difficulty": "Class 9"
+    },
+    {
+      "id": "loops-which-kind",
+      "question": "You want to read every line of a file, but you do not know how many lines it has. Which kind of loop fits?",
+      "type": "multiple_choice",
+      "options": [
+        "A counting loop with a fixed number",
+        "A conditional loop that runs until the lines run out",
+        "No loop is needed",
+        "A loop that runs exactly once"
+      ],
+      "correct_answers": ["A conditional loop that runs until the lines run out", "2"],
+      "explanation": "You cannot count in advance, so the loop must be driven by a condition rather than a number.",
+      "hint": "Do you know the number of repetitions before you start?",
+      "progressive_hints": [
+        "Do you know the number of repetitions before you start?",
+        "If you cannot know the count, the loop must test something instead."
+      ],
+      "difficulty": "Class 10"
+    }
+  ],
+  "sources": [
+    "Standard introductory computer science: counting and conditional loops, loop termination, and infinite loops. Academic review is still needed."
+  ],
+  "verification_status": "NEEDS_REVIEW"
+}

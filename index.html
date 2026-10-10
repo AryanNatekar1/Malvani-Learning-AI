@@ -501,9 +501,13 @@ const LESSON_FILES = [
   "data/lessons/physics/friction.json",
   "data/lessons/physics/waves.json",
   "data/lessons/mathematics/fractions.json",
+  "data/lessons/mathematics/percentages.json",
   "data/lessons/chemistry/atoms.json",
+  "data/lessons/chemistry/acids_and_bases.json",
   "data/lessons/biology/photosynthesis.json",
-  "data/lessons/computer_science/algorithms.json"
+  "data/lessons/biology/food_chains.json",
+  "data/lessons/computer_science/algorithms.json",
+  "data/lessons/computer_science/loops.json"
 ];
 const SCENARIO_FILES = [
   "data/scenarios/physics/motion_water_carrying_journey.json",
@@ -859,6 +863,128 @@ const CONCEPT_VISUALS = {
         read: `W = F × d = <b>${v["w-f"]} N</b> × <b>${v["w-d"]} m</b> = <em>${r1(W)} J</em>` +
               (v["w-d"] === 0 ? `<br>Push all you like — with no movement, no work is done.` : ""),
         alt: `A rectangle whose height is the ${v["w-f"]} newton force and whose width is the ${v["w-d"]} metre distance. Its area, ${r1(W)} joules, is the work done.`
+      };
+    }
+  },
+  percentages: {
+    title: "A percentage is parts of a hundred",
+    caption: "Each square is one per cent. The same amount, written three ways.",
+    controls: [{id:"pc-v", label:"Percentage", min:0, max:100, step:1, value:45, unit:"%"}],
+    draw(v){
+      const n = v["pc-v"], S = 14, GAP = 1.6, X0 = 92, Y0 = 16;
+      let cells = "";
+      for(let i = 0; i < 100; i++){
+        const r = Math.floor(i / 10), c = i % 10;
+        cells += `<rect x="${X0 + c*(S+GAP)}" y="${Y0 + r*(S+GAP)}" width="${S}" height="${S}" rx="1.5"
+          class="${i < n ? "f-acc" : "f-panel"}" ${i < n ? "" : 'opacity=".55"'}/>`;
+      }
+      const g = (a,b) => b ? g(b, a % b) : a;
+      const d = g(n, 100) || 1;
+      return {
+        svg: svg(`${cells}
+          <text x="92" y="190" class="lbl-a">${n}%</text>
+          <text x="130" y="190" class="lbl">= ${n}/100${d > 1 ? ` = ${n/d}/${100/d}` : ""} = ${(n/100).toFixed(2)}</text>`, 200),
+        read: `<b>${n}%</b> means <b>${n}</b> shaded out of <b>100</b> — the fraction <em>${n}/100</em>, or the decimal <em>${(n/100).toFixed(2)}</em>.`,
+        alt: `A ten by ten grid of one hundred squares with ${n} of them shaded, showing ${n} per cent as ${n} parts out of one hundred.`
+      };
+    }
+  },
+  "acids and bases": {
+    title: "The pH scale",
+    caption: "Each step of one is a tenfold change in acidity, not a single step.",
+    controls: [{id:"ph-v", label:"pH", min:0, max:14, step:1, value:7, unit:""}],
+    draw(v){
+      const p = v["ph-v"], X0 = 24, W = 312;
+      const x = X0 + (p / 14) * W;
+      const band = p < 7 ? "acidic" : p > 7 ? "basic" : "neutral";
+      // Illustrative everyday examples, approximate and for orientation only.
+      const EX = {0:"battery acid",1:"stomach acid",2:"lemon juice",3:"vinegar",4:"tomato",
+        5:"black coffee",6:"milk",7:"pure water",8:"sea water",9:"baking soda",
+        10:"soap solution",11:"ammonia",12:"lime water",13:"bleach",14:"drain cleaner"};
+      let ticks = "";
+      for(let i = 0; i <= 14; i++){
+        const tx = X0 + (i / 14) * W;
+        ticks += `<line x1="${tx}" y1="96" x2="${tx}" y2="${i % 7 === 0 ? 104 : 100}" class="ax"/>` +
+          (i % 7 === 0 ? `<text x="${tx}" y="120" class="lbl" text-anchor="middle">${i}</text>` : "");
+      }
+      const steps = Math.abs(p - 7);
+      return {
+        svg: svg(`
+          <defs><linearGradient id="phg" x1="0" x2="1">
+            <stop offset="0" stop-color="#e0564e"/><stop offset="0.5" stop-color="#4caf7d"/>
+            <stop offset="1" stop-color="#5b7fd4"/></linearGradient></defs>
+          <rect x="${X0}" y="66" width="${W}" height="28" rx="4" fill="url(#phg)" opacity=".85"/>
+          ${ticks}
+          <text x="${X0}" y="56" class="lbl">acidic</text>
+          <text x="${X0 + W/2}" y="56" class="lbl" text-anchor="middle">neutral</text>
+          <text x="${X0 + W}" y="56" class="lbl" text-anchor="end">basic</text>
+          <polygon points="${x-6},34 ${x+6},34 ${x},46" class="f-acc"/>
+          <text x="${Math.min(Math.max(x,54),306)}" y="28" class="lbl-s" text-anchor="middle">pH ${p} · ${band}</text>
+          <text x="180" y="150" class="lbl" text-anchor="middle">about the same as ${EX[p]}</text>
+          <text x="180" y="170" class="lbl-a" text-anchor="middle">${steps === 0 ? "this is the neutral point" :
+            `${Math.pow(10, steps) >= 1000 ? Math.pow(10,steps).toExponential(0) : Math.pow(10, steps)}× more ${p < 7 ? "acidic" : "basic"} than pure water`}</text>`, 185),
+        read: `pH <b>${p}</b> is <b>${band}</b>. ` + (steps === 0
+          ? `Pure water sits here.`
+          : `It is <em>${Math.pow(10, steps)}×</em> more ${p < 7 ? "acidic" : "basic"} than neutral water, because each step is a factor of ten.`),
+        alt: `A pH scale from 0 to 14 with a marker at ${p}, which is ${band}, about the same as ${EX[p]}.`
+      };
+    }
+  },
+  "food chains": {
+    title: "Energy runs out as it climbs",
+    caption: "Roughly a tenth carries to the next level. The rest is spent living.",
+    controls: [{id:"fc-s", label:"Energy entering the plants", min:1000, max:10000, step:1000, value:10000, unit:" units"}],
+    draw(v){
+      const start = v["fc-s"];
+      const names = ["Plants", "Insects", "Small birds", "Hawk"];
+      let bars = "", y = 24, amounts = [];
+      for(let i = 0; i < 4; i++){
+        const amount = start / Math.pow(10, i);
+        amounts.push(amount);
+        // Cap the longest bar well short of the 360-unit viewBox: the value
+        // label sits outside the bar, and at 250 the first one ran off the
+        // edge so "10000" rendered as "1".
+        const w = Math.max((amount / start) * 186, 3);
+        bars += `<rect x="96" y="${y}" width="${w}" height="22" rx="3" class="f-acc" opacity="${1 - i*0.18}"/>
+          <text x="90" y="${y+16}" class="lbl" text-anchor="end">${names[i]}</text>
+          <text x="${96 + w + 7}" y="${y+16}" class="lbl-a">${amount >= 1 ? Math.round(amount) : amount.toFixed(1)}</text>`;
+        if(i < 3) bars += `<line x1="100" y1="${y+24}" x2="100" y2="${y+34}" class="acc" marker-end="url(#mkA)"/>`;
+        y += 38;
+      }
+      return {
+        svg: svg(`${bars}
+          <text x="96" y="178" class="lbl">of ${start} units, the hawk gets ${Math.round(amounts[3])}</text>`, 190),
+        read: `Starting from <b>${start}</b> units in the plants, only about <em>${Math.round(amounts[3])}</em> reach the hawk — roughly a tenth survives each step.`,
+        alt: `Four bars shrinking tenfold each time: plants ${Math.round(amounts[0])} units, insects ${Math.round(amounts[1])}, small birds ${Math.round(amounts[2])}, hawk ${Math.round(amounts[3])}.`
+      };
+    }
+  },
+  loops: {
+    title: "Write it once, run it many times",
+    caption: "The loop does not get longer when the job does.",
+    controls: [{id:"lp-n", label:"Times to repeat", min:1, max:50, step:1, value:12, unit:""}],
+    draw(v){
+      const n = v["lp-n"];
+      const shown = Math.min(n, 5);
+      let lines = "";
+      for(let i = 0; i < shown; i++){
+        lines += `<text x="24" y="${54 + i*17}" class="lbl">pour one mug</text>`;
+      }
+      if(n > shown) lines += `<text x="24" y="${54 + shown*17}" class="lbl">… ${n - shown} more lines</text>`;
+      return {
+        svg: svg(`
+          <text x="24" y="30" class="lbl-s">Written out</text>
+          <text x="208" y="30" class="lbl-s">With a loop</text>
+          ${lines}
+          <rect x="204" y="40" width="140" height="52" rx="5" class="f-panel"/>
+          <rect x="204" y="40" width="140" height="52" rx="5" class="acc" fill="none" stroke-width="1.6"/>
+          <text x="214" y="60" class="lbl-a">repeat ${n} times:</text>
+          <text x="224" y="78" class="lbl">pour one mug</text>
+          <text x="24" y="${70 + shown*17}" class="lbl">${n} line${n===1?"":"s"} long</text>
+          <text x="204" y="112" class="lbl">always 2 lines</text>
+          <text x="180" y="158" class="lbl-a" text-anchor="middle">change the size — only the number changes</text>`, 175),
+        read: `Spelled out, the instructions are <b>${n}</b> line${n===1?"":"s"} long. As a loop they are <em>2 lines</em>, whatever ${n} happens to be.`,
+        alt: `A comparison showing ${n} repeated instructions on the left against a two-line loop on the right that repeats the same instruction ${n} times.`
       };
     }
   },
