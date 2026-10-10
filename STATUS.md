@@ -144,7 +144,20 @@ Current Version: **V3.0 local desktop app + deployable web app**
   look finished when it is not. The regional connection is matched against
   already-documented places rather than written, because a fluent invented
   link to Sindhudurg is exactly the failure this project exists to refuse.
-- 194 automated tests, including GUI flow, compact-layout reachability,
+- Wikipedia retrieval, working, with no API key and no third-party packages.
+  It was chosen because nothing secret enters the repository, every passage
+  has a public URL a reader can check, and Marathi and Hindi editions exist.
+  Every network failure returns no passages rather than raising, so a weak
+  connection degrades to "I could not find this" instead of breaking the app.
+- An extractive answer mode that selects sentences verbatim from retrieved
+  passages rather than writing them, so grounding holds by construction and
+  the whole pipeline runs today with no model, no key and no per-question
+  cost. Its limits are documented rather than discovered later: it finds the
+  defining sentence for a well-named topic, and it cannot tell which sense of
+  a word a learner wants, nor an educational article from a coincidence. It
+  is good enough to draft for a teacher and not good enough to show a student
+  unreviewed, which is what the draft's reviewer notes say.
+- 221 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that
