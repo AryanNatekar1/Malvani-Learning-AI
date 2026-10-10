@@ -35,7 +35,10 @@ from dataclasses import dataclass
 
 
 # Words carry no evidence on their own, so they are ignored when checking
-# whether a claim actually overlaps the passage it cites.
+# whether a claim actually overlaps the passage it cites. The Devanagari
+# entries are ordinary grammar shared by Marathi and Hindi — and, is, not,
+# this, in — used only for scoring and never shown to anyone, so none of this
+# is a claim about what a word means.
 STOPWORDS = frozenset(
     """
     a an and are as at be been but by can could did do does for from had has
@@ -44,6 +47,9 @@ STOPWORDS = frozenset(
     over then there these they this those through to too under until up use used
     using very was we were what when where which while who why will with would
     you your
+    आणि आहे आहेत या यात याचा ते तो ती हे हा ही एक मध्ये वर पण किंवा असे असा
+    अशी होते होता नाही ना का जे ज्या त्या त्याच्या म्हणून म्हणजे सुद्धा
+    और है हैं का की के को में से यह वह नहीं पर जो कि भी हो था थी थे
     """.split()
 )
 
@@ -52,7 +58,22 @@ STOPWORDS = frozenset(
 # a sentence wholesale, not to force it to quote.
 MINIMUM_SUPPORT = 0.4
 
-WORD_RE = re.compile(r"[A-Za-z0-9]+")
+# Devanagari vowel signs are combining marks, which Python does not count as
+# alphanumeric, so a plain \w breaks गुरुत्वाकर्षण into fragments at every
+# matra and [A-Za-z0-9] misses it entirely. Naming the block keeps the word
+# whole.
+#
+# This mattered more than it looks. With the old ASCII-only pattern every
+# Devanagari claim had zero meaningful words, scored zero support, and was
+# dropped — so the gate silently rejected all Marathi and Hindi content while
+# reporting nothing unusual. Any future translated lesson would have hit the
+# same wall.
+DEVANAGARI = r"ऀ-ॿ"
+WORD_RE = re.compile(rf"(?:[^\W_]|[{DEVANAGARI}])+", re.UNICODE)
+
+# Devanagari words are written with combining marks that each count as a
+# character, so a Latin "longer than two" threshold keeps more noise.
+MINIMUM_WORD_LENGTH = 3
 
 
 @dataclass(frozen=True)
@@ -144,7 +165,7 @@ def _meaningful_words(text: str) -> set[str]:
     return {
         word
         for word in (match.group(0).lower() for match in WORD_RE.finditer(text))
-        if word not in STOPWORDS and len(word) > 2
+        if word not in STOPWORDS and len(word) >= MINIMUM_WORD_LENGTH
     }
 
 

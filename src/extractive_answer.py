@@ -39,19 +39,30 @@ from __future__ import annotations
 
 import re
 
-from grounded_answer import Passage
+# Share the tokenizer with the gate rather than keeping a second copy. They
+# drifted once already: this module learned to read Devanagari while the gate
+# still could not, so every Marathi sentence was selected and then silently
+# dropped for having no supported words.
+from grounded_answer import (
+    DEVANAGARI,
+    MINIMUM_WORD_LENGTH,
+    STOPWORDS,
+    WORD_RE,
+    Passage,
+)
 
-# Split on sentence-ending punctuation followed by a capital. Imperfect with
-# abbreviations, which costs a slightly odd fragment and nothing worse.
-SENTENCE_SPLIT = re.compile(r"(?<=[.!?])\s+(?=[A-Z0-9])")
-WORD_RE = re.compile(r"[A-Za-z0-9]+")
-
-STOPWORDS = frozenset(
-    """
-    a an and are as at be but by can could did do does for from had has have
-    how i if in into is it its may might of on one or that the their them then
-    there these they this to was were what when which who why will with you
-    """.split()
+# Devanagari ends a sentence with a danda (।) and has no capital letters, so
+# an ASCII-only splitter found no sentences at all in Marathi and returned
+# nothing without erroring — a silent failure, which is the worst kind. A
+# danda always ends a sentence; Latin punctuation only counts when a capital
+# or digit follows, which keeps abbreviations from splitting mid-sentence.
+# Marathi Wikipedia in practice writes a full stop rather than a danda, so
+# both have to end a sentence, and the character that follows may be
+# Devanagari rather than a capital. Requiring a capital was why an entire
+# 1,200-character Marathi article counted as one sentence and was discarded
+# for being too long.
+SENTENCE_SPLIT = re.compile(
+    rf"(?<=[।])\s+|(?<=[.!?])\s+(?=[A-Z0-9{DEVANAGARI}])"
 )
 
 # Below this a "sentence" is usually a heading or a stray fragment; above it
@@ -73,7 +84,7 @@ def _words(text: str) -> set[str]:
     return {
         word
         for word in (m.group(0).lower() for m in WORD_RE.finditer(text))
-        if word not in STOPWORDS and len(word) > 2
+        if word not in STOPWORDS and len(word) >= MINIMUM_WORD_LENGTH
     }
 
 

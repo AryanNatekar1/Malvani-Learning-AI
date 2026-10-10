@@ -167,7 +167,18 @@ Current Version: **V3.0 local desktop app + deployable web app**
   the retrieval rules is compared against the Python one by tests, since a
   static page cannot import them and a silent divergence would show uncited
   text on the version most students use.
-- 225 automated tests, including GUI flow, compact-layout reachability,
+- Lookup follows the chosen language, which is the first thing the language
+  picker actually changes. Marathi reads mr.wikipedia.org and Hindi reads
+  hi.wikipedia.org, so a learner gets real content in the language, written
+  by speakers of it and cited to them, with no translation step and nothing
+  invented. Malvani and Konkani fall back to English and say so.
+- Reading Devanagari required fixing a silent failure across both apps. An
+  ASCII tokenizer broke Marathi words at every vowel mark and an ASCII
+  sentence splitter found no sentences at all, so Marathi searches returned
+  nothing while reporting no error. The gate had the same flaw independently,
+  and would have dropped every Marathi claim for having no supported words.
+  Both now share one tokenizer rather than keeping separate copies.
+- 233 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that

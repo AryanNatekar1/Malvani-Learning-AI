@@ -315,6 +315,10 @@ ul.srcs.warn li::marker{color:var(--warn)}
 .cite:hover{text-decoration:underline}
 .srcs a{color:var(--phase-a); text-decoration:none}
 .srcs a:hover{text-decoration:underline}
+/* A decoded Wikipedia URL is still one long unbroken token, so it needs an
+   explicit break or it pushes the page sideways on a phone. */
+.srcurl{display:block; margin-top:3px; font-size:12px; color:var(--dim);
+  overflow-wrap:anywhere; word-break:break-word}
 a.back{font-size:13.5px; color:var(--muted); text-decoration:none}
 a.back:hover{color:var(--phase-a)}
 @media (max-width:520px){ .qa{padding:18px} }
@@ -1907,23 +1911,40 @@ function renderSolver(id){
  *
  * Tests compare this against the Python versions so the two cannot drift.
  */
-const WIKI_STOPWORDS = new Set(("a an and are as at be but by can could did do does for from had has have " +
+const WIKI_STOPWORDS = new Set((
+  "a an and are as at be but by can could did do does for from had has have " +
   "how i if in into is it its may might of on one or that the their them then there these they this to " +
-  "was were what when which who why will with you").split(" "));
+  "was were what when which who why will with you " +
+  "आणि आहे आहेत या यात याचा ते तो ती हे हा ही एक मध्ये वर पण किंवा असे असा " +
+  "अशी होते होता नाही ना का जे ज्या त्या त्याच्या म्हणून म्हणजे सुद्धा " +
+  "और है हैं का की के को में से यह वह नहीं पर जो कि भी हो था थी थे").split(" "));
 
+/* \w is ASCII-only in JavaScript, so it matched no Devanagari at all. \p{M}
+   has to be included explicitly or a word breaks at every vowel mark. */
 function wikiWords(text){
-  return new Set((text.toLowerCase().match(/[a-z0-9]+/g) || [])
-    .filter(w => w.length > 2 && !WIKI_STOPWORDS.has(w)));
+  return new Set((text.toLowerCase().match(/[\p{L}\p{M}\p{N}]+/gu) || [])
+    .filter(w => w.length >= 3 && !WIKI_STOPWORDS.has(w)));
 }
 
+/* Marathi Wikipedia writes a full stop rather than a danda and has no
+   capitals, so requiring one meant a whole article counted as a single
+   sentence and was discarded for length. */
 function wikiSentences(text){
-  return text.replace(/\n/g, " ").split(/(?<=[.!?])\s+(?=[A-Z0-9])/)
+  return text.replace(/\n/g, " ").split(/(?<=[।])\s+|(?<=[.!?])\s+(?=[A-Z0-9ऀ-ॿ])/)
+    .filter(Boolean)
     .map(s => s.split(/\s+/).join(" ").trim())
     .filter(s => s.length >= 40 && s.length <= 320);
 }
 
+/* Which Wikipedia to read. Picking Marathi gets articles written by Marathi
+   speakers and cited to them — real content in the language, with no
+   translation step to review and nothing invented. Malvani has no Wikipedia,
+   so it falls back to English rather than pretending otherwise. */
+const WIKI_EDITIONS = {English:"en", Marathi:"mr", Hindi:"hi", Konkani:"gom"};
+function wikiEdition(){ return WIKI_EDITIONS[currentLang()] || "en"; }
+
 async function wikiSearch(query, limit = 4){
-  const url = "https://en.wikipedia.org/w/api.php?" + new URLSearchParams({
+  const url = `https://${wikiEdition()}.wikipedia.org/w/api.php?` + new URLSearchParams({
     action:"query", format:"json", formatversion:"2", generator:"search",
     gsrsearch:query, gsrlimit:String(limit), prop:"extracts|info",
     exintro:"1", explaintext:"1", inprop:"url", redirects:"1", origin:"*"
@@ -1982,6 +2003,13 @@ function wikiSelect(query, passages, limit = 4){
   return chosen;
 }
 
+/* A Marathi article's URL is percent-encoded, so showing it raw gives a line
+   of %E0%A4 noise wider than the screen. Decode it for reading; the href
+   stays untouched. */
+function prettyUrl(url){
+  try { return decodeURI(url); } catch(e){ return url; }
+}
+
 async function renderLookup(term){
   const view = el(`<div class="section"><div class="wrap stack gap-l">
     <a class="back" href="#/">← All lessons</a>
@@ -1990,7 +2018,8 @@ async function renderLookup(term){
       <h1 style="font-size:clamp(25px,4.4vw,36px)">${esc(term)}</h1>
       <p class="lede">Looking this up…</p>
     </div>
-    <div data-result><div class="loading"><span class="spin"></span> Searching Wikipedia…</div></div>
+    <div data-result><div class="loading"><span class="spin"></span>
+      Searching ${esc(currentLang())} Wikipedia…</div></div>
   </div></div>`);
   app().replaceChildren(view);
   const slot = view.querySelector("[data-result]");
@@ -2016,14 +2045,17 @@ async function renderLookup(term){
 
   const used = [...new Set(claims.map(c => c.passageIndex))];
   const number = Object.fromEntries(used.map((p, i) => [p, i + 1]));
-  lede.textContent = "Sentences copied from the articles below, not written for you.";
+  const edition = currentLang() === "Malvani" || currentLang() === "Konkani"
+    ? "English" : currentLang();
+  lede.textContent = `Sentences copied from ${edition} Wikipedia, not written for you.`;
   slot.replaceChildren(el(`<div class="stack gap-m">
     <div class="block"><h4>What the sources say</h4>
       ${claims.map(c => `<p>${esc(c.text)} <a class="cite" href="${esc(passages[c.passageIndex].url)}"
         target="_blank" rel="noopener">[${number[c.passageIndex]}]</a></p>`).join("")}</div>
     <div class="block srcbox"><h4>Where this came from</h4>
-      <ul class="srcs">${used.map(p => `<li><a href="${esc(passages[p].url)}" target="_blank"
-        rel="noopener">${esc(passages[p].title)}</a> — ${esc(passages[p].url)}</li>`).join("")}</ul></div>
+      <ul class="srcs">${used.map(p => `<li><a class="srclink" href="${esc(passages[p].url)}"
+        target="_blank" rel="noopener">${esc(passages[p].title)}</a>
+        <span class="srcurl">${esc(prettyUrl(passages[p].url))}</span></li>`).join("")}</ul></div>
     <p class="notice">These sentences were copied from the articles above and arranged by the
       app. Nobody wrote them for your class, nothing here has been checked by a teacher, and
       this is not part of the reviewed lesson library. Treat it as a starting point for

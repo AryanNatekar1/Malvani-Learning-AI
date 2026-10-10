@@ -165,6 +165,48 @@ class WebAppLanguageParityTests(unittest.TestCase):
         self.assertIn("40", splitter.group(0))
         self.assertIn("320", splitter.group(0))
 
+    def test_browser_lookup_reads_devanagari(self) -> None:
+        """The same silent failure would hit the browser copy.
+
+        JavaScript's \\w is ASCII-only too, so without \\p{M} a Marathi word
+        breaks at every vowel mark and nothing is ever selected.
+        """
+        words = re.search(r"function wikiWords\(.*?\n\}", self.html, re.S)
+        self.assertIsNotNone(words)
+        assert words is not None
+        self.assertIn(r"\p{M}", words.group(0))
+        self.assertIn("gu", words.group(0))  # the unicode regex flag
+
+        splitter = re.search(r"function wikiSentences\(.*?\n\}", self.html, re.S)
+        assert splitter is not None
+        body = splitter.group(0)
+        self.assertIn("।", body, "a danda must end a sentence")
+        # The Devanagari range may be written as an escape or as the literal
+        # characters; both are valid in a JavaScript character class, and
+        # what matters is that the lookahead covers the block at all.
+        covers_devanagari = "u0900" in body or "ऀ" in body
+        self.assertTrue(
+            covers_devanagari,
+            "the sentence lookahead does not accept a Devanagari character, so "
+            "a Marathi article would never be split into sentences",
+        )
+
+    def test_browser_lookup_follows_the_chosen_language(self) -> None:
+        """Marathi Wikipedia is written by Marathi speakers, so no translation
+        step is involved and nothing has to be reviewed before it is read."""
+        self.assertIn("WIKI_EDITIONS", self.html)
+        editions = re.search(r"const WIKI_EDITIONS = \{.*?\};", self.html, re.S)
+        self.assertIsNotNone(editions)
+        assert editions is not None
+        for language, code in (("English", "en"), ("Marathi", "mr"), ("Hindi", "hi")):
+            with self.subTest(language=language):
+                self.assertIn(f'{language}:"{code}"', editions.group(0).replace(" ", ""))
+
+        import wikipedia_retrieval
+
+        for language, code in (("English", "en"), ("Marathi", "mr"), ("Hindi", "hi")):
+            self.assertEqual(wikipedia_retrieval.LANGUAGE_EDITIONS[language], code)
+
     def test_lookup_is_not_precached_as_if_it_worked_offline(self) -> None:
         """The offline promise covers lessons, and must not appear to cover this."""
         service_worker = (ROOT / "sw.js").read_text(encoding="utf-8")

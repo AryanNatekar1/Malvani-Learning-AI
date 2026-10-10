@@ -50,6 +50,60 @@ class SentenceSplittingTests(unittest.TestCase):
         self.assertEqual(sentences("Photosynthesis " + "word " * 200 + "."), [])
 
 
+class DevanagariTests(unittest.TestCase):
+    """Marathi and Hindi broke every stage of this silently.
+
+    An ASCII tokenizer found no words, so an ASCII sentence splitter found no
+    sentences, so nothing was selected and nothing was reported. These pin
+    each stage separately, because the failure was invisible end to end.
+    """
+
+    MARATHI = (
+        "वस्तुमान असलेल्या कोणत्याही दोन वस्तूंच्या एकमेकांकडे आकर्षिल्या "
+        "जाण्याच्या प्रवृत्तीला गुरुत्वाकर्षण असे म्हणतात. वजन म्हणजे "
+        "जमिनीच्या दिशेने असणाऱ्या गुरुत्वाकर्षणामुळे मिळणारे त्वरण होय."
+    )
+
+    def test_a_devanagari_word_is_not_split_at_its_vowel_marks(self) -> None:
+        from extractive_answer import _words
+
+        found = _words("गुरुत्वाकर्षण म्हणजे वस्तुमान")
+        self.assertIn("गुरुत्वाकर्षण", found)
+        self.assertIn("वस्तुमान", found)
+        # Fragments produced by the old tokenizer must not appear.
+        self.assertNotIn("वरण", found)
+
+    def test_grammar_words_are_treated_as_stopwords(self) -> None:
+        from extractive_answer import _words
+
+        self.assertNotIn("आणि", _words("गुरुत्वाकर्षण आणि वस्तुमान"))
+
+    def test_marathi_splits_into_sentences(self) -> None:
+        """A full stop ends a Marathi sentence, with no capital to follow it."""
+        self.assertEqual(len(sentences(self.MARATHI)), 2)
+
+    def test_a_danda_ends_a_sentence(self) -> None:
+        text = (
+            "गुरुत्वाकर्षण म्हणजे दोन वस्तूंमधील आकर्षण होय। "
+            "वजन हे गुरुत्वाकर्षणामुळे मिळणारे त्वरण आहे।"
+        )
+        self.assertEqual(len(sentences(text)), 2)
+
+    def test_marathi_claims_survive_the_grounding_gate(self) -> None:
+        """The gate had its own ASCII tokenizer and dropped all of them."""
+        marathi = passage(self.MARATHI, title="गुरुत्वाकर्षण", slug="mr")
+        proposed = extract_claims("गुरुत्वाकर्षण", [marathi], limit=2)
+        self.assertTrue(proposed, "nothing selected from Marathi text")
+        answer = ground_claims(proposed, [marathi])
+        self.assertEqual(answer.dropped, ())
+        self.assertTrue(answer.claims)
+
+    def test_english_still_works_after_the_unicode_change(self) -> None:
+        proposed = extract_claims("photosynthesis", [MAIN], limit=2)
+        self.assertTrue(proposed)
+        self.assertIn("Photosynthesis is the process", proposed[0][0])
+
+
 class SelectionTests(unittest.TestCase):
     def test_selected_text_is_verbatim_so_grounding_holds(self) -> None:
         """The central property: selection cannot invent, by construction."""
