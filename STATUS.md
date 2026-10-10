@@ -157,7 +157,17 @@ Current Version: **V3.0 local desktop app + deployable web app**
   a word a learner wants, nor an educational article from a coincidence. It
   is good enough to draft for a teacher and not good enough to show a student
   unreviewed, which is what the draft's reviewer notes say.
-- 221 automated tests, including GUI flow, compact-layout reachability,
+- Looking up a topic the app has no lesson for, in the browser. Searching for
+  something unknown now offers to look it up: it queries Wikipedia directly
+  from the page, copies sentences verbatim from the results, and shows each
+  one with a citation link and the full source list. It states plainly that
+  nobody wrote it for the reader's class, no teacher has checked it, and it
+  is not part of the reviewed library. Losing the network produces a message
+  pointing back at the offline lessons, never a guess. The browser copy of
+  the retrieval rules is compared against the Python one by tests, since a
+  static page cannot import them and a silent divergence would show uncited
+  text on the version most students use.
+- 225 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that

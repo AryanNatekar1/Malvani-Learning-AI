@@ -116,6 +116,60 @@ class WebAppLanguageParityTests(unittest.TestCase):
             on_disk - precached, set(), "lesson files missing from the sw.js precache"
         )
 
+    def test_browser_lookup_keeps_the_same_grounding_rules(self) -> None:
+        """A static page reimplements retrieval in JS; the rules must survive.
+
+        These are the properties that make the Python pipeline safe. If the
+        browser copy quietly drops one, a student gets an uncited claim on
+        the one version most of them actually use.
+        """
+        lookup = re.search(r"async function renderLookup\(.*?\n\}", self.html, re.S)
+        self.assertIsNotNone(lookup, "index.html has no renderLookup()")
+        assert lookup is not None
+        body = lookup.group(0)
+        # Every displayed sentence carries a citation link.
+        self.assertIn('class="cite"', body)
+        # A failed search refuses rather than guessing.
+        self.assertIn("not going to guess", body)
+        # The reader is told this is not reviewed lesson content.
+        self.assertIn("checked by a teacher", body)
+        # Losing the network degrades to a message, not an exception.
+        self.assertIn("catch", body)
+
+    def test_browser_retrieval_rejects_passages_with_no_source(self) -> None:
+        search = re.search(r"async function wikiSearch\(.*?\n\}", self.html, re.S)
+        self.assertIsNotNone(search)
+        assert search is not None
+        self.assertIn("p.url && p.title", search.group(0))
+
+    def test_browser_selection_matches_the_python_scoring(self) -> None:
+        """Same three corrections, or the two produce different answers."""
+        select = re.search(r"function wikiSelect\(.*?\n\}", self.html, re.S)
+        self.assertIsNotNone(select)
+        assert select is not None
+        body = select.group(0)
+        self.assertIn("1.5", body)   # lead-sentence bonus
+        self.assertIn("0.6", body)   # search-rank decay
+        self.assertIn("0.25", body)  # mild length penalty
+        self.assertIn("0.7", body)   # near-duplicate threshold
+
+        import extractive_answer as extractive
+
+        self.assertEqual(extractive.LEAD_SENTENCE_BONUS, 1.5)
+        self.assertEqual(extractive.RANK_DECAY, 0.6)
+        self.assertEqual(extractive.MINIMUM_SENTENCE_CHARACTERS, 40)
+        self.assertEqual(extractive.MAXIMUM_SENTENCE_CHARACTERS, 320)
+        splitter = re.search(r"function wikiSentences\(.*?\n\}", self.html, re.S)
+        self.assertIsNotNone(splitter)
+        assert splitter is not None
+        self.assertIn("40", splitter.group(0))
+        self.assertIn("320", splitter.group(0))
+
+    def test_lookup_is_not_precached_as_if_it_worked_offline(self) -> None:
+        """The offline promise covers lessons, and must not appear to cover this."""
+        service_worker = (ROOT / "sw.js").read_text(encoding="utf-8")
+        self.assertNotIn("wikipedia.org", service_worker)
+
     def test_lesson_tabs_are_addressable_and_fall_back_safely(self) -> None:
         """A teacher can link straight to a tab; a bad one must not blank the page."""
         self.assertIn("function renderLesson(topic, tab)", self.html)

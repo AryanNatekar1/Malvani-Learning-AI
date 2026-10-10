@@ -310,6 +310,11 @@ ul.srcs{margin:0; padding-left:20px; display:grid; gap:8px}
 ul.srcs li{color:var(--dim); font-size:13.5px; line-height:1.6}
 ul.srcs.warn li{color:var(--muted)}
 ul.srcs.warn li::marker{color:var(--warn)}
+.cite{color:var(--phase-a); text-decoration:none; font-family:var(--f-mono); font-size:12px;
+  vertical-align:super}
+.cite:hover{text-decoration:underline}
+.srcs a{color:var(--phase-a); text-decoration:none}
+.srcs a:hover{text-decoration:underline}
 a.back{font-size:13.5px; color:var(--muted); text-decoration:none}
 a.back:hover{color:var(--phase-a)}
 @media (max-width:520px){ .qa{padding:18px} }
@@ -1890,6 +1895,142 @@ function renderSolver(id){
   drawStep();
 }
 
+/* ============ looking up a topic we have no lesson for ============
+ * A deliberate mirror of three Python modules — wikipedia_retrieval,
+ * extractive_answer and grounded_answer — because a static page cannot run
+ * them. The rules they enforce are repeated here rather than relaxed:
+ *
+ *   every passage must carry a URL, or it cannot support anything;
+ *   sentences are copied, never written, so grounding holds by construction;
+ *   nothing reaches the reader without a visible citation;
+ *   a network failure produces "I could not find this", never a guess.
+ *
+ * Tests compare this against the Python versions so the two cannot drift.
+ */
+const WIKI_STOPWORDS = new Set(("a an and are as at be but by can could did do does for from had has have " +
+  "how i if in into is it its may might of on one or that the their them then there these they this to " +
+  "was were what when which who why will with you").split(" "));
+
+function wikiWords(text){
+  return new Set((text.toLowerCase().match(/[a-z0-9]+/g) || [])
+    .filter(w => w.length > 2 && !WIKI_STOPWORDS.has(w)));
+}
+
+function wikiSentences(text){
+  return text.replace(/\n/g, " ").split(/(?<=[.!?])\s+(?=[A-Z0-9])/)
+    .map(s => s.split(/\s+/).join(" ").trim())
+    .filter(s => s.length >= 40 && s.length <= 320);
+}
+
+async function wikiSearch(query, limit = 4){
+  const url = "https://en.wikipedia.org/w/api.php?" + new URLSearchParams({
+    action:"query", format:"json", formatversion:"2", generator:"search",
+    gsrsearch:query, gsrlimit:String(limit), prop:"extracts|info",
+    exintro:"1", explaintext:"1", inprop:"url", redirects:"1", origin:"*"
+  });
+  const response = await fetch(url);
+  if(!response.ok) throw new Error("search failed");
+  const data = await response.json();
+  const pages = (data && data.query && data.query.pages) || [];
+  if(!Array.isArray(pages)) return [];
+  return pages
+    .slice().sort((a,b) => (a.index ?? 999) - (b.index ?? 999))
+    .map(p => ({ text:(p.extract||"").trim(), title:(p.title||"").trim(), url:(p.fullurl||"").trim() }))
+    // A passage with no URL cannot be checked, so it cannot be used.
+    .filter(p => p.url && p.title && p.text.length >= 120)
+    .filter(p => !p.text.slice(0,200).toLowerCase().includes("may refer to"));
+}
+
+/* Same scoring as extractive_answer.py: lead sentences carry the definition,
+   the search engine's own ranking is the best signal available, and only a
+   mild length penalty, since a stronger one favours terse specialist lines. */
+function wikiSelect(query, passages, limit = 4){
+  const wanted = wikiWords(query);
+  if(!wanted.size || !passages.length) return [];
+  const scored = [];
+  passages.forEach((passage, passageIndex) => {
+    wikiSentences(passage.text).forEach((sentence, position) => {
+      const words = wikiWords(sentence);
+      if(!words.size) return;
+      let overlap = 0;
+      wanted.forEach(w => { if(words.has(w)) overlap++; });
+      if(!overlap) return;
+      let score = overlap;
+      if(position === 0) score *= 1.5;
+      score *= 1 / (1 + 0.6 * passageIndex);
+      score /= Math.pow(words.size, 0.25);
+      scored.push({score, position, passageIndex, sentence, words});
+    });
+  });
+  scored.sort((a,b) => b.score - a.score || a.position - b.position);
+
+  const chosen = [], seen = [], perPassage = {};
+  for(const item of scored){
+    if(chosen.length >= limit) break;
+    if((perPassage[item.passageIndex] || 0) >= 2) continue;
+    const duplicate = seen.some(previous => {
+      let shared = 0;
+      item.words.forEach(w => { if(previous.has(w)) shared++; });
+      return shared / Math.max(item.words.size, 1) > 0.7;
+    });
+    if(duplicate) continue;
+    chosen.push({text:item.sentence, passageIndex:item.passageIndex});
+    seen.push(item.words);
+    perPassage[item.passageIndex] = (perPassage[item.passageIndex] || 0) + 1;
+  }
+  chosen.sort((a,b) => a.passageIndex - b.passageIndex);
+  return chosen;
+}
+
+async function renderLookup(term){
+  const view = el(`<div class="section"><div class="wrap stack gap-l">
+    <a class="back" href="#/">← All lessons</a>
+    <div class="stack gap-s">
+      <span class="eyebrow">Not a lesson in this app</span>
+      <h1 style="font-size:clamp(25px,4.4vw,36px)">${esc(term)}</h1>
+      <p class="lede">Looking this up…</p>
+    </div>
+    <div data-result><div class="loading"><span class="spin"></span> Searching Wikipedia…</div></div>
+  </div></div>`);
+  app().replaceChildren(view);
+  const slot = view.querySelector("[data-result]");
+  const lede = view.querySelector(".lede");
+
+  let passages = [];
+  try {
+    passages = await wikiSearch(term);
+  } catch(err){
+    lede.textContent = "That needed the internet, and it did not work.";
+    slot.replaceChildren(el(`<div class="block"><p>No connection, or the search did not
+      respond. Every lesson already in this app still works offline — go back and pick one.</p></div>`));
+    return;
+  }
+
+  const claims = wikiSelect(term, passages);
+  if(!claims.length){
+    lede.textContent = "Nothing usable came back.";
+    slot.replaceChildren(el(`<div class="block"><p>I could not find this in a source I can
+      show you, so I am not going to guess. Try different words, or ask your teacher.</p></div>`));
+    return;
+  }
+
+  const used = [...new Set(claims.map(c => c.passageIndex))];
+  const number = Object.fromEntries(used.map((p, i) => [p, i + 1]));
+  lede.textContent = "Sentences copied from the articles below, not written for you.";
+  slot.replaceChildren(el(`<div class="stack gap-m">
+    <div class="block"><h4>What the sources say</h4>
+      ${claims.map(c => `<p>${esc(c.text)} <a class="cite" href="${esc(passages[c.passageIndex].url)}"
+        target="_blank" rel="noopener">[${number[c.passageIndex]}]</a></p>`).join("")}</div>
+    <div class="block srcbox"><h4>Where this came from</h4>
+      <ul class="srcs">${used.map(p => `<li><a href="${esc(passages[p].url)}" target="_blank"
+        rel="noopener">${esc(passages[p].title)}</a> — ${esc(passages[p].url)}</li>`).join("")}</ul></div>
+    <p class="notice">These sentences were copied from the articles above and arranged by the
+      app. Nobody wrote them for your class, nothing here has been checked by a teacher, and
+      this is not part of the reviewed lesson library. Treat it as a starting point for
+      reading, not as an answer.</p>
+  </div>`));
+}
+
 /* ---------- places ----------
    Naming a real place is fine here, where naming one in an observation
    activity was not. The difference is who the claim is about: "Sindhudurg
@@ -2023,6 +2164,7 @@ function route(){
     return renderLesson(decodeURIComponent(parts[0]), parts[1]);
   }
   if(h.startsWith("#/solve/")) return renderSolver(decodeURIComponent(h.slice(8)));
+  if(h.startsWith("#/lookup/")) return renderLookup(decodeURIComponent(h.slice(9)));
   if(h.startsWith("#/place/")) return renderPlace(decodeURIComponent(h.slice(8)));
   if(h.startsWith("#/places")) return renderPlaces();
   if(h.startsWith("#/progress")) return renderProgress();
@@ -2089,7 +2231,16 @@ function palRender(query){
   }).slice(0, 40);
   palIndex = 0;
   if(!palItems.length){
-    palList().replaceChildren(el(`<p class="pal-empty">Nothing matches “${esc(query)}”.</p>`));
+    const term = query.trim();
+    const offer = el(`<div class="pal-empty">
+      <p style="margin:0 0 14px">No lesson here covers “${esc(term)}”.</p>
+      ${term ? `<button class="btn" type="button" data-lookup>Look it up and show me the sources</button>
+      <p style="margin:12px 0 0;font-size:12.5px">Searches Wikipedia. You will get sentences
+        copied from the articles, with links — not a lesson written for you.</p>` : ""}
+    </div>`);
+    const button = offer.querySelector("[data-lookup]");
+    if(button) button.addEventListener("click", () => { palClose(); location.hash = "#/lookup/" + encodeURIComponent(term); });
+    palList().replaceChildren(offer);
     return;
   }
   palList().replaceChildren(...palItems.map((e,i) => el(
