@@ -185,7 +185,17 @@ Current Version: **V3.0 local desktop app + deployable web app**
   learner's machine, so it is opt-in, it says up front that what they typed
   goes to Wikipedia, and a test asserts asking a question never reaches the
   network on its own.
-- 245 automated tests, including GUI flow, compact-layout reachability,
+- The offline promise is now tested rather than asserted. A guard replaces the
+  socket constructor so every outbound connection fails, and the lessons,
+  places, teaching actions and quizzes are exercised through it — which
+  catches a future feature reaching the network from somewhere nobody thought
+  to mock, not just an unmocked provider.
+- Claims the README makes are checked by tests: every lesson has a diagram,
+  every diagram has a text alternative and a readout, no diagram points at a
+  lesson that does not exist, every lesson has a quiz, a challenge and a
+  source, nothing calls itself reviewed, and every quiz question's correct
+  answer actually appears among its options.
+- 260 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that
