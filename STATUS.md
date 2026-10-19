@@ -178,7 +178,14 @@ Current Version: **V3.0 local desktop app + deployable web app**
   nothing while reporting no error. The gate had the same flaw independently,
   and would have dropped every Marathi claim for having no supported words.
   Both now share one tokenizer rather than keeping separate copies.
-- 233 automated tests, including GUI flow, compact-layout reachability,
+- The desktop app can look a topic up too, so both apps handle a question the
+  library does not cover. Asking about an unknown topic no longer dead-ends;
+  it explains that no lesson exists, refuses to guess, and offers a search.
+  That action is deliberately the only one in the app that leaves the
+  learner's machine, so it is opt-in, it says up front that what they typed
+  goes to Wikipedia, and a test asserts asking a question never reaches the
+  network on its own.
+- 245 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that

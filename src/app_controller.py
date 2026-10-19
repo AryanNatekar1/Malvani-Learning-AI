@@ -7,6 +7,8 @@ from dataclasses import dataclass
 
 from ai_provider import AIProvider, OfflineAIProvider
 from context_engine import ContextFormatError, ContextRepository, ContextSelection, StudentContext
+from extractive_answer import extract_claims
+from grounded_answer import ground_claims
 from knowledge_engine import (
     available_subjects,
     find_topic,
@@ -39,6 +41,7 @@ from reasoning_engine import ReasoningEngine, ReasoningFeedback
 from recommendation_engine import LearningRecommendation, build_recommendation
 from student_engine import ProfileStore, SQLiteProfileStore, StudentRepository, StudentProfile
 from teaching_engine import LessonSection, TeachingEngine
+from wikipedia_retrieval import WikipediaRetrievalProvider
 
 
 # These phrases signal that a student wants the guided lesson flow, not one
@@ -173,6 +176,9 @@ class AppController:
         self.selected_manual_context_id: str | None = None
         self.current_lesson: Lesson | None = None
         self.current_topic: str | None = None
+        # The last question no installed lesson answered. Held in memory only,
+        # so the look-up action need not make the learner type it again.
+        self.last_unanswered_question: str = ""
         self.quiz_session: QuizSession | None = None
         self.current_problem_session: GuidedProblemSession | None = None
         self.current_problem_hints = 0
@@ -325,6 +331,9 @@ class AppController:
         """Clear lesson-specific state when a subject change makes it irrelevant."""
         self.current_lesson = None
         self.current_topic = None
+        # The last question no installed lesson answered, kept only so the
+        # look-up action does not make the learner type it again.
+        self.last_unanswered_question = ""
         self._clear_lesson_activity_state()
 
     def _clear_lesson_activity_state(self) -> None:
@@ -343,8 +352,15 @@ class AppController:
         self._research_completed_stages.clear()
         self.learning_state_version += 1
 
+    def _clear_unanswered(self) -> None:
+        """Forget the pending look-up once a lesson has answered the learner."""
+        self.last_unanswered_question = ""
+
     def answer_question(self, question: str) -> TutorResponse:
         """Answer a topic question or a bounded follow-up from local lesson data."""
+        # Cleared up front and set again only on the no-lesson path, so the
+        # look-up offer never lingers after a question that was answered.
+        self._clear_unanswered()
         topic = find_topic(question)
         if topic is not None:
             topic_subject = self._subject_for_topic(topic)
@@ -411,13 +427,72 @@ class AppController:
                     start_quiz=True,
                 )
 
+        # Remember what was asked, so "Look it up online" has something to
+        # search without the learner retyping it. Held in memory only, and
+        # replaced by the next question.
+        self.last_unanswered_question = question.strip()
         return TutorResponse(
             None,
             (
-                f"I am still learning this topic. Try a supported "
-                f"{self.profile.preferred_subject} topic."
+                f"There is no lesson here for that yet, and I am not going to "
+                f"guess at it.\n\n"
+                f"You can try a {self.profile.preferred_subject} topic that is "
+                f"installed, or use \"Look it up online\" to search Wikipedia. "
+                f"That one needs the internet and sends what you typed to "
+                f"Wikipedia, so it is a deliberate choice rather than something "
+                f"this app does on its own."
             ),
             False,
+        )
+
+    def look_up_topic(self, query: str | None = None) -> TutorResponse:
+        """Search the web for a topic with no lesson, and cite every sentence.
+
+        Separated from `answer_question` on purpose. Everything else in this
+        app runs on the learner's own machine, and this one call leaves it, so
+        it happens only when someone asks for it and the response says where
+        the words came from.
+        """
+        query = (query or self.last_unanswered_question or "").strip()
+        if not query:
+            return TutorResponse(None, "Ask a question first, then look it up.", False)
+
+        provider = WikipediaRetrievalProvider(language=self.profile.preferred_language)
+        passages = list(provider.search(query, limit=4))
+        if not passages:
+            return TutorResponse(
+                None,
+                (
+                    "That found nothing. Either there is no connection, or the "
+                    "search returned nothing usable.\n\n"
+                    "Every installed lesson still works without the internet."
+                ),
+                False,
+            )
+
+        answer = ground_claims(extract_claims(query, passages, limit=4), passages)
+        if answer.is_empty:
+            return TutorResponse(
+                None,
+                (
+                    "I could not find this in a source I can show you, so I am "
+                    "not going to guess. Try different words, or ask your teacher."
+                ),
+                False,
+            )
+        return TutorResponse(
+            None,
+            answer.as_student_text(),
+            False,
+            sections=(
+                LessonSection(
+                    "NOT A REVIEWED LESSON",
+                    "These sentences were copied from the articles above and "
+                    "arranged by the app. Nobody wrote them for your class and "
+                    "no teacher has checked them. Treat this as a starting "
+                    "point for reading, not as an answer.",
+                ),
+            ),
         )
 
     @staticmethod

@@ -1442,14 +1442,39 @@ class LearningScreen(Screen):
             )
         for column in range(4):
             actions.columnconfigure(column, weight=1)
+        # Follow the loop rather than hard-coding a cell. This button used to
+        # sit at row 1 column 3, which two new actions later grew into, so it
+        # was stacked on top of "Places near you" and one of them was unusable.
+        visual_index = len(action_buttons)
         ttk.Button(
             actions,
             text="Explore visual",
             style="Secondary.TButton",
             command=self.show_diagram,
         ).grid(
-            row=1, column=3, padx=2, pady=2, sticky="ew"
+            row=visual_index // 4, column=visual_index % 4, padx=2, pady=2, sticky="ew"
         )
+
+        # Looking a topic up is the one action that leaves this machine, so it
+        # gets its own row rather than sitting among the offline ones, and it
+        # appears only after a question no installed lesson could answer.
+        self.lookup_frame = ttk.Frame(self, style="App.TFrame")
+        self.lookup_frame.grid(row=8, column=0, sticky="ew", pady=(4, 0))
+        self.lookup_frame.columnconfigure(0, weight=1)
+        self.lookup_note = ttk.Label(
+            self.lookup_frame,
+            text="No lesson covers that. Searching sends what you typed to Wikipedia.",
+            style="SurfaceMuted.TLabel",
+            wraplength=520,
+        )
+        self.lookup_note.grid(row=0, column=0, sticky="w")
+        ttk.Button(
+            self.lookup_frame,
+            text="Look it up online",
+            style="Secondary.TButton",
+            command=self.look_up_online,
+        ).grid(row=0, column=1, padx=(8, 0), sticky="e")
+        self.lookup_frame.grid_remove()
         self.problem_solver_button = ttk.Button(
             actions,
             text="Open Problem Solver",
@@ -1493,6 +1518,7 @@ class LearningScreen(Screen):
             self._set_topic_status(response.topic)
             self._trail_topic = response.topic
         self._refresh_problem_solver_availability()
+        self._refresh_lookup_availability()
         self.refresh_related_questions()
         self.question.set("")
 
@@ -1501,6 +1527,20 @@ class LearningScreen(Screen):
         context = self.app.controller.active_manual_context()
         context_suffix = f" • Context: {context.title}" if context is not None else ""
         self.status.set(f"Offline local mode • Topic: {topic}{context_suffix}")
+
+    def look_up_online(self) -> None:
+        """Search the web for the last question no installed lesson answered."""
+        self.lookup_frame.grid_remove()
+        response = self.app.controller.look_up_topic()
+        self.render_response(response, append=True)
+        self._refresh_lookup_availability()
+
+    def _refresh_lookup_availability(self) -> None:
+        """Offer the one networked action only when it would be useful."""
+        if self.app.controller.last_unanswered_question:
+            self.lookup_frame.grid()
+        else:
+            self.lookup_frame.grid_remove()
 
     def show_action(self, action: str) -> None:
         response = self.app.controller.lesson_action(action)
