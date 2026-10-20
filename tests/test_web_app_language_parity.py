@@ -150,6 +150,7 @@ class WebAppLanguageParityTests(unittest.TestCase):
         body = select.group(0)
         self.assertIn("1.5", body)   # lead-sentence bonus
         self.assertIn("0.6", body)   # search-rank decay
+        self.assertIn("0.9", body)   # paragraph decay
         self.assertIn("0.25", body)  # mild length penalty
         self.assertIn("0.7", body)   # near-duplicate threshold
 
@@ -157,6 +158,12 @@ class WebAppLanguageParityTests(unittest.TestCase):
 
         self.assertEqual(extractive.LEAD_SENTENCE_BONUS, 1.5)
         self.assertEqual(extractive.RANK_DECAY, 0.6)
+        self.assertEqual(extractive.PARAGRAPH_DECAY, 0.9)
+
+        # The browser must keep paragraphs apart too, or it scores a flattened
+        # block and the two apps answer the same question differently.
+        self.assertIn("wikiParagraphs", body)
+        self.assertIn("function wikiParagraphs(", self.html)
         self.assertEqual(extractive.MINIMUM_SENTENCE_CHARACTERS, 40)
         self.assertEqual(extractive.MAXIMUM_SENTENCE_CHARACTERS, 320)
         splitter = re.search(r"function wikiSentences\(.*?\n\}", self.html, re.S)

@@ -1936,6 +1936,14 @@ function wikiSentences(text){
     .filter(s => s.length >= 40 && s.length <= 320);
 }
 
+/* An encyclopaedia lead is structured and flattening it threw that away. The
+   first paragraph defines the subject; later ones branch into other senses of
+   the same word. Keeping the paragraph a sentence came from is what separated
+   rainbows from optical fibre for "dispersion of light". */
+function wikiParagraphs(text){
+  return text.split("\n").map(b => b.trim()).filter(Boolean);
+}
+
 /* Which Wikipedia to read. Picking Marathi gets articles written by Marathi
    speakers and cited to them — real content in the language, with no
    translation step to review and nothing invented. Malvani has no Wikipedia,
@@ -1970,20 +1978,25 @@ function wikiSelect(query, passages, limit = 4){
   if(!wanted.size || !passages.length) return [];
   const scored = [];
   passages.forEach((passage, passageIndex) => {
-    wikiSentences(passage.text).forEach((sentence, position) => {
-      const words = wikiWords(sentence);
-      if(!words.size) return;
-      let overlap = 0;
-      wanted.forEach(w => { if(words.has(w)) overlap++; });
-      if(!overlap) return;
-      let score = overlap;
-      if(position === 0) score *= 1.5;
-      score *= 1 / (1 + 0.6 * passageIndex);
-      score /= Math.pow(words.size, 0.25);
-      scored.push({score, position, passageIndex, sentence, words});
+    let depth = 0;
+    wikiParagraphs(passage.text).forEach((paragraph, paragraphIndex) => {
+      wikiSentences(paragraph).forEach((sentence, position) => {
+        depth++;
+        const words = wikiWords(sentence);
+        if(!words.size) return;
+        let overlap = 0;
+        wanted.forEach(w => { if(words.has(w)) overlap++; });
+        if(!overlap) return;
+        let score = overlap;
+        score *= 1 / (1 + 0.9 * paragraphIndex);   // definition before asides
+        if(position === 0) score *= 1.5;           // the claim of its paragraph
+        score *= 1 / (1 + 0.6 * passageIndex);     // the search engine's ranking
+        score /= Math.pow(words.size, 0.25);       // mild length penalty only
+        scored.push({score, depth, passageIndex, sentence, words});
+      });
     });
   });
-  scored.sort((a,b) => b.score - a.score || a.position - b.position);
+  scored.sort((a,b) => b.score - a.score || a.depth - b.depth);
 
   const chosen = [], seen = [], perPassage = {};
   for(const item of scored){

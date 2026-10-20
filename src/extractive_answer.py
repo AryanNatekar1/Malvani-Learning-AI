@@ -12,27 +12,26 @@ default rather than as a placeholder: it works offline once passages are
 cached, it costs nothing, it cannot invent, and it fails in the one obvious way
 instead of several subtle ones.
 
-What it gives up is real, and worth stating plainly rather than discovering
-later. Measured against live Wikipedia searches, it reliably finds the
-defining sentence for a well-named topic — photosynthesis, electric current,
-the water cycle all come back with the definition first. It fails in two ways
-that word-counting cannot fix:
+Two failures looked unfixable by word-counting and were not. A search for
+dispersion of light used to return a sentence about telecommunication signals
+in coaxial cable, and "monsoon" returned one about a television contestant of
+that name. Both were counting words in a flattened block of text and throwing
+away the structure the encyclopaedia had already written: a lead paragraph
+defines its subject, and later paragraphs branch into other senses of the same
+word. Scoring by which paragraph a sentence came from fixed both, because the
+distinction was never lexical.
 
-* It cannot tell which *sense* of a word a learner wants. A search for
-  dispersion of light returns sentences about optical fibre and about
-  rainbows, and both genuinely contain "dispersion" and "light".
-* It cannot tell an educational article from a coincidence. "Monsoon"
-  retrieves a sentence about a television contestant of that name.
+What remains is genuinely beyond selection. It cannot simplify a sentence
+written for adults, reorder an explanation to build from what a learner
+already knows, or join two sources into one idea. It cannot tell that "phase
+velocity" will lose a Class 9 reader in the first line.
 
-It also cannot simplify a sentence written for adults, reorder an explanation
-to build from what a learner already knows, or join two sources into one idea.
-
-Those are precisely what a language model adds, and when one is configured it
-should replace this step and pass through the same gate — a model's output has
-to earn its citations, where this one has them already. Until then this is
-good enough for its actual job, which is drafting for a teacher to correct,
-and not good enough to put in front of a student unreviewed. The draft written
-by `lesson_drafting` says so in its reviewer notes.
+Those are what a language model adds, and when one is configured it should
+replace this step and pass through the same gate — a model's output has to
+earn its citations, where this one has them already. Until then this is good
+enough for its actual job, which is drafting for a teacher to correct, and not
+good enough to put in front of a student unreviewed. The draft written by
+`lesson_drafting` says so in its reviewer notes.
 """
 
 from __future__ import annotations
@@ -79,6 +78,12 @@ LEAD_SENTENCE_BONUS = 1.5
 # related speciality.
 RANK_DECAY = 0.6
 
+# How fast a sentence's influence falls with its paragraph's position in the
+# article. Set high deliberately: the gap between "this is what the word
+# means" and "the word also has this other use" is the gap between a usable
+# answer and a confusing one.
+PARAGRAPH_DECAY = 0.9
+
 
 def _words(text: str) -> set[str]:
     return {
@@ -96,6 +101,17 @@ def sentences(text: str) -> list[str]:
         if MINIMUM_SENTENCE_CHARACTERS <= len(candidate) <= MAXIMUM_SENTENCE_CHARACTERS:
             found.append(candidate)
     return found
+
+
+def paragraphs(text: str) -> list[str]:
+    """Split a passage into paragraphs, keeping the order they were written in.
+
+    An encyclopaedia lead is structured, and flattening it threw that away.
+    The first paragraph defines the subject; later ones qualify it and branch
+    into specialist senses. Knowing which paragraph a sentence came from is a
+    stronger signal than anything counting its words can produce.
+    """
+    return [block for block in (b.strip() for b in text.split("\n")) if block]
 
 
 def extract_claims(
@@ -119,29 +135,35 @@ def extract_claims(
 
     scored: list[tuple[float, int, int, str, int]] = []
     for passage_index, passage in enumerate(passages):
-        for position, sentence in enumerate(sentences(passage.text)):
-            sentence_words = _words(sentence)
-            if not sentence_words:
-                continue
-            overlap = len(wanted & sentence_words)
-            if not overlap:
-                continue
-            score = float(overlap)
-            # An encyclopaedia article opens with its definition and drifts
-            # into specialist detail after that. Without this, a search for
-            # dispersion of light returned a sentence about coaxial cable,
-            # which is the same word in a sense no school student wants.
-            if position == 0:
-                score *= LEAD_SENTENCE_BONUS
-            # The search engine already ranked these articles, and discarding
-            # that was a mistake: a search for photosynthesis put a sentence
-            # about C4 carbon fixation ahead of the definition in the main
-            # article, purely because it was shorter.
-            score *= 1.0 / (1.0 + RANK_DECAY * passage_index)
-            # Only a mild length penalty. A stronger one favours terse
-            # specialist statements over the fuller sentence that explains.
-            score /= len(sentence_words) ** 0.25
-            scored.append((score, -position, -passage_index, sentence, passage_index))
+        depth = 0
+        for paragraph_index, paragraph in enumerate(paragraphs(passage.text)):
+            for position, sentence in enumerate(sentences(paragraph)):
+                depth += 1
+                sentence_words = _words(sentence)
+                if not sentence_words:
+                    continue
+                overlap = len(wanted & sentence_words)
+                if not overlap:
+                    continue
+                score = float(overlap)
+                # A lead paragraph defines its subject; later ones qualify it
+                # and wander into other senses of the same word. This is what
+                # finally separated rainbows from optical fibre in a search
+                # for dispersion of light — both paragraphs are about
+                # dispersion and light, and only one is the definition.
+                score *= 1.0 / (1.0 + PARAGRAPH_DECAY * paragraph_index)
+                # Within a paragraph, the opening sentence carries the claim.
+                if position == 0:
+                    score *= LEAD_SENTENCE_BONUS
+                # The search engine already ranked these articles, and
+                # discarding that was a mistake: a search for photosynthesis
+                # put a sentence about C4 carbon fixation ahead of the
+                # definition, purely because it was shorter.
+                score *= 1.0 / (1.0 + RANK_DECAY * passage_index)
+                # Only a mild length penalty. A stronger one favours terse
+                # specialist statements over the fuller sentence that explains.
+                score /= len(sentence_words) ** 0.25
+                scored.append((score, -depth, -passage_index, sentence, passage_index))
 
     scored.sort(reverse=True)
 

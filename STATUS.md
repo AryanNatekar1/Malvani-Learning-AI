@@ -157,6 +157,13 @@ Current Version: **V3.0 local desktop app + deployable web app**
   a word a learner wants, nor an educational article from a coincidence. It
   is good enough to draft for a teacher and not good enough to show a student
   unreviewed, which is what the draft's reviewer notes say.
+- Selection scores by which paragraph a sentence came from, which fixed two
+  failures previously recorded here as beyond word-counting. A search for
+  dispersion of light returned a sentence about coaxial cable, and "monsoon"
+  returned one about a television contestant of that name. Both came from
+  flattening an article into one block and discarding the structure it already
+  had: a lead paragraph defines its subject and later ones branch into other
+  senses of the same word. The distinction was never lexical.
 - Looking up a topic the app has no lesson for, in the browser. Searching for
   something unknown now offers to look it up: it queries Wikipedia directly
   from the page, copies sentences verbatim from the results, and shows each

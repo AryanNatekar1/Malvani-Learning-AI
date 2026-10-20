@@ -14,7 +14,7 @@ from pathlib import Path
 SRC_DIR = Path(__file__).resolve().parent.parent / "src"
 sys.path.insert(0, str(SRC_DIR))
 
-from extractive_answer import extract_claims, sentences
+from extractive_answer import extract_claims, paragraphs, sentences
 from grounded_answer import Passage, ground_claims
 
 
@@ -101,6 +101,52 @@ class DevanagariTests(unittest.TestCase):
     def test_english_still_works_after_the_unicode_change(self) -> None:
         proposed = extract_claims("photosynthesis", [MAIN], limit=2)
         self.assertTrue(proposed)
+        self.assertIn("Photosynthesis is the process", proposed[0][0])
+
+
+class ParagraphStructureTests(unittest.TestCase):
+    """The lead paragraph defines; later paragraphs wander.
+
+    Flattening an article's paragraphs discarded the one signal that separates
+    "this is what the word means" from "the word also has this other use".
+    Both of the failures this module used to document as unfixable were that.
+    """
+
+    DISPERSION = passage(
+        "Dispersion is the phenomenon in which the phase velocity of a wave "
+        "depends on its frequency. Dispersion causes white light to separate "
+        "into its colours when it passes through a prism.\n"
+        "Within optics, dispersion is also a property of telecommunication "
+        "signals along transmission lines, such as microwaves in coaxial "
+        "cable or the pulses of light carried in an optical fibre.",
+        title="Dispersion (optics)",
+        slug="dispersion",
+    )
+
+    def test_paragraphs_are_kept_separate(self) -> None:
+        self.assertEqual(len(paragraphs(self.DISPERSION.text)), 2)
+
+    def test_the_lead_paragraph_wins_over_a_later_sense_of_the_word(self) -> None:
+        """Both paragraphs are about dispersion and light; only one defines it."""
+        chosen = [
+            text
+            for text, _ in extract_claims("dispersion of light", [self.DISPERSION], limit=2)
+        ]
+        self.assertTrue(chosen)
+        for text in chosen:
+            self.assertNotIn("coaxial", text)
+            self.assertIn(text, paragraphs(self.DISPERSION.text)[0])
+
+    def test_a_later_paragraph_is_outranked_rather_than_banned(self) -> None:
+        """When it is the only thing on offer, it is still usable."""
+        later_only = passage(
+            paragraphs(self.DISPERSION.text)[1], title="Optical fibre", slug="fibre"
+        )
+        chosen = [text for text, _ in extract_claims("dispersion of light", [later_only], limit=2)]
+        self.assertTrue(any("coaxial" in text for text in chosen))
+
+    def test_a_single_paragraph_passage_is_unaffected(self) -> None:
+        proposed = extract_claims("photosynthesis", [MAIN], limit=2)
         self.assertIn("Photosynthesis is the process", proposed[0][0])
 
 
