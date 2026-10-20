@@ -1,0 +1,43 @@
+{
+  "id": "draft.refraction-of-light",
+  "title": "Refraction Of Light",
+  "subject": "Physics",
+  "topic": "refraction of light",
+  "levels": [
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
+  "content": {
+    "English": {
+      "simple_explanation": "Optical prisms and lenses use refraction to redirect light, as does the human eye.",
+      "detailed_explanation": "Optical prisms and lenses use refraction to redirect light, as does the human eye. Refraction of light is the most commonly observed phenomenon, but other waves such as sound waves and water waves also experience refraction. In optics, the refractive index (also called refraction index or index of refraction), often denoted n, is the ratio of the speed of light in vacuum (c) to the speed of light in a given optical medium (v), n=c/v. Refraction also occurs in oceans when light passes into the halocline where salinity has impacted the density of the water column."
+    }
+  },
+  "language_metadata": {
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
+  },
+  "sources": [
+    "Refraction — https://en.wikipedia.org/wiki/Refraction",
+    "Refractive index — https://en.wikipedia.org/wiki/Refractive_index"
+  ],
+  "verification_status": "NEEDS_REVIEW",
+  "generated": {
+    "assembled_by": "retrieval and arrangement, not a teacher",
+    "claims_dropped_as_unsupported": [],
+    "reviewer_notes": [
+      "Every sentence here came from a source listed above; none was written by a teacher. Read it before any student does.",
+      "No quiz, challenge or reasoning guide was generated. Those need a decision about what a learner should struggle with.",
+      "The suggested places were matched by overlapping subject matter, not chosen by a person. Check the connection is real before using it."
+    ],
+    "suggested_places": [
+      {
+        "id": "place.the-coast",
+        "name": "The beach, and what a wave actually does"
+      }
+    ]
+  }
+}

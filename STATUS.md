@@ -195,7 +195,19 @@ Current Version: **V3.0 local desktop app + deployable web app**
   lesson that does not exist, every lesson has a quiz, a challenge and a
   source, nothing calls itself reviewed, and every quiz question's correct
   answer actually appears among its options.
-- 260 automated tests, including GUI flow, compact-layout reachability,
+- A drafting command a teacher can actually run:
+  `py scripts/draft_lesson.py "dispersion of light" --subject Physics`.
+  It searches, keeps only the sentences a source supports, and writes a draft
+  to `data/lesson_drafts/` with its sources, the claims it dropped, and what
+  still has to be done by hand. `--dry-run` shows it without writing and
+  `--language Marathi` reads Marathi Wikipedia. The drafting pipeline existed
+  before this and nothing could reach it, which left the library with no way
+  to grow faster than one person typing.
+- Drafts are structurally unable to reach a student: they live outside
+  `data/lessons/`, which is the only folder the loader reads, and tests assert
+  no draft is ever loaded as a lesson, that every draft on disk is marked
+  unreviewed, and that none invents a quiz or challenge.
+- 271 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that
