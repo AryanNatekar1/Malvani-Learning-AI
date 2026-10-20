@@ -214,7 +214,13 @@ Current Version: **V3.0 local desktop app + deployable web app**
   `data/lessons/`, which is the only folder the loader reads, and tests assert
   no draft is ever loaded as a lesson, that every draft on disk is marked
   unreviewed, and that none invents a quiz or challenge.
-- 271 automated tests, including GUI flow, compact-layout reachability,
+- Answer checking is compared across both apps by running the website's real
+  JavaScript in a headless browser against the same answers as the Python, for
+  a Problem Solver step and a quiz question. This is the highest-stakes
+  duplication in the project: a divergence logs nothing, it just tells a
+  student their correct answer is wrong. The comparison skips when no browser
+  is present, so it cross-checks without becoming a reason CI cannot run.
+- 278 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that
