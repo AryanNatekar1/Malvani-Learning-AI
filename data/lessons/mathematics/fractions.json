@@ -30,7 +30,10 @@
     "reading maps and scales"
   ],
   "common_misconceptions": [
-    "A larger denominator always means a larger fraction, so 1/8 must be bigger than 1/4."
+    {
+      "statement": "A larger denominator always means a larger fraction, so 1/8 must be bigger than 1/4.",
+      "correction": "The denominator says how many pieces the whole was cut into. More pieces means each one is smaller, so 1/8 is smaller than 1/4."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need something you can actually divide — a chapati, a length of rope, or a cup of water.",

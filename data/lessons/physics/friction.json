@@ -36,8 +36,14 @@
     "road surfaces"
   ],
   "common_misconceptions": [
-    "Friction is always a problem and should always be removed.",
-    "Friction acts only once an object is already moving."
+    {
+      "statement": "Friction is always a problem and should always be removed.",
+      "correction": "Walking, braking, holding anything and tying a knot all depend on it. Without friction you could not stand up."
+    },
+    {
+      "statement": "Friction acts only once an object is already moving.",
+      "correction": "It acts before that too, and takes more force to overcome at the start than it does once the object is sliding."
+    }
   ],
   "observe_around_you": {
     "invitation": "Find one object and three different surfaces — smooth floor, rough ground, and something in between.",

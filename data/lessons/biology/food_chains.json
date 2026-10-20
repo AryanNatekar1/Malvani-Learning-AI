@@ -3,8 +3,17 @@
   "title": "Food Chains",
   "subject": "Biology",
   "topic": "food chains",
-  "aliases": ["food chain", "food web", "ecosystem", "energy flow"],
-  "levels": ["Class 8", "Class 9", "Class 10"],
+  "aliases": [
+    "food chain",
+    "food web",
+    "ecosystem",
+    "energy flow"
+  ],
+  "levels": [
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
   "content": {
     "English": {
       "simple_explanation": "A food chain traces who eats whom, and with it the path that energy takes from the Sun through living things.",
@@ -12,7 +21,10 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
   "real_world_use": [
     "understanding fishing limits",
@@ -22,22 +34,39 @@
     "managing grazing land"
   ],
   "common_misconceptions": [
-    "Energy is passed along a food chain without any being lost.",
-    "A food chain can be as long as you like.",
-    "Removing one species only affects the species that ate it."
+    {
+      "statement": "Energy is passed along a food chain without any being lost.",
+      "correction": "Most of it is lost at every step. An animal spends energy moving, breathing and keeping warm, and that energy leaves as heat. Only roughly a tenth is stored in its body for whatever eats it next."
+    },
+    {
+      "statement": "A food chain can be as long as you like.",
+      "correction": "After four or five steps there is almost nothing left to pass on. That is why top predators are rare and why chains stay short."
+    },
+    {
+      "statement": "Removing one species only affects the species that ate it.",
+      "correction": "Most animals eat several things and are eaten by several others, so the chains cross into a web. Removing one link changes what is available right across it."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need somewhere outdoors with plants growing — a garden, a field edge, a verge, a plant pot.",
     "what_to_do": "Pick one plant and look closely for a few minutes. Find something eating it, or the holes and chewed edges showing something has. Then look for anything that might eat whatever did that — a bird, a spider, a lizard.",
     "what_to_notice": "Count how many links you can actually see evidence for. Then count how many of each you find: are there more plants, or more of the things eating them?",
     "concept_link": "You almost certainly found more plants than plant-eaters, and more plant-eaters than predators. That is the energy loss made visible — each level can only support a fraction of the one beneath it, which is why the numbers shrink as you climb.",
-    "needs": ["somewhere outdoors with plants", "a few minutes of patience"],
+    "needs": [
+      "somewhere outdoors with plants",
+      "a few minutes of patience"
+    ],
     "safety_note": "Look, do not touch. Leave insects and animals alone, and do not handle anything you cannot identify."
   },
   "think_question": "A food chain rarely has more than four or five links. Using what you know about energy, explain why a chain of ten links could not work.",
   "reasoning_guide": {
-    "required_keywords": ["energy", "lost"],
-    "misconception_keywords": ["energy stays the same"],
+    "required_keywords": [
+      "energy",
+      "lost"
+    ],
+    "misconception_keywords": [
+      "energy stays the same"
+    ],
     "correct_feedback": "Good reasoning: you followed the energy and saw that it runs out.",
     "partial_feedback": "You have started well. Say what happens to most of the energy at each step, and what that leaves for the next one.",
     "misconception_feedback": "Energy is not passed on intact. Most of it is spent and lost as heat at every step, so after a few links there is too little left to support another animal."
@@ -53,8 +82,17 @@
     "solution": "One example: water plant → insect → small fish → bird. The water plant is the producer, because it makes its own food from sunlight. Every other link is a consumer.",
     "accepted_answers": []
   },
-  "career_connections": ["marine biology", "fisheries management", "ecology", "agriculture", "wildlife conservation"],
-  "further_exploration": ["photosynthesis", "energy"],
+  "career_connections": [
+    "marine biology",
+    "fisheries management",
+    "ecology",
+    "agriculture",
+    "wildlife conservation"
+  ],
+  "further_exploration": [
+    "photosynthesis",
+    "energy"
+  ],
   "quiz_questions": [
     {
       "id": "food-chains-producer",
@@ -66,7 +104,10 @@
         "An animal that eats other animals",
         "Any organism at the end of the chain"
       ],
-      "correct_answers": ["An organism that makes its own food from sunlight", "1"],
+      "correct_answers": [
+        "An organism that makes its own food from sunlight",
+        "1"
+      ],
       "explanation": "Producers, almost always plants, capture sunlight and build food from it. Every other link depends on them.",
       "hint": "Think about where the energy enters the chain.",
       "progressive_hints": [
@@ -79,8 +120,16 @@
       "id": "food-chains-energy-loss",
       "question": "Roughly how much of the energy at one level is available to the next?",
       "type": "multiple_choice",
-      "options": ["About all of it", "About three quarters", "About a tenth", "None of it"],
-      "correct_answers": ["About a tenth", "3"],
+      "options": [
+        "About all of it",
+        "About three quarters",
+        "About a tenth",
+        "None of it"
+      ],
+      "correct_answers": [
+        "About a tenth",
+        "3"
+      ],
       "explanation": "Most energy is spent on living and lost as heat. Only roughly a tenth is stored and passed on.",
       "hint": "Think about what an animal spends energy on besides growing.",
       "progressive_hints": [
@@ -99,7 +148,10 @@
         "Because chains only exist in water",
         "Because a web has no producers"
       ],
-      "correct_answers": ["Because most animals eat more than one kind of food", "2"],
+      "correct_answers": [
+        "Because most animals eat more than one kind of food",
+        "2"
+      ],
       "explanation": "Real feeding relationships cross and overlap, so a web describes them better than a single line.",
       "hint": "Think about whether any animal eats only one thing.",
       "progressive_hints": [

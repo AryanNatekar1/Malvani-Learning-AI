@@ -36,7 +36,10 @@
     "robot and drone motion"
   ],
   "common_misconceptions": [
-    "Only heavy objects can have a large momentum; how fast they move hardly matters."
+    {
+      "statement": "Only heavy objects can have a large momentum.",
+      "correction": "Momentum is mass times velocity, so speed counts just as much. A small stone thrown hard can carry the momentum of a large one rolling slowly."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need two stones or marbles of different size, and a smooth flat surface.",

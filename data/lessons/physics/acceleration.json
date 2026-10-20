@@ -35,8 +35,14 @@
     "rockets and aircraft"
   ],
   "common_misconceptions": [
-    "An object that is slowing down is not accelerating.",
-    "An object moving at a steady speed around a bend is not accelerating."
+    {
+      "statement": "An object that is slowing down is not accelerating.",
+      "correction": "Acceleration is any change in velocity, including a decrease. Slowing down is acceleration in the opposite direction to the motion."
+    },
+    {
+      "statement": "An object moving at a steady speed around a bend is not accelerating.",
+      "correction": "Velocity includes direction, and going round a bend changes the direction continuously. The speed is steady; the velocity is not."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need a bicycle, or any slope you can roll something down.",

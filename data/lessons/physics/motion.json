@@ -36,8 +36,14 @@
     "delivery and logistics"
   ],
   "common_misconceptions": [
-    "A faster average speed always means the object moved at that exact speed the whole time.",
-    "The distance and total time alone tell you everything about a journey, without needing to think about rest stops or a changing pace."
+    {
+      "statement": "A faster average speed always means the object moved at that exact speed the whole time.",
+      "correction": "An average is what the whole journey works out to. The actual speed may have been higher, lower, or zero at various points along it."
+    },
+    {
+      "statement": "The distance and total time alone tell you everything about a journey, without needing to think about rest stops or a changing pace.",
+      "correction": "They give you the average and nothing else. Two journeys with the same distance and time can be completely different to walk."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need a path you already walk — to school, to a shop, to a neighbour's house.",

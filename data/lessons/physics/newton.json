@@ -29,7 +29,10 @@
     "rockets and propulsion"
   ],
   "common_misconceptions": [
-    "The equal and opposite forces of the third law cancel each other out, so nothing could ever move."
+    {
+      "statement": "The equal and opposite forces of the third law cancel each other out, so nothing could ever move.",
+      "correction": "The two forces act on different objects, so they never cancel. You push the ground back and the ground pushes you forward."
+    }
   ],
   "observe_around_you": {
     "invitation": "This one needs only a bus, an auto, or a bicycle you ride as a passenger.",

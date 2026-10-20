@@ -52,9 +52,18 @@
     "musical instruments"
   ],
   "common_misconceptions": [
-    "The water in a wave travels all the way from where it started to the shore.",
-    "A louder sound travels faster than a quiet one.",
-    "A wave needs something solid to move along."
+    {
+      "statement": "The water in a wave travels all the way from where it started to the shore.",
+      "correction": "The water mostly bobs up and down in place. What travels is the disturbance, carrying energy — which is why a floating leaf rises and falls but stays put."
+    },
+    {
+      "statement": "A louder sound travels faster than a quiet one.",
+      "correction": "It arrives at the same moment. Shouting puts more energy into the wave; the speed is set by the air it travels through."
+    },
+    {
+      "statement": "A wave needs something solid to move along.",
+      "correction": "Sound travels through air and water, and light travels through empty space. A wave needs a disturbance, not a solid."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need any container of still water — a bucket, a wide bowl, a puddle — a small stone, and something light that floats, such as a leaf or a scrap of paper.",

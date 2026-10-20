@@ -36,8 +36,14 @@
     "farming machinery"
   ],
   "common_misconceptions": [
-    "Energy gets used up and simply disappears.",
-    "An object that is standing still cannot have any energy."
+    {
+      "statement": "Energy gets used up and simply disappears.",
+      "correction": "It changes into a form that is harder to use, usually heat and sound. The total is the same; it has just spread out."
+    },
+    {
+      "statement": "An object that is standing still cannot have any energy.",
+      "correction": "A stone held above the ground has energy because of its height. Let go and it turns into motion."
+    }
   ],
   "observe_around_you": {
     "invitation": "Find a ball that bounces, and a hard floor.",

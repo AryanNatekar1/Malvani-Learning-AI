@@ -43,7 +43,10 @@
     "drone and aircraft design"
   ],
   "common_misconceptions": [
-    "Heavier objects always fall faster than lighter ones."
+    {
+      "statement": "Heavier objects always fall faster than lighter ones.",
+      "correction": "They land together. The heavy one is pulled harder, but it is also harder to speed up, and the two effects cancel exactly."
+    }
   ],
   "observe_around_you": {
     "invitation": "Find two objects of clearly different weight that are not fragile — a stone and a small pebble, or a full bottle and an empty one.",

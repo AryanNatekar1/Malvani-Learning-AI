@@ -31,7 +31,10 @@
     "environmental testing"
   ],
   "common_misconceptions": [
-    "An atom is just a tiny solid ball with nothing inside it."
+    {
+      "statement": "An atom is just a tiny solid ball with nothing inside it.",
+      "correction": "An atom has a nucleus of protons and neutrons with electrons around it, and it is mostly empty space."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need a clear glass of water and a spoon of salt or sugar.",

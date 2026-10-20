@@ -3,8 +3,19 @@
   "title": "Loops",
   "subject": "Computer Science",
   "topic": "loops",
-  "aliases": ["loop", "repetition", "iteration", "for loop", "while loop"],
-  "levels": ["Beginner", "Class 8", "Class 9", "Class 10"],
+  "aliases": [
+    "loop",
+    "repetition",
+    "iteration",
+    "for loop",
+    "while loop"
+  ],
+  "levels": [
+    "Beginner",
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
   "content": {
     "English": {
       "simple_explanation": "A loop tells a computer to repeat a set of steps, instead of you writing those steps out again and again.",
@@ -12,7 +23,10 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
   "real_world_use": [
     "processing every row of data",
@@ -22,22 +36,39 @@
     "robotics and automation"
   ],
   "common_misconceptions": [
-    "A loop makes the computer run faster.",
-    "A loop always repeats a fixed number of times.",
-    "An infinite loop happens because one of the steps inside it is wrong."
+    {
+      "statement": "A loop makes the computer run faster.",
+      "correction": "The work still happens the same number of times. What a loop saves is writing the instruction out repeatedly, not the running of it."
+    },
+    {
+      "statement": "A loop always repeats a fixed number of times.",
+      "correction": "A counting loop does. A conditional loop runs until something becomes true, which may be a different number of times on every run."
+    },
+    {
+      "statement": "An infinite loop happens because one of the steps inside it is wrong.",
+      "correction": "Every step can be perfectly correct. The bug is that nothing inside the loop changes the thing the condition is testing, so it stays true forever."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need paper, a pen, and one other person.",
     "what_to_do": "Pick a repetitive everyday task — filling a bucket mug by mug, or laying out plates for a meal. First write the instructions with every single repetition spelled out. Then rewrite them using the word repeat and a number or a condition. Give the second version to the other person and see if they can follow it.",
     "what_to_notice": "Compare how long the two versions are. Then ask what has to change if the bucket is twice as big: how much of each version do you have to rewrite?",
     "concept_link": "The spelled-out version has to be rewritten for every new size. The loop version does not change at all — only the number or the condition does. That is the real power of a loop: it separates the instruction from how many times it runs.",
-    "needs": ["paper and a pen", "one other person"],
+    "needs": [
+      "paper and a pen",
+      "one other person"
+    ],
     "safety_note": null
   },
   "think_question": "A program says: while the bucket is not full, pour in one mug of water. Someone writes it but forgets to actually pour. What happens, and why is this not a mistake in any single instruction?",
   "reasoning_guide": {
-    "required_keywords": ["never", "condition"],
-    "misconception_keywords": ["instruction is wrong"],
+    "required_keywords": [
+      "never",
+      "condition"
+    ],
+    "misconception_keywords": [
+      "instruction is wrong"
+    ],
     "correct_feedback": "Good reasoning: you saw that the condition never changes, so the loop never ends.",
     "partial_feedback": "You have started well. Say what has to change for the loop to stop, and whether anything in the loop changes it.",
     "misconception_feedback": "Each instruction may be perfectly correct on its own. The bug is that nothing inside the loop changes the thing the condition is testing, so it stays true forever."
@@ -53,8 +84,17 @@
     "solution": "Set a number to 1. While the number is 5 or less: print the number, then add 1 to it. It starts at 1, it stops when the number becomes 6, and the number increases by 1 each time round — that increase is what eventually stops it.",
     "accepted_answers": []
   },
-  "career_connections": ["software development", "data science", "robotics", "game development", "automation engineering"],
-  "further_exploration": ["algorithms", "percentages"],
+  "career_connections": [
+    "software development",
+    "data science",
+    "robotics",
+    "game development",
+    "automation engineering"
+  ],
+  "further_exploration": [
+    "algorithms",
+    "percentages"
+  ],
   "quiz_questions": [
     {
       "id": "loops-purpose",
@@ -66,7 +106,10 @@
         "To store information",
         "To fix mistakes in a program"
       ],
-      "correct_answers": ["To repeat steps without writing them out each time", "1"],
+      "correct_answers": [
+        "To repeat steps without writing them out each time",
+        "1"
+      ],
       "explanation": "A loop expresses repetition once, instead of the same instruction being written over and over.",
       "hint": "Think about what you avoid having to write.",
       "progressive_hints": [
@@ -85,7 +128,10 @@
         "The loop has too many steps in it",
         "Loops always have to be stopped by hand"
       ],
-      "correct_answers": ["Nothing inside the loop changes what the condition is testing", "2"],
+      "correct_answers": [
+        "Nothing inside the loop changes what the condition is testing",
+        "2"
+      ],
       "explanation": "A conditional loop ends when its condition becomes false. If nothing inside ever changes that, it cannot end.",
       "hint": "Ask what would have to change for the loop to stop.",
       "progressive_hints": [
@@ -104,7 +150,10 @@
         "No loop is needed",
         "A loop that runs exactly once"
       ],
-      "correct_answers": ["A conditional loop that runs until the lines run out", "2"],
+      "correct_answers": [
+        "A conditional loop that runs until the lines run out",
+        "2"
+      ],
       "explanation": "You cannot count in advance, so the loop must be driven by a condition rather than a number.",
       "hint": "Do you know the number of repetitions before you start?",
       "progressive_hints": [

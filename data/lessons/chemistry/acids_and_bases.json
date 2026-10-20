@@ -3,8 +3,18 @@
   "title": "Acids and Bases",
   "subject": "Chemistry",
   "topic": "acids and bases",
-  "aliases": ["acid", "base", "alkali", "ph", "indicator"],
-  "levels": ["Class 8", "Class 9", "Class 10"],
+  "aliases": [
+    "acid",
+    "base",
+    "alkali",
+    "ph",
+    "indicator"
+  ],
+  "levels": [
+    "Class 8",
+    "Class 9",
+    "Class 10"
+  ],
   "content": {
     "English": {
       "simple_explanation": "Acids and bases are opposite kinds of substance, and an indicator is something that changes colour to tell you which one you have.",
@@ -12,7 +22,10 @@
     }
   },
   "language_metadata": {
-    "English": {"verification_status": "NEEDS_REVIEW", "source": null}
+    "English": {
+      "verification_status": "NEEDS_REVIEW",
+      "source": null
+    }
   },
   "real_world_use": [
     "soil testing for farming",
@@ -22,22 +35,42 @@
     "water quality testing"
   ],
   "common_misconceptions": [
-    "Every acid is dangerous and will burn you.",
-    "A pH of 6 is only slightly more acidic than a pH of 7.",
-    "You can identify an acid safely by tasting it."
+    {
+      "statement": "Every acid is dangerous and will burn you.",
+      "correction": "Lemon juice, vinegar and the acid in your own stomach are all acids. Strength is what matters, not the word."
+    },
+    {
+      "statement": "A pH of 6 is only slightly more acidic than a pH of 7.",
+      "correction": "Each step on the scale is a factor of ten, so pH 6 is ten times more acidic than pH 7 and pH 5 is a hundred times more."
+    },
+    {
+      "statement": "You can identify an acid safely by tasting it.",
+      "correction": "Never. Use an indicator — turmeric on paper will tell you, and it cannot hurt you."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need turmeric, a little water, a piece of paper or a white cloth, and two things to test — lemon juice or tamarind water for one, and soap solution or a pinch of baking soda in water for the other.",
     "what_to_do": "Mix a little turmeric into water and use it to stain the paper yellow. Let it dry. Now put a drop of the lemon juice on one part and a drop of the soap solution on another.",
     "what_to_notice": "One spot stays yellow and the other turns red or reddish-brown. Which is which? Try a third thing — plain water — and see what it does.",
     "concept_link": "Turmeric is an indicator: the molecule that makes it yellow changes shape depending on how many hydrogen ions surround it, and a different shape absorbs different light. The soap turned it red because soap is basic. Lemon left it yellow because it is acidic.",
-    "needs": ["turmeric", "water", "paper or white cloth", "lemon or tamarind", "soap or baking soda"],
+    "needs": [
+      "turmeric",
+      "water",
+      "paper or white cloth",
+      "lemon or tamarind",
+      "soap or baking soda"
+    ],
     "safety_note": "Taste nothing, and use only kitchen items. Never test cleaning chemicals, bleach, or anything from a bottle you cannot identify, and never mix two cleaning products together."
   },
   "think_question": "Indigestion is caused by too much acid in the stomach, and the medicine for it is a mild base. Explain why that works, and why a strong base would be a bad idea.",
   "reasoning_guide": {
-    "required_keywords": ["neutral", "acid"],
-    "misconception_keywords": ["stronger is better"],
+    "required_keywords": [
+      "neutral",
+      "acid"
+    ],
+    "misconception_keywords": [
+      "stronger is better"
+    ],
     "correct_feedback": "Good reasoning: you used neutralisation, and saw why the strength has to be controlled.",
     "partial_feedback": "You have started well. Name what happens when an acid and a base meet, then say why the amount matters.",
     "misconception_feedback": "The goal is to neutralise the excess acid, not to overwhelm it. A strong base would damage the stomach lining, which is why antacids are deliberately mild."
@@ -51,17 +84,39 @@
       "Two steps of ten times each means 10 × 10."
     ],
     "solution": "pH 5 is acidic, because it is below 7. It is two steps from pH 7, and each step is a factor of ten, so it is 100 times more acidic.",
-    "accepted_answers": ["100", "100 times", "acidic 100", "acidic, 100 times"]
+    "accepted_answers": [
+      "100",
+      "100 times",
+      "acidic 100",
+      "acidic, 100 times"
+    ]
   },
-  "career_connections": ["agriculture", "pharmacy", "water treatment", "food technology", "chemical engineering"],
-  "further_exploration": ["atoms", "photosynthesis"],
+  "career_connections": [
+    "agriculture",
+    "pharmacy",
+    "water treatment",
+    "food technology",
+    "chemical engineering"
+  ],
+  "further_exploration": [
+    "atoms",
+    "photosynthesis"
+  ],
   "quiz_questions": [
     {
       "id": "acids-ph-neutral",
       "question": "What pH value is neutral?",
       "type": "multiple_choice",
-      "options": ["0", "7", "10", "14"],
-      "correct_answers": ["7", "2"],
+      "options": [
+        "0",
+        "7",
+        "10",
+        "14"
+      ],
+      "correct_answers": [
+        "7",
+        "2"
+      ],
       "explanation": "pH 7 is neutral, and pure water sits there. Below it is acidic and above it is basic.",
       "hint": "It is the middle of a scale that runs from 0 to 14.",
       "progressive_hints": [
@@ -80,7 +135,10 @@
         "Neutralising an acid",
         "Measuring the temperature of a liquid"
       ],
-      "correct_answers": ["Changing colour to show whether something is acidic or basic", "2"],
+      "correct_answers": [
+        "Changing colour to show whether something is acidic or basic",
+        "2"
+      ],
       "explanation": "An indicator reveals what you cannot see, by changing colour depending on what it is in.",
       "hint": "Think about what turmeric did on the paper.",
       "progressive_hints": [
@@ -93,8 +151,16 @@
       "id": "acids-neutralisation",
       "question": "What is produced when an acid reacts with a base?",
       "type": "multiple_choice",
-      "options": ["A salt and water", "Only a gas", "A stronger acid", "Nothing at all"],
-      "correct_answers": ["A salt and water", "1"],
+      "options": [
+        "A salt and water",
+        "Only a gas",
+        "A stronger acid",
+        "Nothing at all"
+      ],
+      "correct_answers": [
+        "A salt and water",
+        "1"
+      ],
       "explanation": "Neutralisation produces a salt and water. The acid and base cancel each other out.",
       "hint": "Both substances lose their original character.",
       "progressive_hints": [

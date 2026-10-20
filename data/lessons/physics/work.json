@@ -35,8 +35,14 @@
     "physiotherapy"
   ],
   "common_misconceptions": [
-    "Any effort that makes you tired counts as work in physics.",
-    "Holding a heavy object still does work on it."
+    {
+      "statement": "Any effort that makes you tired counts as work in physics.",
+      "correction": "Work is force times the distance moved along it. Your muscles can labour hard and do none of it, which is where the everyday word and the physics word part ways."
+    },
+    {
+      "statement": "Holding a heavy object still does work on it.",
+      "correction": "Nothing moves, so no work is done on the object, however much your arms ache."
+    }
   ],
   "observe_around_you": {
     "invitation": "Find something heavy enough to be a real effort to hold — a full bucket of water works well.",

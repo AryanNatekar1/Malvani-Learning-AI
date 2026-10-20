@@ -266,10 +266,20 @@ a.prow:hover{border-color:var(--edge-bright); background:rgba(120,170,215,.10)}
 .readout b{color:var(--phase-a); font-weight:500}
 .readout em{font-style:normal; color:var(--text)}
 .alt-text{font-size:12.5px; color:var(--dim); line-height:1.6}
-.myths{list-style:none; margin:0; padding:0; display:grid; gap:10px}
-.myths li{position:relative; padding-left:28px; color:var(--muted)}
-.myths li::before{content:"✗"; position:absolute; left:0; top:0; color:var(--warn); font-weight:700;
-  font-family:var(--f-mono); font-size:15px}
+.myths{display:grid; gap:12px; margin:0; padding:0}
+.myth{border:1px solid var(--edge); border-radius:var(--r-md); padding:15px 17px;
+  background:rgba(120,170,215,.04)}
+.myth.was-right{border-color:rgba(52,211,153,.34)}
+.myth.was-wrong{border-color:rgba(245,176,84,.40)}
+.myth-claim{margin:0; line-height:1.6}
+.myth-ask{display:flex; gap:8px; margin-top:13px}
+.myth-ask .btn{min-width:84px; justify-content:center}
+.myth-told{margin-top:13px; padding-top:12px; border-top:1px solid var(--edge)}
+.myth-told p{margin:0; color:var(--muted); font-size:14.5px; line-height:1.7}
+.myth-told p + p{margin-top:8px}
+.verdict{font-weight:500}
+.verdict.right{color:var(--good)}
+.verdict.wrong{color:var(--warn)}
 /* Language picker */
 .langpick{display:flex; align-items:center; gap:6px; border:1px solid var(--edge); border-radius:999px;
   padding:5px 10px 5px 11px; background:rgba(12,20,34,.6); cursor:pointer}
@@ -539,7 +549,7 @@ const state = { lessons:[], scenarios:[], places:[], subject:"All", progress:loa
 
 /* ============ progress (per-browser convenience only) ============ */
 function loadProgress(){
-  const empty = { opened:[], quizAttempts:0, quizCorrect:0, solved:[], challenges:[] };
+  const empty = { opened:[], quizAttempts:0, quizCorrect:0, solved:[], challenges:[], myths:{} };
   try{
     const raw = localStorage.getItem("mla.progress.v2");
     if(!raw) return empty;
@@ -549,7 +559,10 @@ function loadProgress(){
       quizAttempts:Number(p.quizAttempts)||0,
       quizCorrect:Number(p.quizCorrect)||0,
       solved:Array.isArray(p.solved)?p.solved:[],
-      challenges:Array.isArray(p.challenges)?p.challenges:[]
+      challenges:Array.isArray(p.challenges)?p.challenges:[],
+      // Which statements this learner marked true. Theirs, on their own
+      // device, so a lesson can offer to revisit one. Never a score.
+      myths:(p.myths && typeof p.myths === "object") ? p.myths : {}
     };
   }catch(e){ return empty; }
 }
@@ -1421,13 +1434,15 @@ function renderLesson(topic, tab){
   const panels = {
     understand: () => {
       const p = el(`<div class="stack gap-m">
+        <!-- The check comes first on purpose. Asked after the explanation it
+             tests reading, not belief: the learner has just been told the
+             answer. Asked before, it catches what they walked in thinking. -->
+        <div data-myth-slot></div>
         <div class="block"><h4>In more detail</h4>${escPara(en.detailed_explanation)}</div>
         <div data-visual-slot></div>
         ${en.everyday_example?`<div class="block"><h4>An everyday example</h4><p>${esc(en.everyday_example)}</p></div>`:""}
         ${localEx?`<div class="block"><h4>Near you</h4><p>${esc(localEx.text)}</p></div>`:""}
         ${culture?`<div class="block"><h4>In daily life here</h4><p>${esc(culture.text)}</p></div>`:""}
-        ${(l.common_misconceptions||[]).length?`<div class="block"><h4>Common mistakes — these are <em style="font-style:normal;color:var(--warn)">not</em> true</h4>
-          <ul class="myths">${l.common_misconceptions.map(m=>`<li>${esc(m)}</li>`).join("")}</ul></div>`:""}
         ${(l.real_world_use||[]).length?`<div class="block"><h4>Where it's used</h4>
           <div class="pills">${list(l.real_world_use)}</div></div>`:""}
         ${(l.career_connections||[]).length?`<div class="block"><h4>Jobs that use this</h4>
@@ -1443,6 +1458,9 @@ function renderLesson(topic, tab){
       const slot = p.querySelector("[data-visual-slot]");
       const vis = visualBlock(l.topic);
       if(vis) slot.replaceWith(vis); else slot.remove();
+      const mythSlot = p.querySelector("[data-myth-slot]");
+      const myths = mythBlock(l);
+      if(myths) mythSlot.replaceWith(myths); else mythSlot.remove();
       return p;
     },
     observe: () => buildObserve(l),
@@ -1465,6 +1483,88 @@ function renderLesson(topic, tab){
   }
   view.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => show(t.dataset.tab, true)));
   show(tab, false);
+}
+
+/* Misconceptions, asked before they are corrected.
+ *
+ * A list headed "these are not true" tells every learner the same thing and
+ * finds out nothing about any of them. The learner who already knows skims it;
+ * the learner who believes it is contradicted before noticing they believed
+ * anything.
+ *
+ * Asked as true-or-false, the same sentence does two jobs. Answering wrongly
+ * puts a learner's own belief in front of them a moment before the correction,
+ * which is when a correction has a chance of sticking. And the answer says
+ * which misconception this learner holds — two learners both wrong about
+ * photosynthesis may be wrong in different ways, one thinking the food comes
+ * from the soil and the other from the air, and a list cannot tell them apart.
+ *
+ * What a learner marked true is kept on their own device, so the lesson can
+ * offer to revisit it. It is a note to the learner, never a score, and it
+ * goes nowhere. */
+function mythKey(topic, index){ return topic + "#" + index; }
+
+function mythBlock(lesson){
+  const myths = (lesson.common_misconceptions || []).map(normaliseMyth);
+  if(!myths.length) return null;
+  const box = el(`<div class="block">
+    <h4>Before you read on — true or false?</h4>
+    <p style="color:var(--muted);font-size:14px;margin:0 0 16px">Answer from what you
+      already think. Getting one wrong is the useful part.</p>
+    <div class="myths" data-myths></div>
+  </div>`);
+  const list = box.querySelector("[data-myths]");
+
+  myths.forEach((myth, index) => {
+    const key = mythKey(lesson.topic, index);
+    const row = el(`<div class="myth">
+      <p class="myth-claim">${esc(myth.statement)}</p>
+      <div class="myth-ask">
+        <button class="btn btn-quiet" type="button" data-say="true">True</button>
+        <button class="btn btn-quiet" type="button" data-say="false">False</button>
+      </div>
+      <div class="myth-told" hidden></div>
+    </div>`);
+    const told = row.querySelector(".myth-told");
+    const ask = row.querySelector(".myth-ask");
+
+    function answer(saidTrue){
+      ask.hidden = true;
+      row.classList.add(saidTrue ? "was-wrong" : "was-right");
+      told.hidden = false;
+      told.innerHTML = saidTrue
+        ? `<p class="verdict wrong">That one is false — and a lot of people think it is true.</p>
+           ${myth.correction ? `<p>${esc(myth.correction)}</p>`
+             : `<p>The explanation above says what actually happens. Worth reading it again
+                 now that you know this is the part to watch.</p>`}`
+        : `<p class="verdict right">Correct, it is false.</p>
+           ${myth.correction ? `<p>${esc(myth.correction)}</p>` : ""}`;
+      recordMyth(key, saidTrue);
+    }
+    row.querySelectorAll("[data-say]").forEach(button =>
+      button.addEventListener("click", () => answer(button.dataset.say === "true")));
+
+    // Someone returning to a lesson should not be asked again as if nothing
+    // happened, and should still see what they got wrong.
+    const previous = state.progress.myths && state.progress.myths[key];
+    if(previous === true || previous === false) answer(previous);
+    list.append(row);
+  });
+  return box;
+}
+
+function normaliseMyth(entry){
+  // Lessons were authored as plain sentences and stay valid; a correction is
+  // an optional addition, not a new requirement.
+  return typeof entry === "string"
+    ? { statement: entry, correction: "" }
+    : { statement: entry.statement || "", correction: entry.correction || "" };
+}
+
+function recordMyth(key, believed){
+  if(!state.progress.myths) state.progress.myths = {};
+  state.progress.myths[key] = believed;
+  saveProgress();
 }
 
 /* "Look around you" — the honest half of region-based learning.
@@ -2191,7 +2291,7 @@ function renderProgress(){
       e.target.textContent = "Yes, clear everything";
       return;
     }
-    state.progress = { opened:[], quizAttempts:0, quizCorrect:0, solved:[], challenges:[] };
+    state.progress = { opened:[], quizAttempts:0, quizCorrect:0, solved:[], challenges:[], myths:{} };
     saveProgress(); renderProgress();
   });
 }

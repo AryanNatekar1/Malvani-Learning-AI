@@ -36,7 +36,10 @@
     "robotics"
   ],
   "common_misconceptions": [
-    "A moving object always needs a continuing push to keep moving."
+    {
+      "statement": "A moving object always needs a continuing push to keep moving.",
+      "correction": "It keeps moving on its own. What a push overcomes is friction and air resistance, and with neither of those it would carry on without help."
+    }
   ],
   "observe_around_you": {
     "invitation": "Find something heavy you can push on the floor — a full bucket, a sack, a wooden box.",

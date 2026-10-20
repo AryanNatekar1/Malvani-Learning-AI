@@ -32,7 +32,10 @@
     "robotics"
   ],
   "common_misconceptions": [
-    "An algorithm has to be written in computer code to count as an algorithm."
+    {
+      "statement": "An algorithm has to be written in computer code to count as an algorithm.",
+      "correction": "A recipe is an algorithm. So are directions to a shop. The steps and their order are what make it one, not the language it is written in."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need one other person, and somewhere you both know well.",

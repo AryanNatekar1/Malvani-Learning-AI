@@ -220,7 +220,22 @@ Current Version: **V3.0 local desktop app + deployable web app**
   duplication in the project: a divergence logs nothing, it just tells a
   student their correct answer is wrong. The comparison skips when no browser
   is present, so it cross-checks without becoming a reason CI cannot run.
-- 278 automated tests, including GUI flow, compact-layout reachability,
+- Misconceptions are asked before they are corrected. Each is a true-or-false
+  question placed at the top of the lesson, ahead of the explanation, and the
+  correction appears only after the learner answers. A list headed "these are
+  not true" told every learner the same thing and found out nothing about any
+  of them: the one who already knew skimmed it, and the one who believed it
+  was contradicted before noticing they believed anything.
+- That answer is also the diagnosis. Which statement a learner marks true says
+  which misconception *they* hold, where a list cannot distinguish two learners
+  wrong about photosynthesis in different ways — one thinking the food comes
+  from the soil, the other that it comes from the air. The answers stay on the
+  learner's own device so a lesson can offer to revisit one; they are never a
+  score and go nowhere.
+- All 35 misconceptions now carry a correction saying what is true instead,
+  and are phrased as a single claim, because a learner cannot honestly answer
+  true or false to two claims at once.
+- 293 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that

@@ -35,8 +35,14 @@
     "sports analysis"
   ],
   "common_misconceptions": [
-    "Speed and velocity mean exactly the same thing.",
-    "An object moving at a constant speed must also have a constant velocity."
+    {
+      "statement": "Speed and velocity mean exactly the same thing.",
+      "correction": "Speed is how fast. Velocity is how fast and in which direction. Walk a full circle and your speed was never zero, but your velocity averaged out to nothing."
+    },
+    {
+      "statement": "An object moving at a constant speed must also have a constant velocity.",
+      "correction": "Only if it also keeps going in the same direction. Change direction at a steady speed and the velocity changes."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need an open space where you can walk in a loop — a yard, a field, a courtyard.",

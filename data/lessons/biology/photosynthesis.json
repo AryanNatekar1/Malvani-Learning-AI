@@ -31,7 +31,10 @@
     "understanding plant health"
   ],
   "common_misconceptions": [
-    "Plants get all of their food from the soil through their roots."
+    {
+      "statement": "Plants get all of their food from the soil through their roots.",
+      "correction": "A plant builds its food in its leaves, out of carbon dioxide from the air and water, using sunlight as the energy. Soil supplies minerals, but the substance of the plant comes largely from air and light."
+    }
   ],
   "observe_around_you": {
     "invitation": "You need a living plant with broad leaves growing outdoors, and a small piece of card or thick paper.",

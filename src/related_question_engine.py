@@ -207,7 +207,10 @@ def _answer_for_type(
     if question_type == APPLICATIONS:
         return _list_text("REAL-WORLD USE", lesson.real_world_use)
     if question_type == MISCONCEPTION:
-        return _list_text("COMMON MISCONCEPTIONS", lesson.common_misconceptions)
+        return _list_text(
+            "COMMON MISCONCEPTIONS",
+            tuple(item.statement for item in lesson.common_misconceptions),
+        )
     if question_type == CAREERS:
         return _list_text("CAREER CONNECTIONS", lesson.career_connections)
     if question_type == NEXT_STEPS:

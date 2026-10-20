@@ -52,6 +52,50 @@ class ContextEntry:
 
 
 @dataclass(frozen=True)
+class Misconception:
+    """A statement that is false, and why — asked before it is corrected.
+
+    These used to be printed as a list headed "these are not true". That tells
+    every learner the same thing and finds out nothing about any of them: the
+    one who already knows skims it, and the one who believes it is contradicted
+    before they have noticed they believed anything.
+
+    Asked as a true-or-false question first, the same sentence does two jobs.
+    A learner who answers wrongly meets their own belief a moment before the
+    correction, which is when a correction has any chance of sticking. And the
+    answer says which misconception this particular learner holds, which a list
+    never could — the point being that two learners both "wrong about
+    photosynthesis" may be wrong in entirely different ways, one thinking the
+    food comes from the soil and the other that it comes from the air.
+    """
+
+    statement: str
+    correction: str = ""
+
+    @classmethod
+    def from_value(cls, value: Any) -> "Misconception":
+        """Accept a bare string or a statement with its correction.
+
+        Lessons were authored as plain strings, and they stay valid: a
+        misconception with no correction written yet is still worth asking,
+        and the lesson's own explanation stands behind it.
+        """
+        if isinstance(value, str):
+            return cls(statement=value)
+        if isinstance(value, dict):
+            statement = value.get("statement")
+            if not isinstance(statement, str) or not statement.strip():
+                raise LessonFormatError("A misconception needs a statement.")
+            return cls(
+                statement=statement,
+                correction=str(value.get("correction", "")),
+            )
+        raise LessonFormatError(
+            "A misconception must be a sentence, or a statement with a correction."
+        )
+
+
+@dataclass(frozen=True)
 class ObservationActivity:
     """Something a learner can go and watch happen, in their own surroundings.
 
@@ -237,7 +281,7 @@ class Lesson:
     content: dict[str, dict[str, Any]]
     language_metadata: dict[str, TranslationMetadata]
     real_world_use: tuple[str, ...] = ()
-    common_misconceptions: tuple[str, ...] = ()
+    common_misconceptions: tuple[Misconception, ...] = ()
     think_question: str = ""
     reasoning_guide: ReasoningGuide | None = None
     challenge: Challenge | None = None
@@ -315,7 +359,8 @@ class Lesson:
             language_metadata=language_metadata,
             real_world_use=tuple(str(item) for item in value.get("real_world_use", [])),
             common_misconceptions=tuple(
-                str(item) for item in value.get("common_misconceptions", [])
+                Misconception.from_value(item)
+                for item in value.get("common_misconceptions", [])
             ),
             think_question=str(value.get("think_question", "")),
             reasoning_guide=(
