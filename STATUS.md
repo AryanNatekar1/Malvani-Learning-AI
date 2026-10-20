@@ -235,7 +235,14 @@ Current Version: **V3.0 local desktop app + deployable web app**
 - All 35 misconceptions now carry a correction saying what is true instead,
   and are phrased as a single claim, because a learner cannot honestly answer
   true or false to two claims at once.
-- 293 automated tests, including GUI flow, compact-layout reachability,
+- The answers come back to the learner. Progress opens with "Worth another
+  look": the statements they marked true, each with the correction and a link
+  to the lesson it came from. It names the belief rather than scoring the
+  learner, because "you got three wrong" tells nobody what to do next while
+  "you thought plants feed through their roots" is a specific thing to go back
+  to. Collecting answers and doing nothing with them would spend a learner's
+  time and return nothing.
+- 295 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that

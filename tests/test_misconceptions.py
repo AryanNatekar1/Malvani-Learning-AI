@@ -154,6 +154,28 @@ class BrowserBehaviourTests(unittest.TestCase):
         assert reset is not None
         self.assertIn("myths", reset.group(0))
 
+    def test_what_was_collected_is_given_back_to_the_learner(self) -> None:
+        """Asking and then doing nothing with the answers is worse than not asking.
+
+        It spends a learner's time and returns nothing. The answers have to
+        reappear somewhere they can act on.
+        """
+        block = re.search(r"function revisitBlock\(.*?\n\}", self.html, re.S)
+        self.assertIsNotNone(block, "nothing uses the answers that were collected")
+        assert block is not None
+        body = block.group(0)
+        self.assertIn("state.progress.myths", body)
+        # It must name the belief and link back, not report a score.
+        self.assertIn("myth-claim", body)
+        self.assertIn("#/lesson/", body)
+        self.assertIn("revisitBlock()", self.html)
+
+    def test_a_renamed_or_removed_lesson_does_not_break_the_page(self) -> None:
+        """Saved answers outlive content changes, so stale keys must be skipped."""
+        block = re.search(r"function revisitBlock\(.*?\n\}", self.html, re.S)
+        assert block is not None
+        self.assertIn("if(!lesson || !entry) continue", block.group(0))
+
     def test_a_returning_learner_is_not_asked_again(self) -> None:
         block = re.search(r"function mythBlock\(.*?\n\}", self.html, re.S)
         assert block is not None

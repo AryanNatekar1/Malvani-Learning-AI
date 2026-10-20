@@ -2239,6 +2239,45 @@ function renderPlace(id){
   </div></div>`));
 }
 
+/* What the true-or-false answers are actually for.
+ *
+ * Collecting which statements a learner believed and then doing nothing with
+ * them would be worse than not asking: it takes a learner's time and gives
+ * nothing back. This lists the ones they marked true, with the correction and
+ * a way back to the lesson.
+ *
+ * It names the belief rather than the learner. "You got 3 wrong" is a score
+ * and tells nobody what to do next; "you thought plants feed through their
+ * roots" is a specific thing to go and look at, which is the whole reason for
+ * asking per-statement instead of per-topic. */
+function revisitBlock(){
+  const held = [];
+  const myths = state.progress.myths || {};
+  for(const [key, believed] of Object.entries(myths)){
+    if(believed !== true) continue;
+    const cut = key.lastIndexOf("#");
+    if(cut < 0) continue;
+    const lesson = lessonByTopic(key.slice(0, cut));
+    const entry = lesson && (lesson.common_misconceptions || [])[Number(key.slice(cut + 1))];
+    if(!lesson || !entry) continue;           // lesson since renamed or removed
+    held.push({ lesson, myth: normaliseMyth(entry) });
+  }
+  if(!held.length) return null;
+
+  return el(`<div class="stack gap-m">
+    <h2>Worth another look</h2>
+    <p style="color:var(--dim);font-size:14px;margin:0;max-width:62ch">You answered
+      true to ${held.length === 1 ? "this, and it is false" : `these ${held.length}, and they are false`}.
+      That is the useful kind of wrong — it shows exactly which bit to go back to.</p>
+    <div class="stack gap-s">${held.map(({lesson, myth}) => `<div class="myth was-wrong">
+      <p class="myth-claim">${esc(myth.statement)}</p>
+      <div class="myth-told" style="border-top:1px solid var(--edge)">
+        ${myth.correction ? `<p>${esc(myth.correction)}</p>` : ""}
+        <p><a class="qlink" href="#/lesson/${encodeURIComponent(lesson.topic)}">Back to ${esc(lesson.title)} →</a></p>
+      </div></div>`).join("")}</div>
+  </div>`);
+}
+
 /* ---------- progress ---------- */
 function renderProgress(){
   const p = state.progress;
@@ -2256,6 +2295,7 @@ function renderProgress(){
     </div>
     <div class="stack gap-s"><div class="bar"><i style="width:${pct}%"></i></div>
       <p style="color:var(--dim);font-size:13px">${pct}% of the published lessons opened</p></div>
+    <div data-revisit-slot></div>
     <div class="stack gap-m">
       <h2>Lessons</h2>
       <div class="plist">${state.lessons.map(l=>{
@@ -2278,6 +2318,9 @@ function renderProgress(){
         This erases every tick above and cannot be undone. Press again to confirm.</p>
     </div>
   </div></div>`);
+  const revisitSlot = view.querySelector("[data-revisit-slot]");
+  const revisit = revisitBlock();
+  if(revisit) revisitSlot.replaceWith(revisit); else revisitSlot.remove();
   app().replaceChildren(view);
 
   // Clearing progress is not undoable, so ask once rather than wiping on a
