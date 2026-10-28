@@ -242,7 +242,22 @@ Current Version: **V3.0 local desktop app + deployable web app**
   "you thought plants feed through their roots" is a specific thing to go back
   to. Collecting answers and doing nothing with them would spend a learner's
   time and return nothing.
-- 295 automated tests, including GUI flow, compact-layout reachability,
+- An optional language model, on a leash. It is never asked for facts: it is
+  given passages already retrieved and asked only to rewrite them for a
+  younger reader, with every sentence naming the passage it came from, and the
+  result goes through the same gate an extractive answer does. A sentence no
+  passage supports is dropped before a learner sees it.
+- It stays optional in three ways. No key is in the repository — it is read
+  from `ANTHROPIC_API_KEY`. The `anthropic` package is not a dependency of the
+  app, so a school can clone and run with nothing installed. And every failure
+  (no key, no package, no network, a refusal, a malformed reply) falls back to
+  selecting sentences, so an answer never depends on any of them.
+- Nothing about a learner is sent. The topic and the retrieved passages go;
+  name, answers, progress and writing stay on the machine, and a test asserts
+  it by inspecting what the request actually contained.
+- `PRINCIPLES.md` records the rules the project runs on and names the file
+  that enforces each one. A test checks every path it points at exists.
+- 313 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that

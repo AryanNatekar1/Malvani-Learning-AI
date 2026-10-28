@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 from ai_provider import AIProvider, OfflineAIProvider
 from context_engine import ContextFormatError, ContextRepository, ContextSelection, StudentContext
+from external_model import ExternalModelWriter
 from extractive_answer import extract_claims
 from grounded_answer import ground_claims
 from knowledge_engine import (
@@ -470,7 +471,13 @@ class AppController:
                 False,
             )
 
-        answer = ground_claims(extract_claims(query, passages, limit=4), passages)
+        # Try the model first where one is configured, since selecting
+        # sentences cannot simplify prose written for adults. Fall back to
+        # selection whenever it is unavailable or returns nothing supported,
+        # so the answer never depends on a key, a package or a connection.
+        answer = ExternalModelWriter().write(query, passages, sentences=4)
+        if answer.is_empty:
+            answer = ground_claims(extract_claims(query, passages, limit=4), passages)
         if answer.is_empty:
             return TutorResponse(
                 None,
