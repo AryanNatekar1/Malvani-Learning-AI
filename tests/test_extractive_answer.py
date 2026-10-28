@@ -98,6 +98,39 @@ class DevanagariTests(unittest.TestCase):
         self.assertEqual(answer.dropped, ())
         self.assertTrue(answer.claims)
 
+    def test_an_english_query_still_selects_from_a_marathi_article(self) -> None:
+        """A learner reading Marathi was handed an empty answer.
+
+        The article was right — गुरुत्वाकर्षण for "gravity" — but scoring
+        compares the query's words with each sentence's, and across scripts
+        there is no overlap at all, so nothing was ever selected.
+        """
+        marathi = passage(self.MARATHI, title="गुरुत्वाकर्षण", slug="mr")
+        proposed = extract_claims("gravity", [marathi], limit=2)
+        self.assertTrue(proposed, "nothing selected from the correct article")
+        for text, index in proposed:
+            self.assertIn(text, marathi.text)
+
+    def test_the_fallback_takes_the_opening_of_the_best_article(self) -> None:
+        """An encyclopaedia leads with its definition, so that is the floor."""
+        marathi = passage(self.MARATHI, title="गुरुत्वाकर्षण", slug="mr")
+        proposed = extract_claims("gravity", [marathi], limit=1)
+        self.assertEqual(proposed[0][0], sentences(self.MARATHI)[0])
+
+    def test_the_fallback_does_not_fire_when_scoring_works(self) -> None:
+        """It is a floor, used only after the ordinary path has failed."""
+        proposed = extract_claims("photosynthesis", [MAIN, SPECIALIST], limit=2)
+        self.assertIn("Photosynthesis is the process", proposed[0][0])
+
+    def test_an_off_topic_passage_in_the_same_script_is_still_refused(self) -> None:
+        """The fallback rescues a script mismatch, not an irrelevant result.
+
+        Asked about dispersion and handed an article about mangoes, the right
+        answer is to say nothing was found — returning the mango text would be
+        exactly the guessing the gate exists to prevent.
+        """
+        self.assertEqual(extract_claims("tectonic plates", [MAIN], limit=1), [])
+
     def test_english_still_works_after_the_unicode_change(self) -> None:
         proposed = extract_claims("photosynthesis", [MAIN], limit=2)
         self.assertTrue(proposed)

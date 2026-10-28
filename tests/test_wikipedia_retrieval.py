@@ -176,6 +176,80 @@ class FailureTests(unittest.TestCase):
         self.assertIn("not going to guess", answer.as_student_text())
 
 
+class CrossLanguageTests(unittest.TestCase):
+    """A smaller edition cannot find its own articles from an English query.
+
+    Asked for "gravity", Marathi Wikipedia returned a person's name, a disused
+    physics term, and nothing about gravity — while गुरुत्वाकर्षण sat one
+    editor-maintained link away. Only four of ten school topics came back.
+    """
+
+    MARATHI_GRAVITY = (
+        "वस्तुमान असलेल्या कोणत्याही दोन वस्तूंच्या एकमेकांकडे आकर्षिल्या "
+        "जाण्याच्या प्रवृत्तीला गुरुत्वाकर्षण असे म्हणतात. वजन म्हणजे "
+        "जमिनीच्या दिशेने मिळणारे त्वरण होय."
+    )
+
+    def provider(self, responses):
+        """Serve a queued reply per request, recording which host was asked."""
+        self.hosts = []
+
+        def opener(request, timeout=None):
+            self.hosts.append(request.full_url)
+            return fake_response(responses.pop(0))
+
+        return WikipediaRetrievalProvider(language="Marathi", opener=opener)
+
+    def test_english_is_consulted_to_find_the_marathi_article(self) -> None:
+        provider = self.provider([
+            # English search returns the langlink to the Marathi article.
+            {"query": {"pages": [{"title": "Gravity", "index": 1,
+                                  "langlinks": [{"title": "गुरुत्वाकर्षण"}]}]}},
+            # Fetching that article by title in the Marathi edition.
+            {"query": {"pages": [page("गुरुत्वाकर्षण", self.MARATHI_GRAVITY,
+                                      url="https://mr.wikipedia.org/wiki/x")]}},
+            # Direct Marathi search, which returns junk.
+            {"query": {"pages": [page("मुराद मिर्झा", "x " * 80)]}},
+        ])
+        passages = provider.search("gravity", limit=3)
+        self.assertTrue(passages)
+        self.assertEqual(passages[0].title, "गुरुत्वाकर्षण")
+        self.assertIn("en.wikipedia.org", self.hosts[0])
+        self.assertIn("lllang=mr", self.hosts[0])
+
+    def test_the_linked_article_outranks_a_direct_search_hit(self) -> None:
+        """Ordering was the bug: direct results filled every slot with junk."""
+        provider = self.provider([
+            {"query": {"pages": [{"title": "Gravity", "index": 1,
+                                  "langlinks": [{"title": "गुरुत्वाकर्षण"}]}]}},
+            {"query": {"pages": [page("गुरुत्वाकर्षण", self.MARATHI_GRAVITY,
+                                      url="https://mr.wikipedia.org/wiki/x")]}},
+            {"query": {"pages": [page("मुराद मिर्झा", "x " * 80, index=1)]}},
+        ])
+        titles = [p.title for p in provider.search("gravity", limit=3)]
+        self.assertEqual(titles[0], "गुरुत्वाकर्षण")
+
+    def test_no_langlink_falls_back_to_searching_the_edition(self) -> None:
+        provider = self.provider([
+            {"query": {"pages": [{"title": "Obscure", "index": 1}]}},   # no langlinks
+            {"query": {"pages": [page("थेट निकाल", self.MARATHI_GRAVITY,
+                                      url="https://mr.wikipedia.org/wiki/y")]}},
+        ])
+        titles = [p.title for p in provider.search("obscure", limit=3)]
+        self.assertEqual(titles, ["थेट निकाल"])
+
+    def test_english_never_consults_itself_twice(self) -> None:
+        hosts = []
+
+        def opener(request, timeout=None):
+            hosts.append(request.full_url)
+            return fake_response({"query": {"pages": [page("Gravity", DISPERSION)]}})
+
+        WikipediaRetrievalProvider(language="English", opener=opener).search("gravity")
+        self.assertEqual(len(hosts), 1)
+        self.assertNotIn("lllang", hosts[0])
+
+
 class LanguageTests(unittest.TestCase):
     def test_each_supported_language_maps_to_its_own_edition(self) -> None:
         for language, expected in (

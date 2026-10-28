@@ -137,10 +137,27 @@ class WebAppLanguageParityTests(unittest.TestCase):
         self.assertIn("catch", body)
 
     def test_browser_retrieval_rejects_passages_with_no_source(self) -> None:
-        search = re.search(r"async function wikiSearch\(.*?\n\}", self.html, re.S)
-        self.assertIsNotNone(search)
-        assert search is not None
-        self.assertIn("p.url && p.title", search.group(0))
+        # The filter lives in wikiPassages, which every retrieval path feeds
+        # through, so it cannot be bypassed by adding another path.
+        builder = re.search(r"function wikiPassages\(.*?\n\}", self.html, re.S)
+        self.assertIsNotNone(builder, "index.html has no wikiPassages()")
+        assert builder is not None
+        self.assertIn("p.url && p.title", builder.group(0))
+
+    def test_browser_reaches_the_right_article_through_english(self) -> None:
+        """A smaller edition cannot find its own articles from a Latin query."""
+        self.assertIn("function wikiThroughEnglish(", self.html)
+        through = re.search(r"async function wikiThroughEnglish\(.*?\n\}", self.html, re.S)
+        assert through is not None
+        self.assertIn("langlinks", through.group(0))
+        self.assertIn("lllang:wikiEdition()", through.group(0).replace(" ", ""))
+
+    def test_browser_rescues_only_a_script_mismatch(self) -> None:
+        """Returning an off-topic article would be the guessing we refuse."""
+        select = re.search(r"function wikiSelect\(.*?\n\}", self.html, re.S)
+        assert select is not None
+        body = select.group(0)
+        self.assertIn("queryDevanagari !== passagesDevanagari", body)
 
     def test_browser_selection_matches_the_python_scoring(self) -> None:
         """Same three corrections, or the two produce different answers."""

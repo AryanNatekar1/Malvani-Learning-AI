@@ -72,16 +72,49 @@ class WikipediaRetrievalProvider(RetrievalProvider):
         return f"https://{self.edition}.wikipedia.org/w/api.php"
 
     def search(self, query: str, limit: int = 5) -> tuple[Passage, ...]:
-        """Return intro extracts for the best-matching articles.
+        """Find articles in this edition, reaching through English if needed.
 
-        One request does both jobs: `generator=search` finds the articles and
-        `prop=extracts|info` returns their opening text and canonical URL, so
-        a lookup costs a single round trip on a slow connection.
+        Searching a smaller edition directly answered four of ten school
+        topics in Marathi, not because the articles were missing but because
+        its search could not match an English query against them: gravity,
+        electric current, food chain, monsoon and percentage all exist in
+        Marathi and none were found.
+
+        So a non-English lookup also asks English Wikipedia which article the
+        query means, then follows the interlanguage link editors have already
+        drawn to the Marathi or Hindi version of that same article. The
+        content is still written by speakers of the language; only the way of
+        finding it borrows English's better search.
         """
         query = query.strip()
         if not query:
             return ()
         limit = max(1, min(limit, 10))
+        if self.edition == "en":
+            return self._direct_search(query, limit)
+
+        # The cross-language link goes first, not last. A smaller edition's
+        # search ranks badly against a query in another script: asked for
+        # "gravity", Marathi Wikipedia returned a person's name, a disused
+        # physics term and nothing about gravity, which filled every slot with
+        # junk while गुरुत्वाकर्षण sat one editor-maintained link away.
+        found = self._search_through_english(query, limit)
+        seen = {passage.title for passage in found}
+        for passage in self._direct_search(query, limit):
+            if len(found) >= limit:
+                break
+            if passage.title not in seen:
+                found += (passage,)
+                seen.add(passage.title)
+        return found
+
+    def _direct_search(self, query: str, limit: int) -> tuple[Passage, ...]:
+        """Search this edition on its own terms.
+
+        One request does both jobs: `generator=search` finds the articles and
+        `prop=extracts|info` returns their opening text and canonical URL, so
+        a lookup costs a single round trip on a slow connection.
+        """
         parameters = {
             "action": "query",
             "format": "json",
@@ -105,7 +138,75 @@ class WikipediaRetrievalProvider(RetrievalProvider):
         # The API returns pages in arbitrary order; `index` preserves the
         # relevance ranking the search actually produced.
         pages = sorted(pages, key=lambda page: page.get("index", 999))
+        return self._passages_from(pages)
 
+    def _search_through_english(self, query: str, limit: int) -> tuple[Passage, ...]:
+        """Ask English which articles the query means, then take their twins.
+
+        `langlinks` is the mapping Wikipedia's own editors maintain between
+        the same article in different languages, so this is not a translation
+        and nothing is guessed: it is the Marathi article an editor said
+        corresponds to the English one.
+        """
+        found = self._fetch(
+            {
+                "action": "query",
+                "format": "json",
+                "formatversion": "2",
+                "generator": "search",
+                "gsrsearch": query,
+                "gsrlimit": str(limit),
+                "prop": "langlinks",
+                "lllang": self.edition,
+                "lllimit": str(limit),
+                "redirects": "1",
+            },
+            host="en.wikipedia.org",
+        )
+        if found is None:
+            return ()
+        pages = found.get("query", {}).get("pages", [])
+        if not isinstance(pages, list):
+            return ()
+        pages = sorted(pages, key=lambda page: page.get("index", 999))
+
+        titles = []
+        for page in pages:
+            for link in page.get("langlinks") or []:
+                title = str(link.get("title") or "").strip()
+                if title and title not in titles:
+                    titles.append(title)
+        if not titles:
+            return ()
+        return self._extracts_for_titles(titles[:limit])
+
+    def _extracts_for_titles(self, titles: list[str]) -> tuple[Passage, ...]:
+        """Fetch intro extracts for named articles in this edition."""
+        payload = self._fetch(
+            {
+                "action": "query",
+                "format": "json",
+                "formatversion": "2",
+                "titles": "|".join(titles),
+                "prop": "extracts|info",
+                "exintro": "1",
+                "explaintext": "1",
+                "inprop": "url",
+                "redirects": "1",
+            }
+        )
+        if payload is None:
+            return ()
+        pages = payload.get("query", {}).get("pages", [])
+        if not isinstance(pages, list):
+            return ()
+        # `titles` loses the order asked for, so restore the ranking English
+        # gave, which reflects how well each article matched the query.
+        position = {title: index for index, title in enumerate(titles)}
+        pages.sort(key=lambda page: position.get(str(page.get("title")), 999))
+        return self._passages_from(pages)
+
+    def _passages_from(self, pages: list[dict]) -> tuple[Passage, ...]:
         passages: list[Passage] = []
         for page in pages:
             extract = str(page.get("extract") or "").strip()
@@ -114,21 +215,22 @@ class WikipediaRetrievalProvider(RetrievalProvider):
             if len(extract) < MINIMUM_EXTRACT_CHARACTERS or not url or not title:
                 continue
             if "may refer to" in extract[:200].lower():
-                continue  # a disambiguation page explains nothing
+                continue
             try:
                 passages.append(Passage(text=extract, title=title, url=url))
             except ValueError:
                 continue
         return tuple(passages)
 
-    def _fetch(self, parameters: dict[str, str]) -> dict | None:
+    def _fetch(self, parameters: dict[str, str], host: str | None = None) -> dict | None:
         """Return decoded JSON, or None for any failure at all.
 
         Broad by intention. A lesson app on a rural connection must treat a
         DNS failure, a timeout, a captive portal returning HTML and a changed
         API shape identically: no passages, app still running.
         """
-        url = f"{self.endpoint}?{urllib.parse.urlencode(parameters)}"
+        endpoint = f"https://{host}/w/api.php" if host else self.endpoint
+        url = f"{endpoint}?{urllib.parse.urlencode(parameters)}"
         request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
         try:
             with self._open(request, timeout=self.timeout) as response:

@@ -188,5 +188,43 @@ def extract_claims(
     # Present in source order rather than score order: the highest-scoring
     # sentence is often a detail, and an explanation should open with the
     # definition the first article leads with.
+    if not chosen and _written_in_another_script(query, passages):
+        chosen = _opening_sentences(passages, limit)
     chosen.sort(key=lambda pair: pair[1])
     return chosen
+
+
+def _written_in_another_script(query: str, passages: list[Passage]) -> bool:
+    """True when the query and the passages cannot share words at all.
+
+    This is the difference between "the scoring could not see" and "there is
+    nothing here". A Latin query against a Devanagari article has no possible
+    overlap however relevant the article is, and the right answer is to use
+    the article. A Latin query against a Latin article that shares no words is
+    simply off-topic, and the right answer is to say so — a passage about
+    mangoes must never be returned for a question about dispersion.
+    """
+    query_devanagari = bool(re.search(f"[{DEVANAGARI}]", query))
+    passage_devanagari = any(
+        re.search(f"[{DEVANAGARI}]", passage.text) for passage in passages
+    )
+    return query_devanagari != passage_devanagari
+
+
+def _opening_sentences(passages: list[Passage], limit: int) -> list[tuple[str, int]]:
+    """Take how the best-ranked article opens.
+
+    Used only when scoring was structurally unable to work. An encyclopaedia
+    opens with its definition, so its first sentences are a reasonable answer
+    when relevance cannot be measured rather than merely came out low.
+    """
+    for passage_index, passage in enumerate(passages):
+        opening = []
+        for paragraph in paragraphs(passage.text):
+            for sentence in sentences(paragraph):
+                opening.append((sentence, passage_index))
+                if len(opening) >= limit:
+                    return opening
+            if opening:
+                return opening
+    return []

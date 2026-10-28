@@ -257,7 +257,19 @@ Current Version: **V3.0 local desktop app + deployable web app**
   it by inspecting what the request actually contained.
 - `PRINCIPLES.md` records the rules the project runs on and names the file
   that enforces each one. A test checks every path it points at exists.
-- 313 automated tests, including GUI flow, compact-layout reachability,
+- Marathi and Hindi lookup went from four of ten school topics to ten of ten,
+  with no model. A smaller Wikipedia edition cannot find its own articles from
+  a Latin query — asked for "gravity", Marathi returned a person's name while
+  गुरुत्वाकर्षण sat one editor-maintained link away. A non-English lookup now
+  asks English which article the query means and follows the interlanguage
+  link editors have already drawn. The content is still written by speakers of
+  the language; only the finding borrows English's better search.
+- Selection also had to learn that a Latin query and a Devanagari article
+  share no words however right the article is, so scoring silently produced
+  nothing. Where the two scripts differ it falls back to how the article
+  opens. Where they match it does not: an off-topic passage is still refused,
+  since returning it would be the guessing the gate exists to prevent.
+- 323 automated tests, including GUI flow, compact-layout reachability,
   question-trail, state-reset, privacy-boundary, and resize smoke tests, plus
   checks that observations name no place, that every place cites a source,
   that the desktop app teaches the same content the website does, and that

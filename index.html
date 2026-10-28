@@ -2051,23 +2051,81 @@ function wikiParagraphs(text){
 const WIKI_EDITIONS = {English:"en", Marathi:"mr", Hindi:"hi", Konkani:"gom"};
 function wikiEdition(){ return WIKI_EDITIONS[currentLang()] || "en"; }
 
-async function wikiSearch(query, limit = 4){
-  const url = `https://${wikiEdition()}.wikipedia.org/w/api.php?` + new URLSearchParams({
-    action:"query", format:"json", formatversion:"2", generator:"search",
-    gsrsearch:query, gsrlimit:String(limit), prop:"extracts|info",
-    exintro:"1", explaintext:"1", inprop:"url", redirects:"1", origin:"*"
-  });
+async function wikiApi(host, params){
+  const url = `https://${host}/w/api.php?` + new URLSearchParams(
+    Object.assign({ action:"query", format:"json", formatversion:"2", origin:"*" }, params));
   const response = await fetch(url);
   if(!response.ok) throw new Error("search failed");
-  const data = await response.json();
+  return response.json();
+}
+
+function wikiPages(data){
   const pages = (data && data.query && data.query.pages) || [];
-  if(!Array.isArray(pages)) return [];
+  return Array.isArray(pages) ? pages : [];
+}
+
+function wikiPassages(pages){
   return pages
-    .slice().sort((a,b) => (a.index ?? 999) - (b.index ?? 999))
     .map(p => ({ text:(p.extract||"").trim(), title:(p.title||"").trim(), url:(p.fullurl||"").trim() }))
     // A passage with no URL cannot be checked, so it cannot be used.
     .filter(p => p.url && p.title && p.text.length >= 120)
     .filter(p => !p.text.slice(0,200).toLowerCase().includes("may refer to"));
+}
+
+async function wikiDirectSearch(host, query, limit){
+  const data = await wikiApi(host, {
+    generator:"search", gsrsearch:query, gsrlimit:String(limit),
+    prop:"extracts|info", exintro:"1", explaintext:"1", inprop:"url", redirects:"1"
+  });
+  return wikiPassages(wikiPages(data).slice().sort((a,b) => (a.index ?? 999) - (b.index ?? 999)));
+}
+
+/* Ask English which article the query means, then take the article editors
+   have linked it to in this language. Not a translation — langlinks is the
+   mapping Wikipedia's own editors maintain between the same article in
+   different languages. */
+async function wikiThroughEnglish(query, limit){
+  const data = await wikiApi("en.wikipedia.org", {
+    generator:"search", gsrsearch:query, gsrlimit:String(limit),
+    prop:"langlinks", lllang:wikiEdition(), lllimit:String(limit), redirects:"1"
+  });
+  const titles = [];
+  for(const page of wikiPages(data).slice().sort((a,b) => (a.index ?? 999) - (b.index ?? 999))){
+    for(const link of page.langlinks || []){
+      const title = (link.title || "").trim();
+      if(title && !titles.includes(title)) titles.push(title);
+    }
+  }
+  if(!titles.length) return [];
+  const got = await wikiApi(`${wikiEdition()}.wikipedia.org`, {
+    titles: titles.slice(0, limit).join("|"),
+    prop:"extracts|info", exintro:"1", explaintext:"1", inprop:"url", redirects:"1"
+  });
+  const order = {};
+  titles.forEach((t, i) => { order[t] = i; });
+  return wikiPassages(wikiPages(got).slice()
+    .sort((a,b) => (order[a.title] ?? 999) - (order[b.title] ?? 999)));
+}
+
+async function wikiSearch(query, limit = 4){
+  if(wikiEdition() === "en") return wikiDirectSearch("en.wikipedia.org", query, limit);
+
+  // The cross-language link goes first. A smaller edition's search ranks
+  // badly against a query in another script: asked for "gravity", Marathi
+  // Wikipedia returned a person's name and nothing about gravity, while
+  // गुरुत्वाकर्षण sat one editor-maintained link away.
+  let found = [];
+  try { found = await wikiThroughEnglish(query, limit); } catch(e){}
+  const seen = new Set(found.map(p => p.title));
+  try {
+    for(const p of await wikiDirectSearch(`${wikiEdition()}.wikipedia.org`, query, limit)){
+      if(found.length >= limit) break;
+      if(!seen.has(p.title)){ found.push(p); seen.add(p.title); }
+    }
+  } catch(e){
+    if(!found.length) throw e;   // both paths failed: let the caller report it
+  }
+  return found;
 }
 
 /* Same scoring as extractive_answer.py: lead sentences carry the definition,
@@ -2111,6 +2169,25 @@ function wikiSelect(query, passages, limit = 4){
     chosen.push({text:item.sentence, passageIndex:item.passageIndex});
     seen.push(item.words);
     perPassage[item.passageIndex] = (perPassage[item.passageIndex] || 0) + 1;
+  }
+  /* Scoring compares the query's words with each sentence's, which silently
+     finds nothing when the two are in different scripts: asked for "gravity",
+     गुरुत्वाकर्षण shares not one word with the query even though it is exactly
+     the right article. An encyclopaedia opens with its definition, so the
+     opening sentences are a reasonable answer when relevance cannot be
+     measured at all. */
+  const queryDevanagari = /[ऀ-ॿ]/.test(query);
+  const passagesDevanagari = passages.some(p => /[ऀ-ॿ]/.test(p.text));
+  if(!chosen.length && queryDevanagari !== passagesDevanagari){
+    outer: for(let i = 0; i < passages.length; i++){
+      for(const paragraph of wikiParagraphs(passages[i].text)){
+        for(const sentence of wikiSentences(paragraph)){
+          chosen.push({text:sentence, passageIndex:i});
+          if(chosen.length >= limit) break outer;
+        }
+        if(chosen.length) break outer;
+      }
+    }
   }
   chosen.sort((a,b) => a.passageIndex - b.passageIndex);
   return chosen;
